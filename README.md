@@ -2,8 +2,6 @@
 
 **Tout le programme de maths du Bac Pro, en images, en curseurs et en animations, relié aux métiers de la relation client.**
 
-🌐 **Site en ligne** : https://tom-rougeaud.github.io/maths-et-mcv/
-
 ---
 
 ## 🎯 Pour qui ?
@@ -39,7 +37,7 @@ Les exemples renvoient à la vente, au commerce et à l’accueil : prix, remise
 ## 📱 Pensé pour tous les écrans
 
 - Compatible **mobile et ordinateur**
-- Interface moderne, sans néon
+- Interface moderne
 - **Aucune installation**, aucun compte
 
 ---
