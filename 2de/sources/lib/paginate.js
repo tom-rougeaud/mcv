@@ -119,6 +119,8 @@
   document.querySelectorAll('[data-wordpage]').forEach(s => { const v = res.words[s.dataset.wordpage]; if (v) s.textContent = v; else res.errors.push('Page introuvable : ' + s.dataset.wordpage); });
   document.querySelectorAll('[data-numof]').forEach(s => { const v = res.num[s.dataset.numof]; if (v) s.textContent = v; else res.errors.push('Numéro introuvable : ' + s.dataset.numof); });
   document.querySelectorAll('.bilan td').forEach(td => { const bs = [...td.querySelectorAll('[data-numof]')]; if (bs.length > 1) td.innerHTML = bs.map(b => +b.textContent).sort((a, b) => a - b).map(x => `<b>${x}</b>`).join(', '); });
+  // version 3 : les coups de pouce (écrits à l’envers) descendent en bas de leur page ; la hauteur totale ne change pas
+  document.querySelectorAll('#out .page').forEach(pg => { const ps = [...pg.querySelectorAll('.inner .pouce-inv')]; if (!ps.length) return; const f = document.createElement('div'); f.className = 'pfoot'; ps.forEach(x => f.appendChild(x)); pg.appendChild(f); res.pouces = (res.pouces || 0) + ps.length; });
   // coups de pouce : dans l’ordre des numéros d’exercice, page par page
   // (tri par groupe : on ne mélange jamais deux chapitres)
   document.querySelectorAll('#out .inner').forEach(inn => { const runs = []; let cur = null;
