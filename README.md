@@ -65,8 +65,8 @@ Dans le dossier [`2de/`](2de/) : l’appli qui accompagne le manuel **Maths et M
 
 👉 En ligne : https://tom-rougeaud.github.io/mcv/2de/
 
-- **7 chapitres** : prix, marges et TVA · statistique · premier degré · factures, réductions et intérêts · fonctions · probabilités · géométrie
-- Pour chaque chapitre : questions flash d’automatismes, leçon courte, astuces (calculer vite, ordre de grandeur, sens, vérifier), exercices résolus pas à pas, entraînement corrigé (les nombres changent à chaque essai), problèmes du commerce, de la vente et de l’accueil, et un sujet « vers le bac »
+- **8 chapitres** : prix, marges et TVA · statistique · premier degré · factures, réductions et intérêts · fonctions · probabilités · géométrie · croisement de deux variables
+- Pour chaque chapitre : questions flash, lien avec le métier (« Au travail »), leçon courte avec formules mises en forme (KaTeX), astuces, exercices résolus pas à pas, un **simulateur à manipuler** avec un défi, entraînement corrigé (les nombres changent à chaque essai), problèmes du commerce, de la vente et de l’accueil, sujet « vers le bac », **contrôle blanc sur 20** (barème et compétences) et **PDF du chapitre** à télécharger
 - Glossaire visuel, lecture à voix haute, taille du texte réglable
 - Progression enregistrée **uniquement sur l’appareil** (export / import / effacement possibles), aucune donnée envoyée
 - Un seul fichier HTML, sans CDN ni police externe
