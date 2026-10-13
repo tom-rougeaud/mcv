@@ -32,7 +32,7 @@ function chapter(c) {
   const col = c.col, R = id => `<b data-numof="${c.id}-${id}">·</b>`;
   const fixed = [], ex = [], key = [], rep = [];
   /* 1. ouverture « Au travail » */
-  fixed.push(`<div class="blk op3 c-${col}"><div class="op3-h"><div><div class="ch-k">Chapitre ${c.n} · ${esc(c.dom)}${c.prepa ? ' · <span class="prepa">prépare la 1re</span>' : ''}</div><h2 class="fit">${c.titre}</h2></div><div class="qrbox">${QR[c.id].svg}<span>Ce chapitre<br>dans l’appli</span></div></div>
+  fixed.push(`<div class="blk op3 c-${col}"><div class="op3-h"><div><div class="ch-k">Chapitre ${c.n} · ${esc(c.dom)}</div><h2 class="fit">${c.titre}</h2></div><div class="qrbox">${QR[c.id].svg}<span>Ce chapitre<br>dans l’appli</span></div></div>
     <div class="op3-sc">${SC[c.id]()}</div>
     <div class="op3-q"><span class="op3-k">💼 Au travail</span><span class="mt-r">${c.metier.roles.map(r => `<span>${r}</span>`).join('')}</span><p>${c.travail.question}</p></div>
     <div class="op3-o"><b>Dans ce chapitre</b><ul>${c.objectifs.map(o => `<li>${o}</li>`).join('')}</ul></div></div>`);
@@ -94,8 +94,8 @@ const CH = DATA.map(chapter);
 const QV = s => ({ vb: s.match(/viewBox="([^"]+)"/)[1], body: s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '') });
 const pCover = `<div class="page cover2"><div class="cvfull">${cover({ qr: QV(QR.home.svg) })}</div></div>`;
 /* le schéma du chapitre */
-const STEPS = [['💼', 'Au travail', 'une scène du métier, une question'], ['🚀', 'Point de départ', 'un document, 6 questions'], ['📘', 'La leçon', 'chaque notion en 6 temps'], ['🧭', 'Méthodes', 'un résolu, puis un à compléter'], ['✏️', 'Je m’entraîne', 'des supports à compléter'], ['🧩', 'Je résous', 'des situations du métier'], ['🎯', 'S’évaluer', 'un contrôle blanc sur 20']];
-const flow = S(600, 250, STEPS.map(([ic, t, s], i) => { const x = 10 + (i % 4) * 150, y = i < 4 ? 20 : 140, w = 130; return Rc(x, y, w, 86, { c: i === 2 ? 'k' : 'k2', rx: 14 }) + `<text x="${x + w / 2}" y="${y + 30}" font-size="22" text-anchor="middle">${ic}</text>` + T(x + w / 2, y + 54, t, { fs: 14, c: i === 2 ? 'tw' : 'tx' }) + T(x + w / 2, y + 72, s, { fs: 9.5, c: i === 2 ? 'tw' : 'ts', w: 600 }) + (i < 3 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : '') + (i >= 4 && i < 6 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : ''); }).join('') + `<path d="M535 106 C 560 125, 90 112, 75 134" fill="none" class="ks" stroke-width="2.4" stroke-dasharray="6 4"/><path d="M75 138 l-6 -10 h12 z" class="k"/>` + T(527, 196, 'La leçon en 6 temps :', { fs: 12, c: 'kt', a: 'middle' }) + T(527, 214, 'je découvre · je comprends', { fs: 10.5, w: 600 }) + T(527, 229, 'je vois · je retiens', { fs: 10.5, w: 600 }) + T(527, 244, 'exemple · attention', { fs: 10.5, w: 600 }), 'Le déroulé d’un chapitre');
+const STEPS = [['💼', 'Au travail', 'une scène du métier|et une question'], ['🚀', 'Point de départ', 'un document|6 questions'], ['📘', 'La leçon', 'chaque notion|en 6 temps'], ['🧭', 'Méthodes', 'un résolu, puis|un à compléter'], ['✏️', 'Je m’entraîne', 'des supports|à compléter'], ['🧩', 'Je résous', 'des situations|du métier'], ['🎯', 'S’évaluer', 'un contrôle|blanc sur 20']];
+const flow = S(600, 250, STEPS.map(([ic, t, s], i) => { const x = 10 + (i % 4) * 150, y = i < 4 ? 20 : 140, w = 130; return Rc(x, y, w, 86, { c: i === 2 ? 'k' : 'k2', rx: 14 }) + `<text x="${x + w / 2}" y="${y + 30}" font-size="22" text-anchor="middle">${ic}</text>` + T(x + w / 2, y + 50, t, { fs: 14, c: i === 2 ? 'tw' : 'tx' }) + s.split('|').map((l, j) => T(x + w / 2, y + 68 + j * 12, l, { fs: 10, c: i === 2 ? 'tw' : 'ts', w: 600 })).join('') + (i < 3 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : '') + (i >= 4 && i < 6 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : ''); }).join('') + `<path d="M535 106 C 560 125, 90 112, 75 134" fill="none" class="ks" stroke-width="2.4" stroke-dasharray="6 4"/><path d="M75 138 l-6 -10 h12 z" class="k"/>` + T(527, 196, 'La leçon en 6 temps :', { fs: 12, c: 'kt', a: 'middle' }) + T(527, 214, 'je découvre · je comprends', { fs: 10.5, w: 600 }) + T(527, 229, 'je vois · je retiens', { fs: 10.5, w: 600 }) + T(527, 244, 'exemple · attention', { fs: 10.5, w: 600 }), 'Le déroulé d’un chapitre');
 const pGuide = `<div class="page c-nombre" data-recto="0"><div class="inner" data-sec="guide">
   <h1 class="pg-t">Ton manuel : comment ça marche ?</h1>
   <p class="pg-p">Chaque chapitre suit toujours le même chemin. On part d’une situation du métier, on comprend, puis on s’entraîne et on résout.</p>
@@ -119,10 +119,9 @@ const compCard = ([k, geste, metier, manuel]) => `<div class="cpc cpc-${k}"><div
 const pComp1 = `<div class="page c-algo"><div class="inner" data-sec="competences">
   <h1 class="pg-t">Les 5 compétences, au travail</h1>
   <p class="pg-p">Au bac, on évalue cinq compétences. Ce sont aussi des gestes que tu feras chaque jour en magasin, à l’accueil ou au service client.</p>
-  ${COMPS.slice(0, 3).map(compCard).join('')}
+  ${COMPS.map(compCard).join('')}
 </div><div class="foot"></div></div>`;
 const pComp2 = `<div class="page c-algo"><div class="inner">
-  ${COMPS.slice(3).map(compCard).join('')}
   <h2 class="pg-s">Les consignes</h2>
   <table class="tbl cons2"><tr><th>Dans le manuel</th><th>Au bac</th><th>Ce qu’on attend</th></tr>
   <tr><td>Calcule</td><td>Calculer</td><td>un résultat chiffré, avec son unité</td></tr>
@@ -136,9 +135,9 @@ const pComp2 = `<div class="page c-algo"><div class="inner">
 </div><div class="foot"></div></div>`;
 const pToc = `<div class="page" data-recto="0"><div class="inner" data-sec="sommaire">
   <h1 class="pg-t">Sommaire</h1>
-  <div class="toc2">${DATA.map(c => `<div class="tc2 c-${c.col}"><span class="tn2">${c.n}</span><div><b>${esc(c.titre)}${c.prepa ? ' <span class="prepa">prépare la 1re</span>' : ''}</b><span>${c.notions.map(n => n.titre).join(' · ')}</span></div><span class="tp2"><span data-pageof="${c.id}">…</span></span></div>`).join('')}
+  <div class="toc2">${DATA.map(c => `<div class="tc2 c-${c.col}"><span class="tn2">${c.n}</span><div><b>${esc(c.titre)}</b><span>${c.notions.map(n => n.titre).join(' · ')}</span></div><span class="tp2"><span data-pageof="${c.id}">…</span></span></div>`).join('')}
   <div class="tc2 ann"><span class="tn2">✔️</span><div><b>Réponses de « Je m’entraîne »</b><span>Pour vérifier seul, chapitre par chapitre</span></div><span class="tp2"><span data-pageof="rep">…</span></span></div><div class="tc2 ann"><span class="tn2">🔤</span><div><b>Glossaire visuel</b><span>Les mots de chaque chapitre, avec un schéma</span></div><span class="tp2"><span data-pageof="glo">…</span></span></div></div>
-  <p class="pg-p small" style="margin-top:4mm">Programme de mathématiques de seconde professionnelle (BO spécial n° 5 du 11 avril 2019), avec le module « Calculs commerciaux et financiers » des spécialités sans physique-chimie. Le chapitre 8 prépare la statistique à deux variables de 1re.</p>
+  <p class="pg-p small" style="margin-top:4mm">Programme de mathématiques de seconde professionnelle (BO spécial n° 5 du 11 avril 2019), avec le module « Calculs commerciaux et financiers » des spécialités sans physique-chimie.</p>
 </div><div class="foot"></div></div>`;
 
 /* ---------- chapitres ---------- */

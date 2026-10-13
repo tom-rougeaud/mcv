@@ -1,4 +1,4 @@
-/* Chapitre 8 · Croisement de deux variables — version 3. Prépare la 1re (programme de 1re Bac Pro, statistique à deux variables). */
+/* Chapitre 8 · Croisement de deux variables — version 3. */
 'use strict';
 const K = require('../lib/kit3');
 const { rnd, fr, H, FM, M, R, adapt } = K;
@@ -8,7 +8,7 @@ const V2 = require('../content2/c8.js');
 
 module.exports = function (chk) {
   const old = V2(chk);
-  const c = { id: 'c8', n: 8, col: 'mesure', icone: '🗂️', dom: 'Statistique et probabilités', titre: 'Croisement de deux variables', prepa: true };
+  const c = { id: 'c8', n: 8, col: 'mesure', icone: '🗂️', dom: 'Statistique et probabilités', titre: 'Croisement de deux variables' };
   c.travail = { question: `Un cuisiniste a reçu ${H('2 000 visiteurs')} sur son stand au salon de l’habitat. ${H('640')} ont demandé un devis. Quelle tranche d’âge cibler pour la prochaine campagne ? Tu sauras répondre à la fin du chapitre (sujet « vers le bac »).` };
   c.objectifs = ['Je saurai lire une case d’un tableau croisé.', 'Je saurai compléter un tableau croisé avec les totaux.', 'Je saurai choisir le bon total : « sur l’ensemble » ou « parmi ».', 'Je saurai comparer deux groupes de tailles différentes.'];
   c.depart = 'c8';

@@ -130,11 +130,11 @@ table.mkt3{width:100%;border-collapse:collapse;font-size:10pt}
 .rout3 b{font:800 11.5pt 'Inter';color:#2B2D7C}.rout3 span:last-child{grid-column:1/-1;font-size:10pt;line-height:1.3}
 .rep3{display:grid;grid-template-columns:1fr 1fr;gap:2mm 4mm}
 .rep3>div{display:flex;gap:2.4mm;align-items:center;font-size:10pt;line-height:1.28}
-.cpc{display:grid;grid-template-columns:52mm 1fr;gap:5mm;align-items:center;background:var(--tt);border-radius:5mm;padding:3mm 4mm;margin-bottom:3.4mm}
+.cpc{display:grid;grid-template-columns:46mm 1fr;gap:4.5mm;align-items:center;background:var(--tt);border-radius:5mm;padding:3mm 4mm;margin-bottom:3.2mm}
 .cpc-i svg{width:100%;height:auto;display:block;background:#fff;border-radius:3mm}
 .cpc .cp{font-size:11pt}
-.cpc-g{margin:1.6mm 0 1.2mm;font:800 12pt 'Inter';color:#2B2D7C}
-.cpc-m,.cpc-x{margin:.8mm 0;font-size:10.6pt;line-height:1.3}
+.cpc-g{margin:1mm 0 .8mm;font:800 11.6pt 'Inter';color:#2B2D7C}
+.cpc-m,.cpc-x{margin:.7mm 0;font-size:10.5pt;line-height:1.3}
 .cpc-app{--tt:#E0EBFD}.cpc-ana{--tt:#EEE3FB}.cpc-rea{--tt:#DCF4E4}.cpc-val{--tt:#FFE7D1}.cpc-com{--tt:#FBE0EF}
 
 /* réponses de « Je m’entraîne » */
