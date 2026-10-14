@@ -62,8 +62,8 @@ function cover(o = {}) {
   R = rng(7);
   const qr = o.qr || '';
   let s = `<svg viewBox="0 0 840 1188" xmlns="http://www.w3.org/2000/svg" class="cvsvg"><defs>
-<linearGradient id="cvbg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#6A45D8"/><stop offset=".55" stop-color="#4A33AE"/><stop offset="1" stop-color="#2A1F70"/></linearGradient>
-<radialGradient id="cvglow" cx=".25" cy=".2" r=".7"><stop offset="0" stop-color="#9C86F5" stop-opacity=".45"/><stop offset="1" stop-color="#9C86F5" stop-opacity="0"/></radialGradient></defs>
+<linearGradient id="cvbg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#22B07A"/><stop offset=".55" stop-color="#14855C"/><stop offset="1" stop-color="#0A4D37"/></linearGradient>
+<radialGradient id="cvglow" cx=".25" cy=".2" r=".7"><stop offset="0" stop-color="#8CF0C4" stop-opacity=".45"/><stop offset="1" stop-color="#8CF0C4" stop-opacity="0"/></radialGradient></defs>
 <rect width="840" height="1188" fill="url(#cvbg)"/><rect width="840" height="1188" fill="url(#cvglow)"/>`;
   // motifs : [nom, x, y, rotation, échelle, opacité]
   const L = [['tag', 150, 130, -12, 1, .2], ['bars', 660, 150, 6, .95, .2], ['sigma', 420, 120, 0, .9, .12], ['star', 290, 70, 0, 1, .3],
@@ -74,17 +74,17 @@ function cover(o = {}) {
   L.forEach(([k, x, y, r, sc, op]) => { s += G(x, y, r, sc, op, M[k]()); });
   // titre
   s += `<g font-family="Inter">`;
-  s += `<rect x="70" y="420" width="700" height="330" rx="40" fill="#241A66" opacity=".42"/>`;
+  s += `<rect x="70" y="420" width="700" height="330" rx="40" fill="#073D2B" opacity=".45"/>`;
   s += `<text x="110" y="492" font-size="26" font-weight="800" fill="${YEL}" letter-spacing="6">MATHÉMATIQUES · 1re BAC PRO</text>`;
-  s += `<text x="104" y="598" font-size="104" font-weight="800" fill="${W}" letter-spacing="-2">Maths et MCV</text>`;
+  s += `<text x="106" y="596" font-size="92" font-weight="800" fill="${W}" letter-spacing="-2" textLength="620" lengthAdjust="spacingAndGlyphs">Maths et MCV</text>`;
   s += `</g>` + `<path d="${line(110, 628, 470, 622, 2.5)}" fill="none" stroke="${YEL}" stroke-width="9" stroke-linecap="round"/>`;
   s += `<g font-family="Inter"><text x="110" y="690" font-size="38" font-weight="700" fill="${W}">Métiers de la relation client</text>`;
   s += `<text x="110" y="728" font-size="27" font-weight="700" fill="${YEL}">Commerce · Vente · Accueil</text></g>`;
   // bas de page : auteur et QR code
-  s += `<rect x="0" y="1040" width="840" height="148" fill="#1D1560" opacity=".55"/>`;
+  s += `<rect x="0" y="1040" width="840" height="148" fill="#063526" opacity=".55"/>`;
   s += `<g font-family="Inter"><text x="70" y="1104" font-size="38" font-weight="800" fill="${W}">Tom Rougeaud</text>`;
-  s += `<text x="70" y="1140" font-size="20" font-weight="700" fill="#DCD3FF">Manuel et appli · licence CC BY-NC 4.0</text></g>`;
-  if (qr) { s += `<rect x="636" y="958" width="152" height="182" rx="18" fill="${W}"/><g transform="translate(648 970) scale(${(128 / +qr.vb.split(' ')[2]).toFixed(4)})">${qr.body}</g><text x="712" y="1124" font-family="Inter" font-size="17" font-weight="800" fill="#22307F" text-anchor="middle">L’appli · 2de</text>`; }
+  s += `<text x="70" y="1140" font-size="20" font-weight="700" fill="#CFF5E3">Manuel de l’élève et appli en ligne</text></g>`;
+  if (qr) { s += `<rect x="636" y="958" width="152" height="182" rx="18" fill="${W}"/><g transform="translate(648 970) scale(${(128 / +qr.vb.split(' ')[2]).toFixed(4)})">${qr.body}</g><text x="712" y="1124" font-family="Inter" font-size="17" font-weight="800" fill="#0E5E44" text-anchor="middle">L’appli · 1re</text>`; }
   return s + '</svg>';
 }
 module.exports = { cover, M };

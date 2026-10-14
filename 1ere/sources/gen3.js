@@ -44,7 +44,7 @@ function chapter(c) {
   const au = AUTO.gen(c.id, seedOf(c.id + '-auto'));
   fixed.push(`<div class="blk auto3 c-${col}" data-sec="${c.id}-auto"><div class="auto3-h"><span class="ic">⚡</span>Automatismes<span class="sec-sub">5 minutes · sans calculatrice · les prérequis de 2de du chapitre et un intérêt simple</span></div><ol class="auto3-q">${au.map(q => `<li><span>${q.t}</span>${bl(26, q.a)}</li>`).join('')}</ol></div>`);
   key.push({ k: 'auto', html: `<b>Automatismes</b> — ${au.map((q, i) => `${i + 1}. ${q.a}`).join(' ; ')}.` });
-  /* 2. point de départ : un document du métier, 6 questions */
+  /* 2. point de départ : un document du métier, 5 questions */
   const dp = MCVT.dep(c.depart, seedOf(c.id + '-dep'));
   fixed.push(`<div class="blk dep3 c-${col}" data-sec="${c.id}-dep"><div class="dep3-h"><span class="ic">🚀</span>Point de départ<span class="sec-sub">un document du métier · 5 questions · sans calculatrice</span></div><div class="dep3-g"><div class="dep3-doc"><div class="dep3-t">${dp.titre}</div>${dp.doc}</div><ol class="dep3-q">${dp.qs.map(q => `<li><span class="dq-t">${q.t}</span>${q.kind === 'qcm' ? `<span class="opts">${q.choices.map((x, j) => opt(x, j === q.ok)).join('')}</span>` : bl(24, q.a)}</li>`).join('')}</ol></div></div>`);
   key.push({ k: 'dep', html: `<b>Point de départ</b> — ${dp.qs.map((q, i) => `${i + 1}. ${q.a}`).join(' ; ')}.` });
@@ -102,7 +102,7 @@ const CH = DATA.map(chapter);
 const QV = s => ({ vb: s.match(/viewBox="([^"]+)"/)[1], body: s.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, '') });
 const pCover = `<div class="page cover2"><div class="cvfull">${cover({ qr: QV(QR.home.svg) })}</div></div>`;
 /* le schéma du chapitre */
-const STEPS = [['💼', 'Au travail', 'une scène du métier|et une question'], ['🚀', 'Point de départ', 'un document|6 questions'], ['📘', 'La leçon', 'chaque notion|en 6 temps'], ['🧭', 'Méthodes', 'un résolu, puis|un à compléter'], ['✏️', 'Je m’entraîne', 'des supports|à compléter'], ['🧩', 'Je résous', 'des situations|du métier'], ['🎯', 'S’évaluer', 'un contrôle|blanc sur 20']];
+const STEPS = [['💼', 'Au travail', 'une scène du métier|et une question'], ['🚀', 'Point de départ', '5 automatismes|puis un document'], ['📘', 'La leçon', 'chaque notion|en 6 temps'], ['🧭', 'Méthodes', 'un résolu, puis|un à compléter'], ['✏️', 'Je m’entraîne', 'des supports|à compléter'], ['🧩', 'Je résous', 'des situations|du métier'], ['🎯', 'S’évaluer', 'un contrôle|blanc sur 20']];
 const flow = S(600, 250, STEPS.map(([ic, t, s], i) => { const x = 10 + (i % 4) * 150, y = i < 4 ? 20 : 140, w = 130; return Rc(x, y, w, 86, { c: i === 2 ? 'k' : 'k2', rx: 14 }) + `<text x="${x + w / 2}" y="${y + 30}" font-size="22" text-anchor="middle">${ic}</text>` + T(x + w / 2, y + 50, t, { fs: 14, c: i === 2 ? 'tw' : 'tx' }) + s.split('|').map((l, j) => T(x + w / 2, y + 68 + j * 12, l, { fs: 10, c: i === 2 ? 'tw' : 'ts', w: 600 })).join('') + (i < 3 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : '') + (i >= 4 && i < 6 ? Ar(x + w + 2, y + 43, x + w + 18, y + 43, { w: 2.4, h: 8 }) : ''); }).join('') + `<path d="M535 106 C 560 125, 90 112, 75 134" fill="none" class="ks" stroke-width="2.4" stroke-dasharray="6 4"/><path d="M75 138 l-6 -10 h12 z" class="k"/>` + T(527, 196, 'La leçon en 6 temps :', { fs: 12, c: 'kt', a: 'middle' }) + T(527, 214, 'je découvre · je comprends', { fs: 10.5, w: 600 }) + T(527, 229, 'je vois · je retiens', { fs: 10.5, w: 600 }) + T(527, 244, 'exemple · attention', { fs: 10.5, w: 600 }), 'Le déroulé d’un chapitre');
 const pGuide = `<div class="page c-nombre" data-recto="0"><div class="inner" data-sec="guide">
   <h1 class="pg-t">Ton manuel : comment ça marche ?</h1>
@@ -115,6 +115,7 @@ const pGuide = `<div class="page c-nombre" data-recto="0"><div class="inner" dat
   <h2 class="pg-s">L’appli qui va avec</h2>
   <div class="qrhow"><div class="qrbox big">${QR.home.svg}<span>Maths et MCV · 1re</span></div><div><p class="pg-p">Sur téléphone ou ordinateur, sans compte : la leçon animée, les méthodes pas à pas, l’entraînement corrigé tout de suite avec de nouveaux nombres à chaque essai, les problèmes et le contrôle blanc.</p><p class="pg-p small">tom-rougeaud.github.io/mcv/1ere · Rien n’est envoyé sur Internet : la progression reste sur l’appareil.</p></div></div>
   <div class="owner"><span>Ce manuel appartient à</span><i></i><span>Classe</span><i></i></div>
+  <p class="pg-p small lic">© Tom Rougeaud · Manuel et appli sous licence <b>CC BY-NC 4.0</b> : tu peux les partager et les adapter, sans usage commercial, en citant l’auteur.</p>
 </div><div class="foot"></div></div>`;
 /* les compétences, expliquées par le métier (double page) */
 const COMPS = [
