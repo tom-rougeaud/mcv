@@ -73,6 +73,20 @@ Dans le dossier [`2de/`](2de/) : l’appli qui accompagne le manuel **Maths et M
 
 ---
 
+## 🆕 Maths et MCV · 1re (manuel + appli)
+
+Dans le dossier [`1ere/`](1ere/) : l’appli qui accompagne le manuel **Maths et MCV · 1re Bac Pro Métiers de la relation client**.
+
+👉 En ligne : https://tom-rougeaud.github.io/mcv/1ere/
+
+- **8 chapitres** : coûts, résultat et intérêts · résolution graphique · second degré · dérivation · suites · statistique à deux variables · probabilités · géométrie dans l’espace
+- En tête de chaque chapitre, l’encart **« De la 2de à la 1re »** : ce que le chapitre reprend du manuel de 2de, et ce qu’il approfondit (avec un lien vers l’appli de 2de)
+- Leçon en 4 notions avec méthode visuelle animée, encadrés « Je programme » (Python) et « Je raisonne », exercices résolus, simulateur « Je manipule » avec un défi, exercices à support visuel dont les nombres changent à chaque essai, problèmes du métier, sujet « vers le bac », contrôle blanc sur 20 et PDF du chapitre
+- Graphiques, droites d’ajustement et solides calculés par programme ; glossaire visuel de 72 mots
+- Progression enregistrée **uniquement sur l’appareil** (export / import / effacement), aucune donnée envoyée ; un seul fichier HTML, sans CDN ni police externe
+
+---
+
 ## 📄 Licence
 
 **CC BY-NC 4.0** : libre de partage et d’adaptation, avec mention de l’auteur, pour un usage non commercial.

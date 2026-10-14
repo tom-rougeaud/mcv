@@ -1,0 +1,18 @@
+/* 1re · glossaire du chapitre 8 */
+'use strict';
+const G = require('../shared/t8.js');
+module.exports = ({ sv, t, W }) => {
+  const RED = '#C2332A', BLUE = '#1D5FC2';
+  const pv = (o = {}) => G.pave(30, 104, 3.2, 30, 20, 20, { fill: '#F3E1C7', ...o });
+  return [
+    W('solide', 'le solide', sv(G.cyl(50, 104, 5, 4, 14, { fill: '#E0EBFD' }) + G.cone(140, 104, 5, 5, 16, { fill: '#FDE3E0' }) + G.boule(230, 70, 5, 6, { fill: '#D6F2F2' }), 'Trois solides : cylindre, cône, boule'), 'Objet de l’espace qui a un volume.', 'Le cône et la boule sont des solides.', { sens: 'solides usuels : pavé, prisme, cylindre, pyramide, cône, boule' }),
+    W('cavaliere', 'la perspective cavalière', sv(pv().svg + t(228, 60, 'face avant', { fs: 11, c: 'ts' }) + t(228, 76, 'en vraie grandeur', { fs: 11, c: 'ts' }), 'Un pavé en perspective cavalière'), 'Façon de dessiner un solide : face avant en vraie grandeur, fuyantes à 45° et réduites.', 'Le carton est dessiné en perspective cavalière.', { formule: 'fuyantes : 45°, × 0,5' }),
+    W('fuyante', 'la fuyante', sv((() => { const P = pv(); return P.svg + [[1, 0, 0, 1, 0, 1], [1, 1, 0, 1, 1, 1], [0, 1, 0, 0, 1, 1]].map(([a, b, c2, d, e, f]) => G.L(P.v(a, b, c2), P.v(d, e, f), { stroke: RED, w: 2.8 })).join(''); })() + t(228, 60, 'fuyantes', { fs: 12, c: 'kt' }), 'Les fuyantes en rouge'), 'Arête dessinée vers l’arrière, inclinée à 45° et réduite.', 'Les fuyantes du carton sont parallèles.', { formule: 'longueur dessinée = longueur réelle × 0,5' }),
+    W('cachee', 'l’arête cachée', sv((() => { const P = pv(); return P.svg + [[0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 0, 1], [0, 0, 1, 0, 1, 1]].map(([a, b, c2, d, e, f]) => G.L(P.v(a, b, c2), P.v(d, e, f), { stroke: BLUE, w: 2.6, dash: 1 })).join(''); })() + t(228, 60, 'en pointillés', { fs: 12, c: 'kt' }), 'Les trois arêtes cachées en pointillés'), 'Arête qu’on ne voit pas : on la dessine en pointillés.', 'En perspective, le pavé a trois arêtes cachées.', { formule: 'pointillés' }),
+    W('cylindre', 'le cylindre', sv(G.cyl(90, 104, 5, 6, 16, { fill: '#E0EBFD' }) + t(200, 56, 'V = π × r² × h', { fs: 14, c: 'kt' }), 'Un cylindre'), 'Solide dont les deux bases sont des disques identiques.', 'La bougie A est un cylindre.', { formule: 'V = π r² h' }),
+    W('cone', 'le cône', sv(G.cone(90, 104, 5, 6, 17, { fill: '#FDE3E0' }) + t(200, 56, 'V = π × r² × h ÷ 3', { fs: 14, c: 'kt' }), 'Un cône'), 'Solide dont la base est un disque et qui se termine en pointe.', 'Le volume du cône est le tiers de celui du cylindre.', { formule: 'V = π r² h ÷ 3' }),
+    W('pyramide', 'la pyramide', sv(G.pyr(50, 104, 3.2, 26, 28, { fill: '#EEE3FB' }) + t(210, 56, 'V = B × h ÷ 3', { fs: 14, c: 'kt' }), 'Une pyramide à base carrée'), 'Solide dont la base est un polygone et qui se termine en pointe.', 'La bougie pyramide a une base carrée de 6 cm.', { formule: 'V = B × h ÷ 3' }),
+    W('boule', 'la boule', sv(G.boule(90, 60, 5, 9, { fill: '#D6F2F2' }) + G.L([90, 60], [135, 60], { stroke: RED, w: 2 }) + t(112, 54, 'r', { fs: 12, c: 'kt' }) + t(210, 56, 'V = 4/3 × π × r³', { fs: 14, c: 'kt' }), 'Une boule et son rayon'), 'Solide plein entouré par une sphère.', 'La bougie boule a un rayon de 3 cm.', { formule: 'V = 4/3 π r³' }),
+    W('section', 'la section plane', sv(G.cone(70, 108, 5, 6, 18, { fill: '#FDE3E0', cut: G.ell(70, 108 - 45, 30 * (1 - 9 / 18), { fill: RED, op: .6, stroke: RED, w: 2 }) }) + t(210, 56, 'cône coupé à mi-hauteur :', { fs: 11, c: 'ts' }) + t(210, 72, 'disque de rayon r ÷ 2', { fs: 12, c: 'kt' }), 'La section d’un cône à mi-hauteur'), 'Face obtenue quand on coupe un solide par un plan.', 'La section du cylindre parallèle à la base est un disque.', { formule: 'cône, pyramide : réduction de la base' })
+  ];
+};
