@@ -1,10 +1,10 @@
 /* ===== Maths et MCV · 2de — styles de l’application (écran, mobile d’abord) ===== */
-:root{--ink:#1D2240;--soft:#545B7A;--brand:#2B2D7C;--accent:#FFC233;--bg:#F5F6FB;--line:#E1E6F5;--ok:#1E7F45;--ko:#C2332A;--r:16px;--z:1;
+:root{--ink:#1D2240;--soft:#545B7A;--brand:#0E6B4C;--accent:#FFC233;--bg:#F5F6FB;--line:#E1E6F5;--ok:#1E7F45;--ko:#C2332A;--r:16px;--z:1;
 --c-verbe:#1E7F45;--t-verbe:#DCF4E4;--c-algebre:#C2332A;--t-algebre:#FDE3E0;--c-nombre:#1D5FC2;--t-nombre:#E0EBFD;--c-fonction:#B05200;--t-fonction:#FFE7D1;
 --c-geometrie:#7438C0;--t-geometrie:#EEE3FB;--c-mesure:#08767C;--t-mesure:#D6F2F2;--c-algo:#AA2272;--t-algo:#FBE0EF;--c-donnees:#755C00;--t-donnees:#FFF0B8}
 .c-verbe{--cc:var(--c-verbe);--tt:var(--t-verbe)}.c-algebre{--cc:var(--c-algebre);--tt:var(--t-algebre)}.c-nombre{--cc:var(--c-nombre);--tt:var(--t-nombre)}
 .c-fonction{--cc:var(--c-fonction);--tt:var(--t-fonction)}.c-geometrie{--cc:var(--c-geometrie);--tt:var(--t-geometrie)}.c-mesure{--cc:var(--c-mesure);--tt:var(--t-mesure)}
-.c-algo{--cc:var(--c-algo);--tt:var(--t-algo)}.c-donnees{--cc:var(--c-donnees);--tt:var(--t-donnees)}.c-brand{--cc:#2B2D7C;--tt:#E6E8FA}
+.c-algo{--cc:var(--c-algo);--tt:var(--t-algo)}.c-donnees{--cc:var(--c-donnees);--tt:var(--t-donnees)}.c-brand{--cc:#0E6B4C;--tt:#DDF5EA}
 html,body{background:var(--bg)}
 body{font-family:'Andika',system-ui,'Segoe UI','Noto Color Emoji','Apple Color Emoji',sans-serif;font-size:17px;line-height:1.45;color:var(--ink);-webkit-text-size-adjust:100%}
 h1,h2,h3,.btn,.tabs a,.card-t,.kick,.ck,.num2,.ex-t,.top b{font-family:'Inter',system-ui,'Segoe UI','Noto Color Emoji',sans-serif}
@@ -40,7 +40,7 @@ img,svg{max-width:100%}
 .say{border:0;background:#fff;border-radius:99px;width:36px;height:36px;font-size:17px;cursor:pointer;margin-left:auto;flex:none;box-shadow:0 0 0 1.5px var(--line)}
 
 /* ---------- accueil ---------- */
-.hero{display:flex;gap:16px;align-items:center;background:linear-gradient(160deg,#2560D8 0,#1F45B0 55%,#22307F 100%);color:#fff;border-radius:22px;padding:22px 20px;position:relative;overflow:hidden;min-height:150px}
+.hero{display:flex;gap:16px;align-items:center;background:linear-gradient(160deg,#22B07A 0,#14855C 55%,#0A4D37 100%);color:#fff;border-radius:22px;padding:22px 20px;position:relative;overflow:hidden;min-height:150px}
 .hero::after{content:none}
 .hero>*{position:relative;z-index:1}
 .sigma{display:grid;place-items:center;width:64px;height:64px;border-radius:18px;background:var(--accent);color:var(--brand);font:800 40px/1 'Inter',system-ui,sans-serif}
@@ -128,12 +128,12 @@ img,svg{max-width:100%}
 .it-q{flex:1 1 180px}
 .it.ok{background:#E9F7EE}.it.ko{background:#FDEDEB}
 .inp{font:inherit;font-size:17px;min-height:44px;width:130px;max-width:100%;padding:6px 10px;border:2px solid #C9D1EA;border-radius:10px;background:#fff;color:var(--ink)}
-.inp:focus{border-color:var(--cc,var(--brand));outline:none;box-shadow:0 0 0 3px var(--tt,#E6E8FA)}
+.inp:focus{border-color:var(--cc,var(--brand));outline:none;box-shadow:0 0 0 3px var(--tt,#DDF5EA)}
 .inp.big{font-size:24px;width:180px;text-align:center}
 .inp.txt{width:100%;min-height:64px;resize:vertical}
 .chs{display:flex;flex-wrap:wrap;gap:6px}
 .ch{font:inherit;font-size:15px;min-height:42px;padding:6px 12px;border-radius:10px;border:2px solid #C9D1EA;background:#fff;cursor:pointer;color:var(--ink)}
-.ch.sel{border-color:var(--cc,var(--brand));background:var(--tt,#E6E8FA);font-weight:700}
+.ch.sel{border-color:var(--cc,var(--brand));background:var(--tt,#DDF5EA);font-weight:700}
 .ch.good{border-color:var(--ok);background:#DCF4E4}
 .chs.big .ch{font-size:19px;min-height:52px;padding:8px 18px}
 .itfb{font-weight:700}.sol{color:var(--ko)}
@@ -142,7 +142,7 @@ img,svg{max-width:100%}
 
 /* ---------- problèmes ---------- */
 .etape{font-size:19px;margin:22px 2px 10px;color:var(--brand)}
-.pb.bac{border-color:#2B2D7C;border-style:double;border-width:4px}
+.pb.bac{border-color:#0E6B4C;border-style:double;border-width:4px}
 #main .bacline{margin:6px 0;font-size:14px}
 .stmt{margin-top:8px}
 .stmt>p:first-child{margin-top:0}
