@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P } = H;
+  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P, xs } = H;
   const axis = m => { const raw = m / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(k => k * p).find(v => v >= raw); return [Math.ceil(m / step - 1e-9) * step, step]; };
   const L10 = Math.log10, sup = n => String(n).replace('-', '⁻').split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'['0123456789'.indexOf(c)] || c).join('');
 
@@ -12,18 +12,19 @@
     const k = int(R, 0, 1), n = pick(R, [3, 4, 5, 6]);
     return { titre: 'Le commerce en ligne en chiffres', doc,
       qs: [k ? { t: 'Combien y a-t-il de sites marchands actifs ?', kind: 'tap', cell: 'si', v: 158200, tol: .01, a: '158 200' } : { t: 'Quel est le panier moyen ?', kind: 'tap', cell: 'pm', v: 62, tol: .01, a: '62 €' },
-        { t: `Écris 10${sup(n)} en écriture décimale.`, kind: 'num', v: 10 ** n, tol: .01, a: fr(10 ** n) },
+        { t: `Écris 10${sup(n)} en écriture décimale.`, kind: 'num', v: 10 ** n, tol: .01, a: fr(10 ** n), x: `10${sup(n)} : un 1 suivi de ${n} zéros, ${fr(10 ** n)}` },
         { t: 'Un milliard, c’est 10 puissance…', kind: 'num', v: 9, tol: .01, a: '9' },
-        { t: `log(10${sup(n)}) = ?`, kind: 'num', v: n, tol: .01, a: String(n) },
+        { t: `log(10${sup(n)}) = ?`, kind: 'num', v: n, tol: .01, a: String(n), x: `log(10ⁿ) = n, donc log(10${sup(n)}) = ${n}` },
         { t: 'Le logarithme décimal de 158 200 est compris entre :', kind: 'qcm', choices: ['5 et 6', '6 et 7', '158 et 159'], ok: 0, a: '5 et 6 : 10⁵ ≤ 158 200 < 10⁶' }] };
   };
 
   /* e1 · une fonction exponentielle : valeurs, sens de variation */
   TR.c4e1 = R => {
     const k = pick(R, [100, 500, 1000, 2000]), q = pick(R, [1.2, 1.5, 2, .5, .8, .9]), f = x => k * Math.pow(q, x), up = q > 1;
-    const xs = [-1, 0, 1, 2, .5];
+    const XV = [-1, 0, 1, 2, .5];
     const items = [num('a', f(-1), 2, fr(rnd(f(-1), 2)), [{ v: -k * q, m: 'Une puissance d’exposant négatif n’est pas négative : q⁻¹ = 1 ÷ q.' }, { v: k * q, m: 'q⁻¹ = 1 ÷ q : on divise par q, on ne multiplie pas.' }]), num('b', k, 2, fr(k), [{ v: 0, m: 'q⁰ = 1, donc f(0) = ' + fr(k) + ' × 1.' }]), num('c', f(2), 2, fr(rnd(f(2), 2)), [{ v: k * q * 2, m: 'q² = q × q : l’exposant n’est pas un facteur.' }]),
       num('d', rnd(f(.5), 2), 2, fr(rnd(f(.5), 2)), [{ v: rnd(k * q / 2, 2), m: 'q puissance 0,5 n’est pas q ÷ 2 : utilise la touche puissance.' }]), qcm('e', ['croissante', 'décroissante'], up ? 0 : 1, up ? `croissante : q = ${fr(q)} > 1` : `décroissante : 0 < q = ${fr(q)} < 1`)];
+    xs(items, { a: `f(− 1) = ${fr(k)} × ${fr(q)}⁻¹ = ${fr(k)} ÷ ${fr(q)} ≈ ${fr(rnd(f(-1), 2))}`, b: `f(0) = ${fr(k)} × ${fr(q)}⁰ = ${fr(k)} × 1 = ${fr(k)}`, c: `f(2) = ${fr(k)} × ${fr(q)}² = ${fr(k)} × ${fr(rnd(q * q, 4))} = ${fr(rnd(f(2), 2))}`, d: `f(0,5) = ${fr(k)} × ${fr(q)}^0,5 ≈ ${fr(rnd(f(.5), 2))}` });
     const cells = [tb('a', items[0].a, 16), tb('b', items[1].a, 16), fr(rnd(f(1), 2)), tb('c', items[2].a, 16), tb('d', items[3].a, 18)];
     const [ym, ys] = axis(Math.max(f(-1), f(3)) * 1.05), g = P.plot({ W: 600, H: 200, x: [-1, 3, 1], y: [0, ym, ys], ml: 64, mt: 12, mb: 30, zeroAxes: false, fine: true, lab: 'Courbe de f' });
     return { titre: 'Une fonction exponentielle', consigne: `f(x) = ${fr(k)} × ${fr(q)}ˣ. Complète le tableau de valeurs au centième, puis donne le sens de variation.`,
@@ -43,6 +44,7 @@
     s += line(200, `e. log(${A} × ${B2}) = log(${A}) + log(…) ; … =`, 'e', String(B2));
     const items = [num('a', a + b, 0, String(a + b), [{ v: a * b, m: 'On multiplie deux puissances de même base : on additionne les exposants.' }]), num('b', a, 0, String(a), [{ v: (a + b) / b, m: 'On divise deux puissances de même base : on soustrait les exposants.' }]), num('c', b * c, 0, String(b * c), [{ v: b + c, m: 'Une puissance de puissance : on multiplie les exposants.' }]),
       num('d', n, 0, String(n), [{ v: 10 ** n, m: 'log(10ⁿ) est l’exposant n, pas le nombre 10ⁿ.' }]), num('e', B2, 0, String(B2), [{ v: A * B2, m: 'Le logarithme d’un produit est la somme des logarithmes de chaque facteur.' }])];
+    xs(items, { a: `${a} + ${b} = ${a + b}`, b: `${a + b} − ${b} = ${a}`, c: `${b} × ${c} = ${b * c}`, d: `log(10ⁿ) = n`, e: `log(${A} × ${B2}) = log(${A}) + log(${B2})` });
     return { titre: 'Les propriétés opératoires', consigne: 'Complète chaque égalité avec la bonne propriété.', support: svg(600, 220, s, 'Cinq égalités à compléter'), items,
       hints: ['qᵃ × qᵇ = qᵃ⁺ᵇ ; qᵃ ÷ qᵇ = qᵃ⁻ᵇ.', '(qᵃ)ᵇ = qᵃˣᵇ.', 'log(10ⁿ) = n ; log(a × b) = log(a) + log(b).'] };
   };
@@ -54,6 +56,7 @@
     const rows = [[`${fr(q)}ˣ = ${fr(a)}`, `x = log(${fr(a)}) ÷ log(${fr(q)}) ≈ ${tb('a', fr(x1), 18)}`], [`10ˣ = ${fr(b)}`, `x = log(${fr(b)}) ≈ ${tb('b', fr(x2), 18)}`], [`log(x) = ${fr(c)}`, `x = 10<sup>${fr(c)}</sup> = ${tb('c', fr(x3), 18)}`], [`${fr(d)}ˣ ≤ 0,5`, `x ≥ ${tb('d', fr(half), 18)} ; plus petit entier : ${tb('e', String(nmin), 12)}`]];
     const items = [num('a', x1, 2, fr(x1), [{ v: rnd(a / q, 2), m: 'On ne divise pas a par q : on divise les logarithmes, log(a) ÷ log(q).' }, { v: rnd(L10(a / q), 2), m: 'C’est log(a) ÷ log(q), et non log(a ÷ q).' }]), num('b', x2, 2, fr(x2), [{ v: b / 10, m: '10ˣ = b donne x = log(b) : utilise la touche log.' }]), num('c', x3, 4, fr(x3), [{ v: 10 * c, m: '10 puissance c, ce n’est pas 10 × c.' }]),
       num('d', half, 2, fr(half), [{ v: rnd(-half, 2), m: 'log(' + fr(d) + ') est négatif : en divisant, le sens de l’inégalité change, et le résultat est positif.' }]), num('e', nmin, 0, String(nmin), [{ v: nmin - 1, m: 'On cherche un entier au moins égal à ' + fr(half) + ' : on arrondit à l’entier supérieur.' }])];
+    xs(items, { a: `x × log(${fr(q)}) = log(${fr(a)}), donc x = log(${fr(a)}) ÷ log(${fr(q)}) ≈ ${fr(x1)}`, b: `x = log(${fr(b)}) ≈ ${fr(x2)}`, c: `x = 10^${fr(c)} = ${fr(x3)}`, d: `x × log(${fr(d)}) ≤ log(0,5) ; log(${fr(d)}) < 0, le sens change : x ≥ log(0,5) ÷ log(${fr(d)}) ≈ ${fr(half)}`, e: `${fr(half)} arrondi à l’entier supérieur : ${nmin}` });
     return { titre: 'Résoudre avec le logarithme', consigne: 'Résous chaque équation au centième, puis l’inéquation.', support: table(['Équation', 'Solution'], rows), items,
       hints: ['qˣ = a donne x = log(a) ÷ log(q).', '10ˣ = b donne x = log(b) ; log(x) = c donne x = 10ᶜ.', 'Si 0 < q < 1, log(q) < 0 : en divisant, on change le sens de l’inégalité.'] };
   };

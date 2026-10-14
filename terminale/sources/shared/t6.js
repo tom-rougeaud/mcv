@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int } = H;
+  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, xs } = H;
   const p2 = x => fr(rnd(x, 4));
   /* arbre pondéré à deux étapes : o = { A: ['D', 'M'], B: ['R', 'R̄'], w1: [x, y], w2: [[x, y], [x, y]], leaf: [x, x, x, x] }
      chaque poids ou feuille peut être un texte ou une case { k, a } ; hl : indices des chemins mis en valeur */
@@ -40,6 +40,7 @@
     const pic = H.tree({ A: [ctx[0], ctx[1]], B: [ctx[2], ctx[3]], w1: [fr(a), { k: 'a', a: fr(rnd(1 - a, 2)) }], w2: [[fr(b1), { k: 'b', a: fr(rnd(1 - b1, 2)) }], [fr(b2), { k: 'c', a: fr(rnd(1 - b2, 2)) }]], lab: 'Arbre pondéré à compléter' });
     const items = [num('a', rnd(1 - a, 2), 2, fr(rnd(1 - a, 2)), [{ v: a, m: 'La somme des probabilités issues d’un même nœud vaut 1 : 1 − ' + fr(a) + '.' }]), num('b', rnd(1 - b1, 2), 2, fr(rnd(1 - b1, 2)), [{ v: rnd(1 - a, 2), m: 'Sur cette branche, on complète à 1 la probabilité ' + fr(b1) + ' du même nœud.' }]), num('c', rnd(1 - b2, 2), 2, fr(rnd(1 - b2, 2))),
       num('d', pAB, 4, p2(pAB), [{ v: rnd(a + b1, 4), m: 'Le long d’un chemin, on multiplie les probabilités, on ne les additionne pas.' }]), num('e', pB, 4, p2(pB), [{ v: pAB, m: 'Deux chemins mènent à ' + ctx[2] + ' : il faut additionner leurs probabilités.' }, { v: rnd(b1 + b2, 4), m: 'On additionne les probabilités des chemins (produits), pas les probabilités des branches.' }])];
+    xs(items, { a: `1 − ${fr(a)} = ${fr(rnd(1 - a, 2))}`, b: `1 − ${fr(b1)} = ${fr(rnd(1 - b1, 2))}`, c: `1 − ${fr(b2)} = ${fr(rnd(1 - b2, 2))}`, d: `P(${ctx[0]} ∩ ${ctx[2]}) = ${fr(a)} × ${fr(b1)} = ${p2(pAB)}`, e: `P(${ctx[2]}) = ${fr(a)} × ${fr(b1)} + ${fr(rnd(1 - a, 2))} × ${fr(b2)} = ${p2(pAB)} + ${p2((1 - a) * b2)} = ${p2(pB)}` });
     return { titre: 'Compléter un arbre pondéré', consigne: `${ctx[4]}. Complète l’arbre, puis calcule les probabilités demandées (à 0,0001 près).`,
       support: pic + `<p class="tr-l">d. P(${ctx[0]} ∩ ${ctx[2]}) = ${tb('d', p2(pAB), 18)} · e. P(${ctx[2]}) = ${tb('e', p2(pB), 18)}</p>`, items,
       hints: ['Les branches qui partent d’un même nœud ont une somme égale à 1.', 'Probabilité d’un chemin : produit des probabilités de ses branches.', `P(${ctx[2]}) : somme des probabilités des chemins qui mènent à ${ctx[2]}.`] };
@@ -52,6 +53,7 @@
     const tabl = table(['', 'Achat en promotion (P)', 'Sans promotion', 'Total'], [['Client avec carte (C)', String(AB), String(A - AB), String(A)], ['Client sans carte', String(NAB), String(NA - NAB), String(NA)], ['Total', String(B), String(n - B), String(n)]], 'dt-c');
     const items = [num('a', pa, 4, p2(pa), [{ v: A, m: 'Une probabilité est un nombre entre 0 et 1 : divise l’effectif par le total ' + n + '.' }]), num('b', rnd(AB / A, 4), 4, p2(AB / A), [{ v: rnd(AB / n, 4), m: 'Sachant C, on ne regarde que la ligne des clients avec carte : divise par ' + A + ', pas par ' + n + '.' }]),
       num('c', rnd(AB / n, 4), 4, p2(AB / n), [{ v: rnd(AB / A, 4), m: 'P(C ∩ P) se calcule sur tous les clients : divise par ' + n + '.' }]), num('d', rnd(AB / B, 4), 4, p2(AB / B), [{ v: rnd(AB / A, 4), m: 'Sachant P, on se place dans la colonne « promotion » : divise par ' + B + '.' }])];
+    xs(items, { a: `P(C) = ${A} ÷ ${n} = ${p2(pa)}`, b: `P<sub>C</sub>(P) = ${AB} ÷ ${A} ≈ ${p2(AB / A)}`, c: `P(C ∩ P) = ${AB} ÷ ${n} = ${p2(AB / n)}`, d: `P<sub>P</sub>(C) = ${AB} ÷ ${B} ≈ ${p2(AB / B)}` });
     return { titre: 'Du tableau croisé aux probabilités conditionnelles', consigne: `${n} tickets de caisse d’un magasin (fictif). On choisit un ticket au hasard. Calcule à 0,0001 près.`,
       support: tabl + `<p class="tr-l">a. P(C) = ${tb('a', p2(pa), 16)} · b. P<sub>C</sub>(P) = ${tb('b', p2(AB / A), 16)}</p><p class="tr-l">c. P(C ∩ P) = ${tb('c', p2(AB / n), 16)} · d. P<sub>P</sub>(C) = ${tb('d', p2(AB / B), 16)}</p>`, items,
       hints: ['P(C) : effectif des clients avec carte ÷ effectif total.', 'P<sub>C</sub>(P) : parmi les clients avec carte seulement.', 'P<sub>P</sub>(C) : parmi les achats en promotion seulement.'] };
@@ -64,6 +66,7 @@
     const rows = [['Cas 1 : carte (A) et achat en ligne (B)', fr(pa), fr(pb), fr(pab), tb('a', p2(pa * pb), 14)], ['Cas 2 : moins de 25 ans (A) et paiement mobile (B)', fr(pa2), fr(pb2), fr(pab2), tb('c', p2(pa2 * pb2), 14)]];
     const items = [num('a', rnd(pa * pb, 4), 4, p2(pa * pb), [{ v: rnd(pa + pb, 4), m: 'On multiplie P(A) par P(B).' }]), qcm('b', ['indépendants', 'pas indépendants'], ind ? 0 : 1, ind ? 'indépendants : P(A ∩ B) = P(A) × P(B)' : 'pas indépendants : P(A ∩ B) ≠ P(A) × P(B)'),
       num('c', rnd(pa2 * pb2, 4), 4, p2(pa2 * pb2)), qcm('d', ['indépendants', 'pas indépendants'], ind ? 1 : 0, !ind ? 'indépendants : P(A ∩ B) = P(A) × P(B)' : 'pas indépendants : P(A ∩ B) ≠ P(A) × P(B)')];
+    xs(items, { a: `${fr(pa)} × ${fr(pb)} = ${p2(pa * pb)}`, b: `${p2(pa * pb)} ${ind ? '=' : '≠'} ${fr(pab)} = P(A ∩ B) : ${ind ? 'indépendants' : 'pas indépendants'}`, c: `${fr(pa2)} × ${fr(pb2)} = ${p2(pa2 * pb2)}`, d: `${p2(pa2 * pb2)} ${!ind ? '=' : '≠'} ${fr(pab2)} = P(A ∩ B) : ${!ind ? 'indépendants' : 'pas indépendants'}` });
     return { titre: 'Indépendants ou pas ?', consigne: 'Pour chaque cas, calcule P(A) × P(B), puis compare à P(A ∩ B).',
       support: table(['Situation (enquête fictive)', 'P(A)', 'P(B)', 'P(A ∩ B)', 'P(A) × P(B)'], rows) + `<p class="tr-l">b. Dans le cas 1, A et B sont :</p><p class="tr-l">d. Dans le cas 2, A et B sont :</p>`, items,
       hints: ['Calcule le produit P(A) × P(B).', 'Si ce produit est égal à P(A ∩ B), les évènements sont indépendants.', 'Sinon, savoir que A est réalisé change la probabilité de B.'] };

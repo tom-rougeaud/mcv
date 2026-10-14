@@ -147,3 +147,18 @@ table.evg3{table-layout:fixed;width:100%}
 .evg3 th:nth-child(1),.evg3 td:nth-child(1){width:32mm}.evg3 th:nth-child(2){width:62mm}.evg3 th:nth-child(3){width:15mm}
 .evg3 th{font-size:8pt}
 .nt3r .fxm{display:inline-block;vertical-align:middle}
+/* version professeur : corrigé détaillé dans les zones libres, et corrigé complet */
+.detz{margin-top:1mm;border:1.6px dashed #E7A3AB;border-radius:4mm;padding:2mm 3.4mm;overflow:hidden;background:#FFF8F8;break-inside:avoid}
+.detz h3{margin:0 0 1mm;font:800 11pt 'Inter';color:#D0021B}
+.dz-e{margin:0 0 1.4mm;break-inside:avoid}
+.dz-t{margin:0 0 .4mm;font:800 9.6pt 'Inter';color:#1D2240}
+.dz-t .cn{display:inline-grid;place-items:center;min-width:5mm;height:5mm;border-radius:50%;background:var(--cc);color:#fff;font-size:8.4pt;margin-right:1mm}
+.dz-l{margin:0;padding-left:0;list-style:none}
+.dz-l li{margin:.25mm 0;font-size:9.4pt;line-height:1.28;color:#B0021A}
+.dz-l li b{color:#1D2240;margin-right:.6mm}
+.dz-l li i{color:#545B7A;font-size:8.6pt}
+.detz .lines{margin-top:1mm}
+.cc .dz-e{margin:0}.cc .dz-t{font-size:10.4pt}.cc .dz-l li{font-size:10pt}
+/* grille des contrôles : la colonne « Ce que je sais faire » garde toute sa largeur */
+.evg3 td.gp{display:table-cell;text-align:left;font-size:9.4pt;line-height:1.25}
+.evg3 td .cp{font-size:7.6pt;padding-left:1.6mm;padding-right:1.6mm;white-space:nowrap}.evg3 th{font-size:7.8pt;padding-left:.6mm;padding-right:.6mm}

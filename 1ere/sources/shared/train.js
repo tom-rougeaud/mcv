@@ -20,14 +20,16 @@
   const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-size="${o.fs || 14}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 700}" class="${o.c || 'tx'}"${o.r ? ` transform="rotate(${o.r} ${x} ${y})"` : ''}>${s}</text>`;
   const svg = (w, h, body, lab = '') => `<svg viewBox="0 0 ${w} ${h}" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(lab)}">${body}</svg>`;
   const table = (head, rows, cls = '') => `<table class="dt tcx dt-sm ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, j) => j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
-  const num = (k, v, d, a, err = []) => ({ k, v, tol: TOL(d), a, err: err.filter(e => Number.isFinite(e.v) && Math.abs(e.v - v) > TOL(d)) });
-  const qcm = (k, choices, ok, a) => ({ k, qcm: { choices, ok }, a: a || choices[ok], v: null });
+  const num = (k, v, d, a, err = [], x) => ({ k, v, tol: TOL(d), a, err: err.filter(e => Number.isFinite(e.v) && Math.abs(e.v - v) > TOL(d)), ...(x ? { x } : {}) });
+  const qcm = (k, choices, ok, a, x) => ({ k, qcm: { choices, ok }, a: a || choices[ok], v: null, ...(x ? { x } : {}) });
   const pick = (R, arr) => arr[Math.floor(R() * arr.length)];
   const int = (R, lo, hi) => lo + Math.floor(R() * (hi - lo + 1));
   const shuffle = (R, arr) => { const b = arr.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
   const DEP = {}, TR = {};
-  const H = { MC, P, fr, rnd, eur, pct, esc, TOL, L, tb, sb, T, svg, table, num, qcm, pick, int, shuffle, NB };
+  /* calculs détaillés (version professeur) : xs(items, { a: '…', b: '…' }) */
+  const xs = (items, m) => { items.forEach(it => { if (m[it.k]) it.x = m[it.k]; }); return items; };
+  const H = { MC, P, fr, rnd, eur, pct, esc, TOL, L, tb, sb, T, svg, table, num, qcm, pick, int, shuffle, NB, xs };
 
   /* vérification d’une réponse, avec l’erreur fréquente reconnue */
   function verdict(it, s) {

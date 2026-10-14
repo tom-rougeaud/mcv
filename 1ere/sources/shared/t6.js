@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, T, num, qcm, pick, int, P } = H;
+  const { fr, rnd, tb, T, num, qcm, pick, int, P, xs: XS } = H;
   const BLUE = P.BLUE, RED = P.RED;
   const pas = h => h <= 10 ? 2 : h <= 25 ? 5 : h <= 50 ? 10 : h <= 100 ? 20 : 50;
   /* nuage aléatoire autour de y = a x + b, bruit d’amplitude e */
@@ -31,6 +31,7 @@
     const xm = rnd(pts.reduce((s, p) => s + p[0], 0) / n, 2), ym = rnd(pts.reduce((s, p) => s + p[1], 0) / n, 2);
     const g = repN(pts, { lab: 'Nuage de cinq points', xl: 'x', yl: 'y' });
     const items = [num('a', xm, 1, fr(xm)), num('b', ym, 1, fr(ym), [{ v: rnd(pts.reduce((s, p) => s + p[1], 0), 2), m: 'Tu as fait la somme. Divise-la par le nombre de points, 5.' }]), qcm('c', ['croissante', 'décroissante'], a > 0 ? 0 : 1, a > 0 ? 'croissante : le nuage monte' : 'décroissante : le nuage descend')];
+    XS(items, { a: `(${pts.map(p => fr(p[0])).join(' + ')}) ÷ 5 = ${pts.reduce((s, p) => s + p[0], 0)} ÷ 5 = ${fr(xm)}`, b: `(${pts.map(p => fr(p[1])).join(' + ')}) ÷ 5 = ${pts.reduce((s, p) => s + p[1], 0)} ÷ 5 = ${fr(ym)}` });
     return { titre: 'Le point moyen', consigne: 'Calcule les coordonnées du point moyen G : la moyenne des x, puis la moyenne des y. Puis indique la tendance du nuage.', support: ligne(['x', 'y'], [pts.map(p => p[0]), pts.map(p => p[1])]) + g.wrap(g.base + g.pts(pts, { r: 5.5 })) + `<p class="tr-l">a. x̄ = ${tb('a', items[0].a, 14)} &nbsp; b. ȳ = ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. La tendance du nuage est :</p>`, items,
       hints: ['Additionne les 5 valeurs de x, puis divise par 5.', 'Fais de même avec les 5 valeurs de y.', 'Si le nuage monte de gauche à droite, la tendance est croissante.'] };
   };
@@ -41,6 +42,7 @@
     const f = x => rnd(a * x + b, 2), xs = rnd((yt - b) / a, 2);
     const g = repN(pts, { xmax: 11, ex: [f(11)], lab: 'Nuage et droite d’ajustement', xl: 'x', yl: 'y' });
     const items = [num('a', f(x1), 1, fr(f(x1))), num('b', f(x2), 1, fr(f(x2))), num('c', xs, 1, fr(xs), [{ v: f(yt), m: 'Ici on connaît y : résous a x + b = ' + yt + ' pour trouver x.' }]), qcm('d', ['une interpolation', 'une extrapolation'], 1, `une extrapolation : x = ${x2} est en dehors des données (de 1 à 6)`)];
+    XS(items, { a: `y = ${fr(a)} × ${fr(x1)} + ${b} = ${fr(f(x1))}`, b: `y = ${fr(a)} × ${x2} + ${b} = ${fr(f(x2))}`, c: `x = (${yt} − ${b}) ÷ ${fr(a)} = ${yt - b} ÷ ${fr(a)} ≈ ${fr(xs)}` });
     return { titre: 'Prévoir avec la droite', consigne: `La droite d’ajustement du nuage a pour équation y = ${fr(a)} x + ${b}. Utilise-la pour estimer.`, support: g.wrap(g.base + g.line(a, b, { stroke: RED, w: 2.6 }) + g.pts(pts, { r: 5.5 })) + `<p class="tr-l">a. Pour x = ${fr(x1)}, y ≈ ${tb('a', items[0].a, 14)} &nbsp; b. Pour x = ${x2}, y ≈ ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. Pour y = ${yt}, x ≈ ${tb('c', items[2].a, 14)} (au dixième)</p><p class="tr-l">d. L’estimation pour x = ${x2} est :</p>`, items,
       hints: ['Remplace x par la valeur donnée dans y = a x + b.', 'Pour trouver x, résous a x + b = y : x = (y − b) ÷ a.', 'Une extrapolation sort de la plage des données.'] };
   };
@@ -53,6 +55,7 @@
     const g = repN(pts, { lab: 'Nuage de sept points', xl: 'x', yl: 'y' });
     const pertinent = F.r2 >= .9;
     const items = [num('a', ar, 2, fr(ar)), num('b', br, 2, fr(br)), qcm('c', ['oui', 'non'], pertinent ? 0 : 1, pertinent ? `oui : R² = ${fr(r2)} est proche de 1` : `non : R² = ${fr(r2)} est loin de 1`), num('d', rnd(ar * x0 + br, 2), 1, fr(rnd(ar * x0 + br, 2)))];
+    XS(items, { a: `${fr(rnd(F.a, 6))} arrondi au centième : ${fr(ar)}`, b: `${fr(rnd(F.b, 6))} arrondi au centième : ${fr(br)}`, d: `y = ${fr(ar)} × ${x0} + ${fr(br)} = ${fr(rnd(ar * x0, 2))} + ${fr(br)} = ${fr(rnd(ar * x0 + br, 2))}` });
     return { titre: 'Lire un tableur', consigne: 'Un tableur a calculé la droite d’ajustement (moindres carrés) et R². Arrondis a et b au centième, juge l’ajustement (ici, on le dit pertinent si R² ≥ 0,9), puis fais une estimation avec les valeurs arrondies.', support: g.wrap(g.base + g.pts(pts, { r: 5.5 })) + sheet + `<p class="tr-l">a. a ≈ ${tb('a', items[0].a, 14)} &nbsp; b. b ≈ ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. Un ajustement affine est-il pertinent ?</p><p class="tr-l">d. Pour x = ${x0}, y ≈ ${tb('d', items[3].a, 14)} (avec a et b arrondis)</p>`, items,
       hints: ['La pente est a, l’ordonnée à l’origine est b : y = a x + b.', 'Plus R² est proche de 1, plus les points sont proches de la droite.', 'Remplace x par la valeur donnée dans y = a x + b.'] };
   };

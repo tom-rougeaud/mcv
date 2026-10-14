@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P } = H;
+  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P, xs } = H;
   const fit = Pts => { const n = Pts.length, mx = Pts.reduce((s, p) => s + p[0], 0) / n, my = Pts.reduce((s, p) => s + p[1], 0) / n, sxx = Pts.reduce((s, p) => s + (p[0] - mx) ** 2, 0), sxy = Pts.reduce((s, p) => s + (p[0] - mx) * (p[1] - my), 0), syy = Pts.reduce((s, p) => s + (p[1] - my) ** 2, 0), a = sxy / sxx; return { a, b: my - a * mx, r2: sxy * sxy / (sxx * syy) }; };
   H.fit2 = fit;
   const axis = m => { const raw = m / 4, p = Math.pow(10, Math.floor(Math.log10(raw))), step = [1, 2, 2.5, 5, 10].map(k => k * p).find(v => v >= raw); return [Math.ceil(m / step - 1e-9) * step, step]; };
@@ -41,6 +41,8 @@
       num('c', po(xp), 1, fr(po(xp)), [{ v: pb(xp), m: 'Ici, on demande la prévision de l’autre modèle.' }]),
       qcm('d', ['une interpolation', 'une extrapolation'], 1, 'une extrapolation : x = 8 est en dehors des données (0 à 5)'),
       num('e', pb(xi), 1, fr(pb(xi)), [{ v: po(xi), m: 'Utilise le modèle choisi à la question a.' }])];
+    const ex = (x, aff) => aff ? `y = ${fr(A)} × ${fr(x)} + ${fr(B)} ≈ ${fr(pa(x))}` : `y = ${fr(Kk)} × ${fr(Q)}^${fr(x)} ≈ ${fr(pe(x))}`;
+    xs(items, { b: ex(xp, !best), c: ex(xp, !!best), e: ex(xi, !best) });
     return { titre: 'Choisir le meilleur ajustement', consigne: 'Le tableur affiche deux courbes de tendance. Choisis le modèle, puis calcule les prévisions au dixième.',
       support: table(['x', ...pts.map(p => String(p[0]))], [['y', ...pts.map(p => fr(p[1]))]], 'dt-c') + svg(600, 240, s, 'Nuage de points avec une droite et une courbe exponentielle d’ajustement') + `<p class="tr-l">a. Le modèle le plus adapté est :</p><p class="tr-l">b. Prévision pour x = 8 avec ce modèle : ${tb('b', fr(pb(xp)), 18)} · c. avec l’autre modèle : ${tb('c', fr(po(xp)), 18)}</p><p class="tr-l">d. Prévoir pour x = 8, c’est faire :</p><p class="tr-l">e. Estimation pour x = 2,5 avec le modèle choisi : ${tb('e', fr(pb(xi)), 18)}</p>`, items,
       hints: ['Le meilleur modèle est celui dont R² est le plus proche de 1.', 'Remplace x par 8 dans l’équation du modèle.', 'Interpolation : à l’intérieur des données ; extrapolation : en dehors.'] };
@@ -54,6 +56,7 @@
     const cells = z.map((v, i) => i === 1 ? tb('a', fr(v), 14) : i === 2 ? tb('b', fr(v), 14) : i === 3 ? tb('c', fr(v), 14) : fr(v));
     const items = [num('a', z[1], 3, fr(z[1]), [{ v: rnd(Math.log(pts[1][1]), 3), m: 'Utilise la touche log (logarithme décimal), pas ln.' }]), num('b', z[2], 3, fr(z[2])), num('c', z[3], 3, fr(z[3])),
       num('d', Q, 3, fr(Q), [{ v: rnd(A, 3), m: 'q = 10 puissance A : il faut calculer 10^' + fr(A) + '.' }]), num('e', y6, 1, fr(y6), [{ v: rnd(A * 6 + B, 1), m: 'Tu as calculé z. Pour y, calcule 10^z ou ' + fr(Kk) + ' × ' + fr(Q) + '⁶.' }])];
+    xs(items, { a: `z = log(${fr(pts[1][1])}) ≈ ${fr(z[1])}`, b: `z = log(${fr(pts[2][1])}) ≈ ${fr(z[2])}`, c: `z = log(${fr(pts[3][1])}) ≈ ${fr(z[3])}`, d: `q = 10^${fr(A)} ≈ ${fr(Q)} (et k = 10^${fr(B)} ≈ ${fr(Kk)})`, e: `y ≈ ${fr(Kk)} × ${fr(Q)}⁶ ≈ ${fr(y6)}` });
     return { titre: 'Le changement de variable z = log(y)', consigne: 'Complète la ligne z = log(y) au millième. Le tableur donne ensuite la droite z = Ax + B.',
       support: table(['x', ...N.map(String)], [['y', ...pts.map(p => fr(p[1]))], ['z = log(y)', ...cells]], 'dt-c') + `<p class="tr-l">Le tableur donne : z = ${fr(A)}x + ${fr(B)}. On en déduit y = 10<sup>z</sup> = ${fr(Kk)} × qˣ.</p><p class="tr-l">d. q = 10<sup>${fr(A)}</sup> ≈ ${tb('d', fr(Q), 16)} · e. Prévision pour x = 6 : y ≈ ${fr(Kk)} × ${fr(Q)}⁶ ≈ ${tb('e', fr(y6), 18)}</p>`, items,
       hints: ['z = log(y) : touche log de la calculatrice.', 'Si z = Ax + B, alors y = 10^B × (10^A)ˣ.', 'Pour x = 6 : y = 10^B × q⁶, avec q = 10^A.'] };
@@ -67,6 +70,7 @@
     const cells = z.map((v, i) => i === 1 ? tb('a', fr(v), 16) : i === 3 ? tb('b', fr(v), 16) : i === 5 ? tb('c', fr(v), 16) : fr(v));
     const items = [num('a', z[1], 4, fr(z[1]), [{ v: 15, m: 'z = 1 ÷ x : divise 1 par le prix.' }]), num('b', z[3], 4, fr(z[3])), num('c', z[5], 4, fr(z[5])),
       num('d', y0, 1, fr(y0), [{ v: rnd(A * x0 + B, 1), m: 'Dans le modèle, on remplace z par 1 ÷ ' + x0 + ', pas par ' + x0 + '.' }]), qcm('e', ['le modèle en z = 1 ÷ x', 'la droite en x'], r2z >= r2l ? 0 : 1, r2z >= r2l ? `le modèle en z : R² = ${fr(r2z)} contre ${fr(r2l)}` : `la droite : R² = ${fr(r2l)}`)];
+    xs(items, { a: `z = 1 ÷ 15 ≈ ${fr(z[1])}`, b: `z = 1 ÷ 25 = ${fr(z[3])}`, c: `z = 1 ÷ 40 = ${fr(z[5])}`, d: `z = 1 ÷ ${x0} ; y = ${fr(A)} ÷ ${x0} + ${fr(B)} ≈ ${fr(y0)}` });
     return { titre: 'Le changement de variable z = 1/x', consigne: `Ventes par semaine d’un article (boutique fictive) selon son prix x en euros. Complète z = 1/x au dix-millième, puis utilise le modèle.`,
       support: table(['prix x (€)', ...X.map(String)], [['ventes y', ...pts.map(p => String(p[1]))], ['z = 1/x', ...cells]], 'dt-c') + `<p class="tr-l">Le tableur donne : y = ${fr(A)}z + ${fr(B)}, avec R² = ${fr(r2z)}. La droite y = ax + b donne R² = ${fr(r2l)}.</p><p class="tr-l">d. Ventes prévues pour un prix de ${x0} € : ${tb('d', fr(y0), 18)}</p><p class="tr-l">e. Le modèle le plus adapté est :</p>`, items,
       hints: ['z = 1 ÷ x : pour x = 15, z = 1 ÷ 15.', `Pour un prix de ${x0} €, z = 1 ÷ ${x0}, puis y = ${fr(A)} × z + ${fr(B)}.`, 'Le meilleur modèle a le R² le plus proche de 1.'] };

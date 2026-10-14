@@ -2,7 +2,8 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, eur, tb, T, table, num, qcm, pick, int, P } = H;
+  const { fr, rnd, eur, tb, T, table, num, qcm, pick, int, P, xs: XS } = H;
+  const par = n => n < 0 ? `(− ${fr(-n)})` : fr(n);
   const RED = P.RED, BLUE = P.BLUE, GRN = P.GRN;
   const opts = (...l) => `<span class="opts">${l.map(x => `<span class="opt">${x}</span>`).join('')}</span>`;
   /* pas de graduation adapté */
@@ -27,8 +28,8 @@
     const x3 = pick(R, [r1 + 1, r2 - 1]);
     return { titre: 'Le bénéfice d’un stand de bougies', doc: `<div class="wfig">${sv}</div>${tab}<p class="srcl">Stand fictif : B(x) est le bénéfice du jour, en dizaines d’euros, pour un prix de vente x en euros.</p>`,
       qs: [{ t: `Quel est le bénéfice pour un prix de ${x3} € ?`, kind: 'tap', cell: String(x3), v: f(x3), tol: .006, a: String(f(x3)) },
-        { t: 'Pour quel prix le bénéfice est-il le plus grand ?', kind: 'num', v: xs, tol: .006, a: `${xs} €` },
-        { t: 'Quel est ce bénéfice maximal ?', kind: 'num', v: f(xs), tol: .006, a: String(f(xs)) },
+        { t: 'Pour quel prix le bénéfice est-il le plus grand ?', kind: 'num', v: xs, tol: .006, a: `${xs} €`, x: `le sommet est au milieu des racines ${r1} et ${r2} : (${r1} + ${r2}) ÷ 2 = ${xs} €` },
+        { t: 'Quel est ce bénéfice maximal ?', kind: 'num', v: f(xs), tol: .006, a: String(f(xs)), x: `B(${xs}) = − (${xs} − ${r1})(${xs} − ${r2}) = ${fr(f(xs))}` },
         { t: `Pour un prix de ${r1} €, le bénéfice est…`, kind: 'qcm', choices: ['positif', 'nul', 'négatif'], ok: 1, a: 'nul : la courbe touche l’axe horizontal' },
         { t: 'Pour un prix de 0 €, le stand gagne-t-il de l’argent ?', kind: 'qcm', choices: ['oui', 'non'], ok: f(0) > 0 ? 0 : 1, a: f(0) > 0 ? 'oui' : `non : B(0) = ${f(0)} est négatif` }] };
   };
@@ -41,6 +42,7 @@
       num('c', p.r2, 0, String(p.r2), [{ v: p.r1, m: 'C’est la plus petite racine. Cherche le point le plus à droite.' }]),
       num('d', p.xs, 0, String(p.xs), [{ v: p.ys, m: 'Tu as lu l’ordonnée du sommet. Ici on demande son abscisse.' }]),
       num('e', p.ys, 0, String(p.ys), [{ v: p.xs, m: 'Tu as lu l’abscisse du sommet. Ici on demande l’ordonnée.' }])];
+    XS(items, { b: `la courbe coupe l’axe horizontal en x = ${p.r1}`, c: `et en x = ${p.r2}`, d: `milieu des racines : (${p.r1} + ${p.r2}) ÷ 2 = ${p.xs}`, e: `f(${p.xs}) = ${fr(p.ys)}` });
     return { titre: 'Lire une parabole', consigne: 'La courbe coupe l’axe horizontal en deux points : ce sont les racines. Lis les nombres demandés sur le graphique.',
       support: g.wrap(g.base + g.curve(p.f, { stroke: BLUE, w: 3.2, a: x0, b: x1 })) + `<p class="tr-l">a. La parabole est ouverte :</p><p class="tr-l">b. Plus petite racine : ${tb('b', items[1].a, 12)} &nbsp; c. Plus grande racine : ${tb('c', items[2].a, 12)}</p><p class="tr-l">d. Abscisse du sommet : ${tb('d', items[3].a, 12)} &nbsp; e. Ordonnée du sommet : ${tb('e', items[4].a, 12)}</p>`, items,
       hints: ['Si la courbe a la forme d’un « U », elle est ouverte vers le haut.', 'Les racines sont les abscisses des points sur l’axe horizontal.', 'Le sommet est le point le plus haut ou le plus bas : lis ses deux coordonnées.'] };
@@ -52,6 +54,7 @@
     const ks = 'abcde'.split(''), items = X.map((x, i) => { const wrong = a * (-x * x) + b * x + c; return num(ks[i], f(x), 0, String(f(x)), x < 0 && wrong !== f(x) ? [{ v: wrong, m: `Attention : (${x})² = ${x * x} est positif. Le signe moins ne se met pas au carré avec la parenthèse oubliée.` }] : []); });
     const best = X.reduce((m, x) => (a > 0 ? f(x) < f(m) : f(x) > f(m)) ? x : m, X[0]);
     items.push(num('f', best, 0, String(best)));
+    const xm = { f: `${a > 0 ? 'plus petite' : 'plus grande'} valeur de la ligne : f(${fr(best)}) = ${fr(f(best))}` }; X.forEach((x, i) => { xm[ks[i]] = `f(${fr(x)}) = ${fr(a)} × ${par(x)}² ${b < 0 ? '− ' + fr(-b) : '+ ' + fr(b)} × ${par(x)} ${c < 0 ? '− ' + fr(-c) : '+ ' + fr(c)} = ${fr(f(x))}`; }); XS(items, xm);
     const tabl = `<table class="dt tcx dt-sm"><thead><tr><th>x</th>${X.map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody><tr><th>f(x)</th>${X.map((x, i) => `<td>${tb(ks[i], items[i].a, 12)}</td>`).join('')}</tr></tbody></table>`;
     return { titre: 'Tableau de valeurs', consigne: `On donne f(x) = ${txtF(a, b, c)}. Complète le tableau de valeurs (cases a à e), puis réponds à f.`, support: tabl + `<p class="tr-l">f. Dans le tableau, la valeur ${a > 0 ? 'la plus petite' : 'la plus grande'} de f(x) est obtenue pour x = ${tb('f', items[5].a, 12)}</p>`, items,
       hints: ['Remplace x par la valeur de la colonne, puis calcule.', 'Calcule d’abord x² : le carré d’un nombre négatif est positif.', `Cherche le nombre ${a > 0 ? 'le plus petit' : 'le plus grand'} de la ligne f(x).`] };
@@ -67,6 +70,7 @@
     const svg = `<svg viewBox="0 0 ${W} ${H}" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Axe des x avec les deux racines de f">${s}${T(X(p.r1), 32, 'x₁', { fs: 14, c: 'kt' })}${T(X(p.r2), 32, 'x₂', { fs: 14, c: 'kt' })}</svg>`;
     const m = pick(R, [p.r1 + 1, p.r2 - 1]), o = pick(R, [p.r1 - 1, p.r2 + 1]);
     const items = [num('a', p.r1, 0, String(p.r1)), num('b', p.r2, 0, String(p.r2)), num('c', p.xs, 0, String(p.xs), [{ v: p.ys, m: 'C’est l’ordonnée. L’abscisse du sommet est le milieu des deux racines.' }]), num('d', p.ys, 0, String(p.ys), [{ v: p.xs, m: 'C’est l’abscisse. L’extremum est la valeur de f en ce point.' }]), qcm('e', ['positif', 'négatif'], p.f(m) > 0 ? 0 : 1, `${p.f(m) > 0 ? 'positif' : 'négatif'} : f(${m}) = ${p.f(m)}`), qcm('f', ['positif', 'négatif'], p.f(o) > 0 ? 0 : 1, `${p.f(o) > 0 ? 'positif' : 'négatif'} : f(${o}) = ${p.f(o)}`)];
+    XS(items, { a: `x − ${p.r1} = 0 donne x = ${p.r1}`, b: `x − ${p.r2} = 0 donne x = ${p.r2}`, c: `(${p.r1} + ${p.r2}) ÷ 2 = ${p.xs}`, d: `f(${p.xs}) = ${fr(p.a)} × (${p.xs} − ${p.r1}) × (${p.xs} − ${p.r2}) = ${fr(p.ys)}`, e: `f(${m}) = ${fr(p.a)} × (${m} − ${p.r1}) × (${m} − ${p.r2}) = ${fr(p.f(m))}`, f: `f(${o}) = ${fr(p.a)} × (${o} − ${p.r1}) × (${o} − ${p.r2}) = ${fr(p.f(o))}` });
     return { titre: 'Racines, sommet et signe', consigne: `On donne f(x) = ${p.fx}. Les deux racines sont placées sur l’axe : x₁ est la plus petite, x₂ la plus grande. Complète a à d, puis réponds à e et f.`, support: svg + `<p class="tr-l">a. x₁ = ${tb('a', items[0].a, 12)} &nbsp; b. x₂ = ${tb('b', items[1].a, 12)} &nbsp; c. abscisse du sommet = ${tb('c', items[2].a, 12)} &nbsp; d. f(sommet) = ${tb('d', items[3].a, 12)}</p><p class="tr-l">e. Pour x = ${m} (entre les racines), f(x) est</p><p class="tr-l">f. Pour x = ${o} (en dehors des racines), f(x) est</p>`, items,
       hints: ['Un produit est nul si l’un de ses facteurs est nul : cherche quand x − x₁ = 0 et x − x₂ = 0.', 'L’abscisse du sommet est le milieu des deux racines : additionne-les et divise par 2.', 'Pour le signe, calcule f pour la valeur donnée et regarde le résultat.'] };
   };

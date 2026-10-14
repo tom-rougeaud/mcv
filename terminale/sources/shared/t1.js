@@ -2,7 +2,8 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P } = H;
+  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P, xs } = H;
+  const sup = n => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c]).join('');
   const sub = n => String(n).split('').map(d => '₀₁₂₃₄₅₆₇₈₉'[d]).join('');
   const f2 = x => fr(rnd(x, 2));
   /* axe gradué : un maximum et un pas « ronds » (4 à 5 graduations) */
@@ -19,9 +20,9 @@
     const ch = [`${fr(u(4))} × ${fr(q)}`, `${fr(u(4))} ${d >= 0 ? '+' : '−'} ${fr(Math.abs(d))}`, `${fr(u0)} × 5`], o = int(R, 0, 2), rot = [...ch.slice(o), ...ch.slice(0, o)];
     return { titre: `${what} · Boutique Lina`, doc: tabl + `<div class="wfig">${g.wrap(g.base + g.pts(N.map(n => [n, u(n)]), { r: 5 }))}</div><p class="srcl">Relevé du premier jour de chaque mois (mois 0 : début du suivi). Entreprise fictive.</p>`,
       qs: [{ t: `Quelle est la valeur au mois ${k} ?`, kind: 'tap', cell: String(k), v: u(k), tol: .01, a: fr(u(k)) },
-        { t: 'Par quel nombre multiplie-t-on pour passer d’un mois au suivant ?', kind: 'num', v: q, tol: .001, a: fr(q) },
+        { t: 'Par quel nombre multiplie-t-on pour passer d’un mois au suivant ?', kind: 'num', v: q, tol: .001, a: fr(q), x: `${fr(u(1))} ÷ ${fr(u0)} = ${fr(q)}` },
         { t: 'Les écarts d’un mois à l’autre sont-ils toujours les mêmes ?', kind: 'qcm', choices: ['oui', 'non'], ok: 1, a: `non : ${fr(u(1) - u(0))} puis ${fr(u(2) - u(1))}… la suite n’est pas arithmétique` },
-        { t: `C’est une ${up ? 'hausse' : 'baisse'} de combien de pour cent chaque mois ?`, kind: 'num', v: pc, tol: .01, a: `${fr(pc)} %` },
+        { t: `C’est une ${up ? 'hausse' : 'baisse'} de combien de pour cent chaque mois ?`, kind: 'num', v: pc, tol: .01, a: `${fr(pc)} %`, x: `q = ${fr(q)} = 1 ${up ? '+' : '−'} ${fr(pc / 100)} : ${up ? 'hausse' : 'baisse'} de ${fr(pc)} % par mois` },
         { t: 'Quel calcul donne la valeur du mois 5 ?', kind: 'qcm', choices: rot, ok: rot.indexOf(ch[0]), a: `${ch[0]} = ${fr(rnd(u(5), 2))}` }] };
   };
 
@@ -36,6 +37,7 @@
       num('d', r, 2, fr(r), [{ v: rnd(A(1) / A(0), 4), m: 'Pour une suite arithmétique, la raison est une différence : terme suivant − terme précédent.' }, { v: -r, m: 'Calcule « terme suivant moins terme précédent », dans cet ordre.' }]),
       num('e', G(5), 2, f2(G(5)), [{ v: rnd(G(4) + (G(4) - G(3)), 4), m: 'Tu as ajouté le dernier écart, comme pour une suite arithmétique. Ici, on multiplie par la raison.' }]),
       qcm('f', ['croissante', 'décroissante'], q > 1 ? 0 : 1, q > 1 ? `croissante : q = ${fr(q)} > 1` : `décroissante : 0 < q = ${fr(q)} < 1`)];
+    xs(items, { a: `${f2(G(1))} ÷ ${f2(G(0))} = ${fr(q)}`, b: `${f2(G(4))} ÷ ${f2(G(3))} = ${fr(q)}`, c: `quotients constants (${fr(q)}) pour la suite ${gName} ; écarts constants (${fr(r)}) pour la suite ${aName}`, d: `${f2(A(1))} − ${f2(A(0))} = ${fr(r)}`, e: `${f2(G(4))} × ${fr(q)} = ${f2(G(5))}` });
     const body = rows.map(([lab, f]) => [lab, ...N.map(n => f2(f(n)))]);
     return { titre: 'Arithmétique ou géométrique ?', consigne: 'Une des deux suites est géométrique. Calcule les quotients, trouve-la, puis complète.',
       support: table(['', ...N.map(n => 'rang ' + n)], body) + `<p class="tr-l">a. Suite ${gName} : rang 1 ÷ rang 0 = ${tb('a', fr(q), 16)} · b. rang 4 ÷ rang 3 = ${tb('b', fr(q), 16)}</p><p class="tr-l">c. La suite géométrique est :</p><p class="tr-l">d. Raison de la suite arithmétique ${aName} : ${tb('d', fr(r), 16)} · e. Suite ${gName}, terme de rang 5 : ${tb('e', f2(G(5)), 20)}</p><p class="tr-l">f. La suite géométrique est :</p>`, items,
@@ -53,6 +55,7 @@
       num('c', rnd(u(6), 2), 2, f2(u(6)), [{ v: rnd(u0 * Math.pow(q, 5), 2), m: 'De u₀ à u₆, on multiplie 6 fois par la raison : l’exposant est 6.' }]),
       num('d', rnd(u(M), 2), 2, f2(u(M)), [{ v: rnd(u0 + M * (u(1) - u0), 2), m: 'Tu as utilisé la formule d’une suite arithmétique. Ici : uₙ = u₀ × qⁿ.' }, { v: rnd(u0 * Math.pow(q, M - 1), 2), m: `L’exposant est le rang : ${M}.` }]),
       qcm('e', ['croissante', 'décroissante'], t > 0 ? 0 : 1, t > 0 ? `croissante : q = ${fr(q)} > 1` : `décroissante : 0 < q = ${fr(q)} < 1`)];
+    xs(items, { a: `q = 1 ${t > 0 ? '+' : '−'} ${Math.abs(t)} ÷ 100 = ${fr(q)}`, b: `u₃ = ${fr(u0)} × ${fr(q)}³ ≈ ${f2(u(3))}`, c: `u₆ = ${fr(u0)} × ${fr(q)}⁶ ≈ ${f2(u(6))}`, d: `u${sub(M)} = ${fr(u0)} × ${fr(q)}${sup(M)} ≈ ${f2(u(M))}` });
     return { titre: 'Le terme de rang n', consigne: `u₀ = ${fr(u0)}, et chaque terme ${t > 0 ? 'augmente' : 'baisse'} de ${Math.abs(t)} %. Trouve la raison, puis les termes demandés, au centième.`,
       support: `<p class="tr-l">a. Raison : q = ${tb('a', fr(q), 16)}</p>` + svg(600, 290, s, 'Nuage de points de la suite, avec les termes de rang 3 et 6 entourés') + `<p class="tr-l">d. u${sub(M)} = ${fr(u0)} × ${fr(q)}${String(M).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[c]).join('')} = ${tb('d', f2(u(M)), 22)}</p><p class="tr-l">e. La suite est :</p>`, items,
       hints: [`Une ${t > 0 ? 'hausse' : 'baisse'} de ${Math.abs(t)} % : on multiplie par 1 ${t > 0 ? '+' : '−'} ${fr(Math.abs(t) / 100)}.`, 'Terme de rang n : uₙ = u₀ × qⁿ. Utilise la touche puissance de la calculatrice.', 'Raison plus grande que 1 : la suite monte. Entre 0 et 1 : elle descend.'] };
@@ -69,6 +72,7 @@
       num('c', u(5), 2, f2(u(5)), [{ v: rnd(u0 * q * 5, 4), m: 'u₅ = u₀ × q⁵ : la raison est multipliée 5 fois, elle n’est pas multipliée par 5.' }]),
       num('d', S(5), 2, f2(S(5)), [{ v: rnd(S(4), 4), m: 'N’oublie pas d’ajouter le terme de rang 5.' }, { v: u(5), m: 'La somme des 6 premiers termes, ce n’est pas le dernier terme.' }]),
       qcm('e', ['=C3+B4', '=B3+B4', '=C3*B4'], 0, '=C3+B4 : cumul précédent + nouveau terme')];
+    xs(items, { a: `B4 = B3 × ${fr(q)} = ${f2(u(1))} × ${fr(q)} = ${f2(u(2))}`, b: `C4 = C3 + B4 = ${f2(S(1))} + ${f2(u(2))} = ${f2(S(2))}`, c: `B7 = ${f2(u(4))} × ${fr(q)} = ${f2(u(5))}`, d: `C7 = C6 + B7 = ${f2(S(4))} + ${f2(u(5))} = ${f2(S(5))}` });
     return { titre: 'Cumuler au tableur', consigne: `Une boutique en ligne (fictive) expédie ${fr(u0)} colis le mois 0, puis multiplie ce nombre par ${fr(q)} chaque mois. Complète la feuille.`,
       support: table(['', 'A · mois n', 'B · colis uₙ', 'C · cumul'], [['1', 'n', 'uₙ', 'cumul'], ...rows].slice(1)) + `<p class="tr-l">En B3 : <code>=B2*${fr(q)}</code> recopiée vers le bas. En C2 : <code>=B2</code>.</p><p class="tr-l">e. Quelle formule écrire en C4, puis recopier vers le bas ?</p>`, items,
       hints: ['Colonne B : chaque terme est le précédent multiplié par la raison.', 'Colonne C : cumul précédent + nouveau terme de la ligne.', 'Le total des 6 premiers mois est dans la dernière case de la colonne C.'] };

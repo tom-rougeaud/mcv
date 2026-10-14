@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, T, num, qcm, pick, int, shuffle, P } = H;
+  const { fr, rnd, tb, T, num, qcm, pick, int, shuffle, P, xs: XS } = H;
   const C1 = '#C2332A', C2 = '#FFC233', C3 = '#DCE2F2', INK = P.INK;
   const pr = (k, n) => rnd(k / n, 4);
   /* grille de n cases colorées (exact : une case = une issue) */
@@ -41,6 +41,7 @@
     const svg = `<svg viewBox="0 0 600 140" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Probabilités des secteurs d’une roue">${s}${T(40, 28, '0', { fs: 12, a: 'start', c: 'ts' })}${T(560, 28, '1', { fs: 12, a: 'end', c: 'ts' })}</svg>`;
     const tabl = `<table class="dt tcx dt-sm dt-c"><thead><tr><th>Issue</th><th>gros lot</th><th>petit lot</th><th>bon de réduction</th><th>perdu</th></tr></thead><tbody><tr><th>Probabilité</th><td>${fr(p1)}</td><td>${fr(p2)}</td><td>${fr(p3)}</td><td>${tb('a', fr(p4), 12)}</td></tr></tbody></table>`;
     const items = [num('a', p4, 2, fr(p4), [{ v: rnd(p1 + p2 + p3, 2), m: 'C’est la somme des trois autres. La probabilité de « perdu » est 1 moins cette somme.' }]), num('b', rnd(p1 + p2, 2), 2, fr(rnd(p1 + p2, 2))), num('c', rnd(1 - p1 - p2, 2), 2, fr(rnd(1 - p1 - p2, 2)), [{ v: rnd(p1 + p2, 2), m: 'C’est P(gagner un lot). On demande l’évènement contraire : 1 − P(gagner un lot).' }]), qcm('d', ['oui', 'non'], 1, 'non : les issues n’ont pas toutes la même probabilité')];
+    XS(items, { a: `1 − (${fr(p1)} + ${fr(p2)} + ${fr(p3)}) = 1 − ${fr(rnd(p1 + p2 + p3, 2))} = ${fr(p4)}`, b: `${fr(p1)} + ${fr(p2)} = ${fr(rnd(p1 + p2, 2))}`, c: `1 − ${fr(rnd(p1 + p2, 2))} = ${fr(rnd(1 - p1 - p2, 2))}` });
     return { titre: 'Une roue sans équiprobabilité', consigne: 'Les secteurs de la roue n’ont pas la même taille. Le tableau donne la probabilité de chaque issue.', support: svg + tabl + `<p class="tr-l">a. P(perdu) dans le tableau &nbsp; b. P(gagner un lot) = P(gros lot) + P(petit lot) = ${tb('b', items[1].a, 12)}</p><p class="tr-l">c. P(ne pas gagner de lot) = ${tb('c', items[2].a, 12)} &nbsp; d. Les issues sont-elles équiprobables ?</p>`, items,
       hints: ['La somme des probabilités de toutes les issues vaut 1.', '« Gros lot » et « petit lot » sont incompatibles : on additionne.', 'Ne pas gagner de lot est le contraire de gagner un lot.'] };
   };
@@ -50,6 +51,7 @@
     const n = pick(R, [20, 25, 40, 50]), g = pick(R, [1, 2]), p = pick(R, [3, 4, 5, 6]), l = n - g - p;
     const sv = grille(n, [[g, C1, 'gros lot'], [p, C2, 'petit lot'], [l, C3, 'perdu']], `${n} tickets`);
     const items = [num('a', pr(g, n), 3, fr(pr(g, n)), [{ v: g, m: 'Une probabilité est un quotient : cas favorables ÷ cas possibles.' }]), num('b', pr(g + p, n), 3, fr(pr(g + p, n)), [{ v: pr(p, n), m: 'Gagner un lot, c’est gagner le gros lot ou un petit lot : additionne les deux.' }]), num('c', pr(l, n), 3, fr(pr(l, n)), [{ v: pr(g + p, n), m: 'C’est la probabilité de gagner. Perdre est l’évènement contraire : 1 − P(gagner).' }]), qcm('d', ['oui', 'non'], 0, 'oui : un ticket ne peut pas être à la fois gros lot et petit lot')];
+    XS(items, { a: `${g} ÷ ${n} = ${fr(pr(g, n))}`, b: `(${g} + ${p}) ÷ ${n} = ${g + p} ÷ ${n} = ${fr(pr(g + p, n))}`, c: `1 − ${fr(pr(g + p, n))} = ${fr(pr(l, n))}, soit ${l} ÷ ${n}` });
     return { titre: 'Tirer un ticket', consigne: `Une urne contient ${n} tickets, chacun a la même chance d’être tiré. On tire un ticket au hasard. Donne les probabilités en décimal.`, support: sv + `<p class="tr-l">a. P(gros lot) = ${tb('a', items[0].a, 14)} &nbsp; b. P(gagner un lot) = ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. P(perdre) = ${tb('c', items[2].a, 14)} (évènement contraire de « gagner un lot »)</p><p class="tr-l">d. Les évènements « gros lot » et « petit lot » sont-ils incompatibles ?</p>`, items,
       hints: ['Compte les cases de la bonne couleur, puis divise par le nombre total de tickets.', 'Pour des évènements incompatibles, on additionne les probabilités.', 'P(contraire) = 1 − P(évènement).'] };
   };
@@ -58,6 +60,7 @@
   TR.c7e2 = R => {
     const N = pick(R, [100, 200]), nA = pick(R, [40, 50, 60, 70]), nB = pick(R, [30, 40, 50]), nAB = pick(R, [10, 15, 20]), u = nA + nB - nAB;
     const items = [num('a', nA - nAB, 0, String(nA - nAB), [{ v: nA, m: 'Dans la zone « seulement A », on enlève ceux qui sont aussi dans B.' }]), num('b', u, 0, String(u), [{ v: nA + nB, m: 'Tu as compté deux fois la partie commune : enlève-la une fois.' }]), num('c', pr(nAB, N), 3, fr(pr(nAB, N))), num('d', pr(u, N), 3, fr(pr(u, N)), [{ v: pr(nA + nB, N), m: 'P(A ou B) = P(A) + P(B) − P(A et B) : n’oublie pas d’enlever la partie commune.' }]), num('e', pr(N - u, N), 3, fr(pr(N - u, N)))];
+    XS(items, { a: `${nA} − ${nAB} = ${nA - nAB}`, b: `${nA} + ${nB} − ${nAB} = ${u}`, c: `${nAB} ÷ ${N} = ${fr(pr(nAB, N))}`, d: `${u} ÷ ${N} = ${fr(pr(u, N))}`, e: `(${N} − ${u}) ÷ ${N} = ${N - u} ÷ ${N} = ${fr(pr(N - u, N))}` });
     return { titre: 'Et, ou', consigne: `Sur ${N} clients, ${nA} ont la carte de fidélité (A), ${nB} ont acheté en ligne (B) et ${nAB} ont les deux. Complète le diagramme et calcule les probabilités pour un client pris au hasard (en décimal).`, support: venn(N, nA, nB, nAB, 'A : carte', 'B : en ligne', { A: ['a', String(nA - nAB)] }) + `<p class="tr-l">a. Clients avec la carte seulement : case a du diagramme &nbsp; b. Clients dans A ou B : ${tb('b', items[1].a, 12)}</p><p class="tr-l">c. P(A et B) = ${tb('c', items[2].a, 14)} &nbsp; d. P(A ou B) = ${tb('d', items[3].a, 14)} &nbsp; e. P(ni A ni B) = ${tb('e', items[4].a, 14)}</p>`, items,
       hints: ['Le centre du diagramme compte les clients qui sont dans A et dans B.', 'A ou B : on additionne les trois zones colorées.', 'Ni A ni B : ce qui reste en dehors des deux disques.'] };
   };
@@ -68,6 +71,7 @@
     const L = a + b, M = c + d, S = a + c;
     const items = [num('a', L, 0, String(L)), num('b', S, 0, String(S)), num('c', N, 0, String(N)), num('d', rnd(a / N, 3), 3, fr(rnd(a / N, 3)), [{ v: rnd(a / L, 3), m: 'Ici on prend un client parmi tous les clients : divise par le total général.' }]), num('e', rnd(a / L, 3), 3, fr(rnd(a / L, 3)), [{ v: rnd(a / N, 3), m: '« Parmi les clients en ligne » : divise par le total de la ligne « en ligne ».' }, { v: rnd(a / S, 3), m: 'Divise par le total des clients en ligne, pas par celui des satisfaits.' }])];
     const tabl = `<table class="dt tcx dt-sm dt-c"><thead><tr><th></th><th>satisfait</th><th>pas satisfait</th><th>total</th></tr></thead><tbody><tr><th>en ligne</th><td>${a}</td><td>${b}</td><td>${tb('a', String(L), 12)}</td></tr><tr><th>en magasin</th><td>${c}</td><td>${d}</td><td>${M}</td></tr><tr><th>total</th><td>${tb('b', String(S), 12)}</td><td>${b + d}</td><td>${tb('c', String(N), 12)}</td></tr></tbody></table>`;
+    XS(items, { a: `${a} + ${b} = ${L}`, b: `${a} + ${c} = ${S}`, c: `${L} + ${M} = ${N}`, d: `${a} ÷ ${N} ≈ ${fr(rnd(a / N, 3))}`, e: `${a} ÷ ${L} ≈ ${fr(rnd(a / L, 3))}` });
     return { titre: 'Un tableau croisé', consigne: 'Une enquête classe les clients selon leur mode d’achat et leur satisfaction. Complète les totaux (a, b, c), puis calcule les probabilités en décimal, arrondies au millième.', support: tabl + `<p class="tr-l">d. P(en ligne et satisfait) = ${tb('d', items[3].a, 14)}</p><p class="tr-l">e. Probabilité qu’un client soit satisfait sachant qu’il achète en ligne : P<sub>en ligne</sub>(satisfait) = ${tb('e', items[4].a, 14)}</p>`, items,
       hints: ['Additionne chaque ligne et chaque colonne.', 'Pour un client pris parmi tous : divise par le total général.', '« Parmi les clients en ligne » : divise par le total de cette ligne.'] };
   };

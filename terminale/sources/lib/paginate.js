@@ -128,6 +128,29 @@
     runs.filter(r => r.length > 1).forEach(pcs => { const anchor = pcs[0].previousElementSibling; const sorted = pcs.slice().sort((x, y) => (+x.querySelector('[data-numof]').textContent || 0) - (+y.querySelector('[data-numof]').textContent || 0)); pcs.forEach(x => x.remove()); let ref = anchor; sorted.forEach(x => { if (ref) ref.after(x); else inn.prepend(x); ref = x; }); }); });
   // corrigé express : dans l’ordre des numéros d’exercice
   document.querySelectorAll('.cc').forEach(cc => { const ps = [...cc.querySelectorAll(':scope > p')]; ps.sort((x, y) => (+x.querySelector('.cn').textContent || 0) - (+y.querySelector('.cn').textContent || 0)).forEach(x => cc.appendChild(x)); });
+  // version professeur : les zones « Mes notes » reçoivent le corrigé détaillé des exercices de la page (ou de la page précédente)
+  const dets = document.getElementById('dets');
+  if (PROF && dets) {
+    const SRC = {}; dets.querySelectorAll('.dz-src').forEach(d => { SRC[d.dataset.for] = d.innerHTML; });
+    const shown = new Set(); let prev = [];
+    [...out.children].forEach(pg => {
+      const here = [...new Set([...pg.querySelectorAll('[data-det]')].map(e => e.dataset.det))].filter(id => SRC[id]);
+      const cand = [...prev, ...here].filter((id, i, a) => !shown.has(id) && a.indexOf(id) === i);
+      prev = here;
+      const notes = pg.querySelector('.inner > .blk.notes'); if (!notes || !cand.length) return;
+      const h = notes.getBoundingClientRect().height + parseFloat(getComputedStyle(notes).marginTop || 0);
+      const z = document.createElement('div'); z.className = 'blk detz'; z.style.height = h + 'px';
+      z.innerHTML = '<h3>✔️ Corrigé détaillé</h3><div class="dz-b"></div>'; const b = z.querySelector('.dz-b');
+      notes.replaceWith(z); let n = 0;
+      for (const id of cand) { const e = document.createElement('div'); e.innerHTML = SRC[id]; const it = e.firstElementChild; b.appendChild(it);
+        if (z.scrollHeight > z.clientHeight + 1) b.removeChild(it); else { shown.add(id); n++; } }
+      if (!n) { z.replaceWith(notes); return; }
+      res.dets = (res.dets || 0) + n;
+      const rest = (z.clientHeight - (b.getBoundingClientRect().bottom - z.getBoundingClientRect().top)) / MM;
+      if (rest > 16) { const l = document.createElement('div'); l.className = 'lines'; l.innerHTML = '<i></i>'.repeat(Math.floor((rest - 4) / 10)); z.appendChild(l); if (z.scrollHeight > z.clientHeight + 1) z.removeChild(l); }
+    });
+    dets.remove();
+  }
   // contrôles : rien ne déborde, ni en bas ni à droite
   [...out.children].forEach((p, i) => { const el = p.querySelector('.inner'); if (el && over(el)) res.errors.push('Page ' + (i + 1) + ' déborde');
     if (PROF) return;

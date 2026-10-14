@@ -2,8 +2,9 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P, esc } = H;
+  const { fr, rnd, tb, sb, T, svg, table, num, qcm, pick, int, P, esc, xs } = H;
   const sg = n => n < 0 ? '− ' + fr(-n) : fr(n);
+  const par = n => n < 0 ? `(− ${fr(-n)})` : fr(n);
   /* écriture d’un polynôme : [[coef, 'x³'], [coef, 'x²'], [coef, 'x'], [coef, '']] */
   const poly = cs => { let o = ''; cs.forEach(([a, s]) => { if (!a) return; const m = (Math.abs(a) === 1 && s ? '' : fr(Math.abs(a))) + s; o += o ? (a < 0 ? ' − ' : ' + ') + m : (a < 0 ? '−' : '') + m; }); return o || '0'; };
   /* flèche simple */
@@ -61,6 +62,8 @@
       num('c', c, 2, fr(c), [{ v: 0, m: 'La dérivée de ' + fr(c) + 'x est ' + fr(c) + ' : seule la constante disparaît.' }]),
       num('d', df(x0), 2, fr(df(x0)), [{ v: f(x0), m: 'Tu as calculé f(' + x0 + '). On demande f′(' + x0 + ') : remplace x dans la dérivée.' }]),
       num('e', f(x0), 2, fr(f(x0)), [{ v: df(x0), m: 'Ça, c’est f′(' + x0 + '). Pour f(' + x0 + '), remplace x dans f(x).' }])];
+    const mo = (k, v) => k === 1 ? v : k === -1 ? '−' + v : fr(k) + v;
+    xs(items, { a: `(${mo(a, 'x³')})′ = 3 × ${par(a)}x² = ${mo(3 * a, 'x²')}`, b: b ? `(${mo(b, 'x²')})′ = 2 × ${par(b)}x = ${mo(2 * b, 'x')}` : 'pas de terme en x² : 0', c: `(${mo(c, 'x')})′ = ${fr(c)}${d ? ` ; la constante ${fr(d)} disparaît` : ''}`, d: `f′(${x0}) = ${fr(3 * a)} × ${par(x0)}² + ${par(2 * b)} × ${par(x0)} + ${par(c)} = ${fr(df(x0))}`, e: `f(${x0}) = ${fr(a)} × ${par(x0)}³ + ${par(b)} × ${par(x0)}² + ${par(c)} × ${par(x0)} + ${par(d)} = ${fr(f(x0))}` });
     return { titre: 'Dériver un polynôme de degré 3', consigne: 'Complète les coefficients de la dérivée, puis calcule f′ et f pour la valeur demandée.', support: svg(600, 120, s, 'La fonction f et les trois coefficients de sa dérivée à compléter') + `<p class="tr-l">d. f′(${x0}) = ${tb('d', fr(df(x0)), 16)} · e. f(${x0}) = ${tb('e', fr(f(x0)), 16)}</p>`, items,
       hints: ['(x³)′ = 3x², (x²)′ = 2x, (x)′ = 1, et la dérivée d’une constante est 0.', 'Un coefficient devant x³ est multiplié par 3 ; devant x², par 2.', `Pour f′(${x0}), remplace x par ${x0} dans f′(x), en respectant les signes.`] };
   };
@@ -75,6 +78,8 @@
     const items = [num('a', F.a, 2, String(F.a), [{ v: -F.a, m: 'La dérivée s’annule quand x − ' + F.a + ' = 0, donc pour x = ' + F.a + '.' }]), num('b', F.b, 2, String(F.b), [{ v: -F.b, m: 'Attention au signe : x − ' + F.b + ' = 0 donne x = ' + F.b + '.' }]),
       num('c', F.f(F.a), 2, fr(F.f(F.a)), [{ v: F.f(F.b), m: 'Calcule f(' + F.a + ') : l’image de la première valeur où f′ s’annule.' }]), num('d', F.f(F.b), 2, fr(F.f(F.b)), [{ v: F.f(F.a), m: 'Calcule f(' + F.b + ').' }]),
       qcm('e', [`un maximum local en x = ${F.a}`, `un minimum local en x = ${F.a}`], inc1 ? 0 : 1, inc1 ? `maximum local : f monte puis descend autour de ${F.a}` : `minimum local : f descend puis monte autour de ${F.a}`)];
+    const img = x => `f(${x}) = ${par(F.c3)} × ${x}³ + ${par(F.c2)} × ${x}² + ${par(F.c1)} × ${x} + ${par(F.d)} = ${fr(F.f(x))}`;
+    xs(items, { a: `x − ${F.a} = 0 donne x = ${F.a}`, b: `x − ${F.b} = 0 donne x = ${F.b}`, c: img(F.a), d: img(F.b) });
     return { titre: 'Le tableau de variations', consigne: `f(x) = ${F.txt} sur [${lo} ; ${hi}], et f′(x) = ${F.s > 0 ? '−3' : '3'}(x − ${F.a})(x − ${F.b}). Complète le tableau, puis réponds à e.`, support: pic + `<p class="tr-l">e. La fonction f admet :</p>`, items,
       hints: ['f′(x) s’annule quand un des facteurs vaut 0 : x − a = 0 ou x − b = 0.', 'Là où f′ est positive, f est croissante ; là où f′ est négative, f est décroissante.', 'Les valeurs du tableau sont les images f(a) et f(b).'] };
   };
@@ -87,13 +92,15 @@
     const ns = cs.map(count);
     // valeur approchée de la plus grande solution de f(x) = 0 sur [b ; hi], si elle existe : on prend c2 sinon
     const c0 = cs[1]; let root = null; { let u = F.b; while (u < hi && F.f(u) > c0) u = rnd(u + .1, 1); root = u; }
-    const xs = [rnd(root - .2, 1), rnd(root - .1, 1), root, rnd(root + .1, 1)];
+    const XV = [rnd(root - .2, 1), rnd(root - .1, 1), root, rnd(root + .1, 1)];
     const pic = H.tabvar({ xs: [String(lo), String(F.a), String(F.b), String(hi)], signs: ['−', '+', '−'], vals: V, lab: 'Tableau de variations de f' });
     const items = [num('a', ns[0], 0, String(ns[0]), [{ v: 1, m: `${fr(cs[0])} est plus grand que le maximum ${fr(V[2])} : la courbe n’atteint jamais cette hauteur.` }]), num('b', ns[1], 0, String(ns[1])), num('c', ns[2], 0, String(ns[2])),
       num('d', rnd(root - .1, 1), 1, fr(rnd(root - .1, 1)))];
+    const why = i => `${fr(cs[i])} comparé aux valeurs du tableau (${V.map(v => fr(rnd(v, 2))).join(' ; ')}) : atteint sur ${ns[i]} intervalle${ns[i] > 1 ? 's' : ''}, donc ${ns[i]} solution${ns[i] > 1 ? 's' : ''}`;
+    xs(items, { a: why(0), b: why(1), c: why(2), d: `f(${fr(rnd(root - .1, 1))}) ≈ ${fr(rnd(F.f(rnd(root - .1, 1)), 3))} > ${fr(c0)} et f(${fr(root)}) ≈ ${fr(rnd(F.f(root), 3))} ≤ ${fr(c0)} : la solution est entre ${fr(rnd(root - .1, 1))} et ${fr(root)}` });
     return { titre: 'Combien de solutions ?', consigne: `f(x) = ${F.txt} sur [${lo} ; ${hi}]. Utilise le tableau de variations pour compter les solutions, puis un tableau de valeurs.`,
       support: pic + `<p class="tr-l">Nombre de solutions de : a. f(x) = ${fr(cs[0])} → ${tb('a', String(ns[0]), 10)} · b. f(x) = ${fr(cs[1])} → ${tb('b', String(ns[1]), 10)} · c. f(x) = ${fr(cs[2])} → ${tb('c', String(ns[2]), 10)}</p>`
-        + table(['x', ...xs.map(x => fr(x))], [['f(x)', ...xs.map(x => fr(rnd(F.f(x), 3)))]], 'dt-c') + `<p class="tr-l">d. La solution de f(x) = ${fr(c0)} située après x = ${F.b} est comprise entre ${tb('d', fr(rnd(root - .1, 1)), 12)} et ${fr(root)}.</p>`, items,
+        + table(['x', ...XV.map(x => fr(x))], [['f(x)', ...XV.map(x => fr(rnd(F.f(x), 3)))]], 'dt-c') + `<p class="tr-l">d. La solution de f(x) = ${fr(c0)} située après x = ${F.b} est comprise entre ${tb('d', fr(rnd(root - .1, 1)), 12)} et ${fr(root)}.</p>`, items,
       hints: ['Dans le tableau, repère les intervalles où f monte et où f descend.', 'Sur chaque intervalle, la valeur c est atteinte une fois si elle est entre les deux valeurs extrêmes.', 'Dans le tableau de valeurs, cherche où f(x) passe au-dessus ou au-dessous de c.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};

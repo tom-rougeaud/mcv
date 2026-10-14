@@ -3,7 +3,7 @@
 (function (root) {
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
-  const { fr, rnd, tb, T, num, qcm, pick, int, shuffle, P } = H;
+  const { fr, rnd, tb, T, num, qcm, pick, int, shuffle, P, xs: XS } = H;
   const INK = P.INK, ACC = '#FFC233', SEC = '#C2332A', PL = '#7438C0';
   const f1 = n => (Math.round(n * 10) / 10).toString();
   const K = .5, C = Math.SQRT1_2;
@@ -58,6 +58,7 @@
     const body = svg + cote(v(0, 0, 0), v(1, 0, 0), `${W} cm`, { dy: 20 }) + cote(v(1, 0, 0), v(1, 1, 0), `${Ht} cm`, { dx: -36, a: 'middle' }) + cote(v(1, 0, 0), v(1, 0, 1), `${D} cm`, { dx: 34, dy: 14 });
     const V = W * Ht * D;
     const items = [num('a', V, 0, `${V}`, [{ v: W + Ht + D, m: 'Le volume est un produit : longueur × largeur × hauteur.' }]), num('b', V / 1000, 1, fr(V / 1000), [{ v: V / 100, m: '1 L = 1 000 cm³ : divise par 1 000.' }]), num('c', 3, 0, '3'), qcm('d', ['visibles', 'cachées'], 1, 'cachées : en perspective, les arêtes cachées sont en pointillés')];
+    XS(items, { a: `V = ${W} × ${Ht} × ${D} = ${fr(V)} cm³`, b: `${fr(V)} ÷ 1 000 = ${fr(V / 1000)} L`, c: 'les trois arêtes qui partent du sommet caché (en bas, à l’arrière)' });
     return { titre: 'Un carton en perspective', consigne: 'Ce carton d’expédition (un pavé droit) est dessiné en perspective cavalière. Calcule son volume, convertis-le en litres, puis observe le dessin.', support: SV(600, 290, body, 'Carton en perspective cavalière') + `<p class="tr-l">a. Volume : ${tb('a', items[0].a, 16)} cm³ &nbsp; b. Volume : ${tb('b', items[1].a, 14)} L</p><p class="tr-l">c. Nombre d’arêtes dessinées en pointillés : ${tb('c', '3', 10)}</p><p class="tr-l">d. Les arêtes en pointillés sont :</p>`, items,
       hints: ['V = longueur × largeur × hauteur.', '1 L = 1 dm³ = 1 000 cm³.', 'Compte les traits en pointillés : ce sont les arêtes qu’on ne voit pas.'] };
   };
@@ -68,6 +69,7 @@
     const Ab = rnd(PI * r * r, 2), Vc = rnd(PI * r * r * h, 2), Vk = rnd(PI * r * r * h / 3, 2);
     const by = 240, body = cyl(150, by, s, r, h, { fill: '#E0EBFD' }) + cone(430, by, s, r, h, { fill: '#FDE3E0' }) + [150, 430].map(cx => L([cx, by], [cx + r * s, by], { stroke: SEC, w: 1.6 }) + T(cx + r * s / 2, by + .35 * r * s + 18, `r = ${r} cm`, { fs: 13, c: 'kt' }) + L([cx, by], [cx, by - h * s], { stroke: SEC, w: 1.4, dash: 1 }) + T(cx + r * s + 10, by - h * s / 2, `h = ${h} cm`, { fs: 13, a: 'start', c: 'kt' })).join('') + T(150, 24, 'cylindre', { fs: 14 }) + T(430, 24, 'cône', { fs: 14 });
     const items = [num('a', Ab, 2, fr(Ab), [{ v: rnd(2 * PI * r, 2), m: 'C’est le périmètre du cercle. L’aire du disque est π × r².' }]), num('b', Vc, 1, fr(Vc)), num('c', Vk, 1, fr(Vk), [{ v: Vc, m: 'Pour un cône, on divise le volume du cylindre par 3.' }]), num('d', 3, 1, '3')];
+    XS(items, { a: `π × ${r}² = ${r * r}π ≈ ${fr(Ab)} cm²`, b: `${r * r}π × ${h} = ${r * r * h}π ≈ ${fr(Vc)} cm³`, c: `${r * r * h}π ÷ 3 = ${fr(r * r * h / 3)}π ≈ ${fr(Vk)} cm³`, d: `${fr(Vc)} ÷ ${fr(Vk)} ≈ 3 : le cylindre contient 3 cônes` });
     return { titre: 'Cylindre et cône', consigne: 'Les deux solides ont la même base et la même hauteur. Calcule au centième, puis compare.', support: SV(600, 290, body, 'Un cylindre et un cône de même base et de même hauteur') + `<p class="tr-l">a. Aire de la base : π × ${r}² ≈ ${tb('a', items[0].a, 16)} cm²</p><p class="tr-l">b. Volume du cylindre ≈ ${tb('b', items[1].a, 16)} cm³ &nbsp; c. Volume du cône ≈ ${tb('c', items[2].a, 16)} cm³</p><p class="tr-l">d. Le volume du cylindre est ${tb('d', '3', 10)} fois celui du cône.</p>`, items,
       hints: ['Aire du disque : π × r × r.', 'Cylindre : aire de la base × hauteur.', 'Cône : aire de la base × hauteur ÷ 3.'] };
   };
@@ -86,6 +88,7 @@
     const r = pick(R, [6, 8, 10]), hh = pick(R, [12, 15, 18]), t = pick(R, [1 / 2, 1 / 3]), rs = rnd(r * t, 2);
     const items = three.map((S0, i) => qcm(String.fromCharCode(97 + i), CH, CH.indexOf(S0.rep), `${S0.rep} : ${S0.txt}`));
     items.push(num('d', rs, 2, fr(rs), [{ v: r, m: 'La section d’un cône est plus petite que sa base : son rayon est réduit.' }]));
+    XS(items, { d: `section = réduction de la base : ${r} × ${t === .5 ? '1/2' : '1/3'} = ${fr(rs)} cm` });
     return { titre: 'Des sections planes', consigne: 'Chaque solide est coupé par un plan ; la section est en rouge. Donne sa forme (a, b, c). Puis calcule un rayon de section (d).', support: SV(600, 250, body, 'Trois solides coupés par un plan') + `<p class="tr-l">a., b., c. : rectangle, disque, triangle ou carré ?</p><p class="tr-l">d. Un cône a un rayon de base de ${r} cm et une hauteur de ${hh} cm. On le coupe parallèlement à la base, à ${t === .5 ? 'mi-hauteur' : 'un tiers de la hauteur en partant du sommet'}. Rayon de la section : ${tb('d', items[3].a, 14)} cm</p>`, items,
       hints: ['Un plan parallèle à la base d’un cylindre ou d’un cône donne un disque.', 'Un plan parallèle à une face d’un pavé donne un rectangle identique à cette face.', `La section du cône est une réduction de la base : rayon × ${t === .5 ? '1/2' : '1/3'}.`] };
   };
