@@ -49,6 +49,7 @@ const SK = {
   escalier: () => mini({ x: [0, 5, 1], y: [0, 100, 20], lab: 'Des points alignés' }, g => g.pts([[0, 20], [1, 35], [2, 50], [3, 65], [4, 80]]) + g.line(15, 20, { w: 1.6, dash: '4 4' })),
   expo: () => mini({ x: [0, 5, 1], y: [0, 80, 20], lab: 'Des points qui montent de plus en plus vite' }, g => g.curve(x => 10 * Math.pow(1.5, x), { w: 1.6, dash: '4 4' }) + g.pts([0, 1, 2, 3, 4, 5].map(n => [n, 10 * Math.pow(1.5, n)]))),
   deuxSuites: () => mini({ x: [0, 12, 4], y: [900, 1900, 500], ml: 38, lab: 'Deux placements : points alignés et points qui montent de plus en plus' }, g => g.pts([0, 2, 4, 6, 8, 10, 12].map(n => [n, 1000 + 60 * n]), { r: 3, fill: '#1D5FC2' }) + g.pts([0, 2, 4, 6, 8, 10, 12].map(n => [n, 1000 * Math.pow(1.05, n)]), { r: 3, fill: '#B05200' })),
+  inverse: () => mini({ x: [0, 8, 2], y: [0, 16, 4], lab: 'Le coût moyen 4 + 6 ÷ q diminue' }, g => g.curve(q => 4 + 6 / q, { a: .5, b: 8 }) + g.seg(0, 4, 8, 4, { stroke: '#C2332A', dash: '4 3', w: 1.4 })),
   somme: () => { const K = Sketch(252); let s = '';
     [18, 30, 42, 54, 66].forEach((h, i) => { s += fill(24 + i * 32, 100 - h, 26, h, .9, i % 2 ? 'k' : 'k2') + K.P(K.rect(24 + i * 32, 100 - h, 26, h), { w: 1.6 }); });
     s += K.P(K.line(16, 100, 184, 100)) + tt(100, 120, 'on additionne tous les rangs', 11);

@@ -52,7 +52,7 @@
   const pdfOf = c => DATA.pdfch ? DATA.pdfch.replace('{n}', c.n) : '';
   function chapter(c, tab) {
     tab = TABS.some(t => t[0] === tab) ? tab : 'depart';
-    const head = `<section class="chead2 c-${c.col}"><a class="back" href="#/">← Chapitres</a><p class="ck">Chapitre ${c.n} · ${esc(c.dom)}</p><h1>${c.icone} ${esc(c.titre)}</h1>
+    const head = `<section class="chead2 c-${c.col}"><a class="back" href="#/">← Chapitres</a><p class="ck">Chapitre ${c.n} · ${esc(c.dom)}</p><h1>${c.icone} ${esc(c.titre)}</h1><p class="sous">${esc(c.sous || '')}</p>
       <p class="hbtns">${pdfOf(c) ? `<a class="btn ghost" href="${pdfOf(c)}" download>📄 PDF du chapitre</a>` : ''}<button class="btn ghost" data-sais>✅ Je sais faire</button></p><div class="saisbox" hidden>${saisList(c)}</div></section>
       <nav class="tabs c-${c.col}" role="tablist">${TABS.map(([k, l]) => `<a role="tab" href="#/${c.id}/${k}" class="${k === tab ? 'on' : ''}" aria-selected="${k === tab}">${l}</a>`).join('')}</nav>`;
     let body = '';
@@ -66,16 +66,28 @@
   }
 
   /* ---------- « De la 2de à la 1re » ---------- */
-  const pontApp = c => `<article class="pont c-${c.col}"><h3>🔗 De la 2de à la 1re</h3><div class="pont-g"><div class="pont-a"><p class="pont-k">En 2de, tu as appris</p><ul>${c.pont.de.map(x => `<li><a class="pont-n" href="../2de/#/c${x.n}" title="Ouvrir ce chapitre dans l’appli de 2de">ch. ${x.n}</a> <i>${esc(x.titre)}</i> : ${x.sais}</li>`).join('')}</ul></div><div class="pont-b"><p class="pont-k">En 1re, tu vas plus loin</p><ul>${c.pont.plus.map(x => `<li>${x}</li>`).join('')}</ul></div></div><p class="small">Besoin de revoir ? Touche un numéro de chapitre : il s’ouvre dans l’appli de 2de.</p></article>`;
+  const pontApp = c => `<article class="pont c-${c.col}"><h3>🔗 De la 2de à la 1re : ce qui reste, ce qui change</h3><div class="pont-g"><div class="pont-a"><p class="pont-k">En 2de, tu as appris</p><ul>${c.pont.de.map(x => `<li><a class="pont-n" href="../2de/#/c${x.n}" title="Ouvrir ce chapitre dans l’appli de 2de">ch. ${x.n}</a> <i>${esc(x.titre)}</i> : ${x.sais}</li>`).join('')}</ul><p class="pont-ex"><b>Exemple de 2de</b> · ${c.pont.ex2}</p></div><div class="pont-b"><p class="pont-k">En 1re, la même situation va plus loin</p><p class="pont-ex">${c.pont.ex1}</p></div></div><div class="pont-g3"><div><p class="pont-k">✅ Ce qui reste</p><ul>${c.pont.reste.map(x => `<li>${x}</li>`).join('')}</ul></div><div><p class="pont-k">➕ Ce qui change</p><ul>${c.pont.change.map(x => `<li>${x}</li>`).join('')}</ul></div><div><p class="pont-k">💼 À quoi ça sert</p><p>${c.pont.pourquoi}</p></div></div><p class="small">Besoin de revoir ? Touche un numéro de chapitre : il s’ouvre dans l’appli de 2de.</p></article>`;
   const pontPage = () => `<section class="chead2 c-brand"><a class="back" href="#/">← Accueil</a><h1>🔗 De la 2de à la 1re</h1><p>Chaque chapitre de 1re part de ce que tu as appris en 2de, puis va plus loin. Avant un chapitre, tu peux relire les chapitres de 2de indiqués.</p></section>`
     + CH.map(c => `<article class="pontl c-${c.col}"><span class="card-n">${c.n}</span><div><h3><a href="#/${c.id}">${c.icone} ${esc(c.titre)}</a></h3><p class="small">S’appuie sur la 2de : ${c.pont.de.map(x => `<a href="../2de/#/c${x.n}">ch. ${x.n} · ${esc(x.titre)}</a>`).join(' · ')}</p><p>➜ ${c.pont.fil}</p></div></article>`).join('');
+
+  /* ---------- zone « Automatismes » : 5 questions flash, nouvelles à chaque tirage ---------- */
+  const AUTOS = {};
+  const autoApp = c => { if (!window.MCVA) return ''; const seed = AUTOS[c.id] || (AUTOS[c.id] = rnd9()), qs = window.MCVA.gen(c.id, seed);
+    return `<article class="auto c-${c.col}" data-c="${c.id}"><div class="ex-h"><span class="num2">⚡</span><span class="ex-t">Automatismes · 5 minutes, sans calculatrice</span><button class="btn sm ghost" data-auto-new>🔄 Nouvelles questions</button></div><p class="cons">Les prérequis de 2de du chapitre, et un intérêt simple. Réponds de tête, puis vérifie.</p><ol class="auto-q">${qs.map((q, j) => `<li class="aq" data-j="${j}"><p>${q.t}</p><input class="inp" inputmode="decimal" autocomplete="off" aria-label="Réponse ${j + 1}"><span class="afb" aria-live="polite"></span></li>`).join('')}</ol><div class="ex-act"><button class="btn" data-auto-check>Vérifier</button><span class="score"></span></div></article>`; };
+  document.addEventListener('click', e => { const t = e.target.closest('[data-auto-check],[data-auto-new]'); if (!t) return; const card = t.closest('.auto'), cid = card.dataset.c;
+    if (t.hasAttribute('data-auto-new')) { AUTOS[cid] = rnd9(); const tmp = document.createElement('div'); tmp.innerHTML = autoApp(byId[cid]); card.replaceWith(tmp.firstElementChild); return; }
+    const qs = window.MCVA.gen(cid, AUTOS[cid]); let ok = 0;
+    $$('.aq', card).forEach((li, j) => { const q = qs[j], v = M.parse(String($('.inp', li).value).replace(/\s*€/, '').replace(/\s/g, '')), good = Number.isFinite(v) && Math.abs(v - q.v) <= q.tol;
+      li.classList.toggle('ok', good); li.classList.toggle('ko', !good); $('.afb', li).innerHTML = good ? '✅' : `❌ <span class="sol">${q.a}</span>`; if (good) ok++; });
+    $('.score', card).textContent = `${ok} / ${qs.length}`; });
+  window.MCVAUTO = cid => window.MCVA.gen(cid, AUTOS[cid]);
 
   /* ---------- 1. départ : la scène, puis un document interactif ---------- */
   let DEP = null;
   function departView(c) {
     const seed = rnd9(), d = TR.dep(c.depart, seed);
     DEP = { c, d, got: {} };
-    return `<article class="au3 c-${c.col}"><div class="au3-sc">${c.scene}</div><div class="au3-t"><p class="au3-k">💼 Au travail <span class="mt-r">${c.metier.roles.map(r => `<span>${r}</span>`).join('')}</span></p><p>${c.travail.question}</p><p class="small">${c.metier.txt}</p><ul class="objs">${c.objectifs.map(o => `<li>🎯 ${o}</li>`).join('')}</ul></div></article>${pontApp(c)}
+    return `<article class="au3 c-${c.col}"><div class="au3-sc">${c.scene}</div><div class="au3-t"><p class="au3-k">💼 Au travail <span class="mt-r">${c.metier.roles.map(r => `<span>${r}</span>`).join('')}</span></p><p>${c.travail.question}</p><p class="small">${c.metier.txt}</p><div class="plan">${c.parties.map((p, k) => `<p class="plan-p${p.n.some(j => c.notions[j - 1].hp) ? ' plan-hp' : ''}"><span class="plan-l">${'ABCDE'[k]}</span><span><b>${p.t}</b><br><small>${p.n.map(j => `${j}. ${c.notions[j - 1].titre}`).join(' · ')}</small></span></p>`).join('')}</div><ul class="objs">${c.objectifs.map(o => `<li>🎯 ${o}</li>`).join('')}</ul></div></article>${pontApp(c)}${autoApp(c)}
       <article class="dep c-${c.col}" id="dep"><div class="ex-h"><span class="num2">🚀</span><span class="ex-t">Point de départ · ${d.titre}</span><button class="btn sm ghost" data-newdep>🔄 Nouveau document</button></div>
       <p class="cons">Lis le document, puis réponds. ${d.qs.some(q => q.kind === 'tap') || d.qs.some(q => q.kind === 'qcm' && hasCells(d, q)) ? 'Pour certaines questions, <b>touche directement le document</b>.' : ''}</p>
       <div class="dep-g"><div class="dep-doc" id="dep-doc">${d.doc}</div><ol class="dep-q">${d.qs.map((q, j) => `<li class="dq" data-j="${j}"><p>${q.t}</p>${q.kind === 'tap' ? `<p class="tapme">👆 Touche la bonne case du tableau.</p>` : q.kind === 'qcm' ? `<span class="chs">${q.choices.map((ch, k) => `<button class="ch" data-dk="${k}">${ch}</button>`).join('')}</span>${hasCells(d, q) ? '<p class="tapme small">… ou touche le document.</p>' : ''}` : `<span class="qa-r"><input class="inp" inputmode="decimal" autocomplete="off" aria-label="Réponse ${j + 1}"><button class="btn sm" data-dv>Vérifier</button></span>`}<p class="qa-fb" aria-live="polite"></p></li>`).join('')}</ol></div>
@@ -95,7 +107,7 @@
   const TEMPS = [['decouvre', '🔎 Je découvre'], ['comprends', '💬 Je comprends'], ['vois', '👀 Je vois'], ['retiens', '📌 Je retiens'], ['exemple', '✏️ Exemple'], ['attention', '⚠️ Attention']];
   const AST = { vite: '⚡ Calculer vite', og: '🎯 Estimer', sens: '💡 Donner du sens', verif: '✅ Vérifier' };
   function leconView(c) {
-    return c.notions.map((nt, i) => `<article class="nt c-${c.col}" id="nt${i + 1}" data-t="1"><div class="lc-h"><span class="lc-n">${i + 1}</span>${nt.titre}</div>
+    return c.notions.map((nt, i) => `<article class="nt c-${c.col}" id="nt${i + 1}" data-t="1"><p class="nt-k">Partie ${'ABCDE'[c.parties.findIndex(p => p.n.includes(i + 1))]} · ${c.parties.find(p => p.n.includes(i + 1)).t}${nt.hp ? ' <span class="hp">➕ Pour aller plus loin · programme de terminale</span>' : ''}</p><div class="lc-h"><span class="lc-n">${i + 1}</span>${nt.titre}</div>
       <div class="tp tp-decouvre"><span class="t3">🔎 Je découvre</span><div class="tp-dg"><p>${nt.decouvre.txt}</p><div class="tp-img">${nt.decouvre.img}</div></div></div>
       <div class="tp tp-comprends" hidden><span class="t3">💬 Je comprends</span>${sayBtn(`#nt${i + 1} .tp-comprends`)}${nt.comprends}</div>
       <div class="tp tp-vois" hidden><span class="t3">👀 Je vois</span><button class="btn sm ghost replay" data-replay-vis>▶ Rejouer</button>${nt.vois}<p class="leg">${nt.voisLeg}</p></div>
@@ -160,7 +172,7 @@
   function placeOvl(inp) { const r = $('rect', inp._g).getBoundingClientRect(), s = inp.parentNode.getBoundingClientRect(), sup = inp.parentNode; Object.assign(inp.style, { position: 'absolute', left: (r.left - s.left + sup.scrollLeft) + 'px', top: (r.top - s.top + sup.scrollTop) + 'px', width: r.width + 'px', height: r.height + 'px', minHeight: '0', fontSize: Math.max(13, Math.min(18, r.height * .55)) + 'px', padding: '0 4px' }); }
   window.addEventListener('resize', () => $$('.ovl').forEach(placeOvl));
   function checkTr(card) {
-    const c = byId[card.dataset.c], e = c.entraine.find(x => x.id === card.dataset.e), g = genOf(c, e); let ok = 0; const msgs = [];
+    const c = byId[card.dataset.c], e = trAll(c).find(x => x.id === card.dataset.e), g = genOf(c, e); let ok = 0; const msgs = [];
     g.items.forEach(it => {
       const box = $(`.it3[data-k="${it.k}"]`, card), inp = box ? $('.inp', box) : $(`.tbi[data-k="${it.k}"]`, card);
       let val; if (it.qcm) { const sel = box && $('.ch.sel', box); val = sel ? sel.dataset.k : ''; } else val = inp ? inp.value : '';
@@ -192,7 +204,8 @@
       li.classList.toggle('ok', !!good); li.classList.toggle('ko', !good); fb.innerHTML = good ? '✅' : `❌ <span class="sol">${it.a}</span>`; if (good) ok++; });
     $('.score', card).textContent = `${ok} / ${m.n}`;
   }
-  const plusLoin = c => `<details class="plus c-${c.col}"><summary>➕ Pour aller plus loin <span>${c.plusloin.meca.length} séries de calculs et ${c.plusloin.probs.length} problèmes en plus</span></summary>${c.plusloin.meca.map(m => mecaCard(c, m)).join('')}${c.plusloin.probs.map((p, i) => probCard(c, p, 'P' + (i + 1), true)).join('')}</details>`;
+  const trAll = c => [...c.entraine, ...(c.plusTr || [])];
+  const plusLoin = c => { const nt = (c.plusTr || []).length, nm = c.plusloin.meca.length, np = c.plusloin.probs.length; if (!nt && !nm && !np) return ''; return `<details class="plus c-${c.col}"><summary>➕ Pour aller plus loin <span>${[nt ? nt + ' exercice' + (nt > 1 ? 's' : '') : '', nm ? nm + ' séries de calculs' : '', np ? np + ' problème' + (np > 1 ? 's' : '') : ''].filter(Boolean).join(', ')} en plus${c.plusNote ? ' · ' + c.plusNote : ''}</span></summary>${(c.plusTr || []).map((e, i) => trCard(c, e, c.entraine.length + i)).join('')}${c.plusloin.meca.map(m => mecaCard(c, m)).join('')}${c.plusloin.probs.map((p, i) => probCard(c, p, 'P' + (i + 1), true)).join('')}</details>`; };
 
   /* ---------- 5. problèmes ---------- */
   const ET = { 2: 'Petit problème', 3: 'Cas pratique', 4: 'Vers le bac' };
@@ -300,11 +313,11 @@
     if (t.classList.contains('ch') && t.dataset.k != null) { $$('.ch', t.parentNode).forEach(b => b.classList.remove('sel', 'good')); t.classList.add('sel'); return; }
     // s’entraîner
     const card = t.closest('.ex2.tr');
-    if (card) { const c = byId[card.dataset.c], en = c.entraine.find(x => x.id === card.dataset.e);
+    if (card) { const c = byId[card.dataset.c], en = trAll(c).find(x => x.id === card.dataset.e);
       if (t.hasAttribute('data-check')) { checkTr(card); return; }
       if (t.hasAttribute('data-hint')) { hint(card, genOf(c, en).hints); return; }
       if (t.hasAttribute('data-sol')) { const g = genOf(c, en); $('.fbs', card).insertAdjacentHTML('beforeend', `<p class="sol">👁️ ${g.items.map(it => `${it.k}. ${it.a}`).join(' ; ')}</p>`); t.remove(); return; }
-      if (t.hasAttribute('data-new')) { SEEDS[c.id + en.id] = rnd9(); const tmp = document.createElement('div'); tmp.innerHTML = trCard(c, en, c.entraine.indexOf(en)); const nc = tmp.firstElementChild; card.replaceWith(nc); mountTr(nc); return; } }
+      if (t.hasAttribute('data-new')) { SEEDS[c.id + en.id] = rnd9(); const tmp = document.createElement('div'); tmp.innerHTML = trCard(c, en, trAll(c).indexOf(en)); const nc = tmp.firstElementChild; card.replaceWith(nc); mountTr(nc); return; } }
     const mc = t.closest('.ex2.meca');
     if (mc) { const c = byId[mc.dataset.c], m = c.plusloin.meca.find(x => x.id === mc.dataset.m);
       if (t.hasAttribute('data-check2')) { checkMeca(mc); return; }

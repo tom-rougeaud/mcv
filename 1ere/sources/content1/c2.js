@@ -6,7 +6,8 @@ const { SK } = require('./sk1');
 const RED = MCVP.RED, BLUE = MCVP.BLUE;
 
 module.exports = function (chk) {
-  const c = { id: 'c2', n: 2, col: 'fonction', icone: '📈', dom: 'Algèbre-analyse · résolution graphique', titre: 'Lire et résoudre avec un graphique' };
+  const c = { id: 'c2', n: 2, col: 'fonction', icone: '📈', dom: 'Algèbre-analyse · résolution graphique', titre: 'Résolution graphique d’équations et d’inéquations', sous: 'Lire et résoudre avec un graphique' };
+  c.parties = [{ t: 'Lire une fonction sur son graphique', n: [1] }, { t: 'Résoudre f(x) = g(x) et f(x) ≥ g(x)', n: [2, 3] }, { t: 'Application : le seuil de rentabilité', n: [4] }];
   c.travail = { question: `Au salon des créateurs, l’offre A coûte ${H('25 € par jour')}. L’offre B demande ${H('60 € de forfait')} puis ${H('15 € par jour')}. Pour combien de jours les deux offres coûtent-elles pareil ? Et ensuite, laquelle choisir ? Un graphique te répond en un coup d’œil.` };
   c.objectifs = ['Je saurai lire une image et un antécédent sur un graphique.', 'Je saurai résoudre f(x) = g(x) avec deux courbes.', 'Je saurai comparer deux offres avec f(x) ≥ g(x).', 'Je saurai trouver un seuil de rentabilité.'];
   c.depart = 'c2';

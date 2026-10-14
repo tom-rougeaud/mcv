@@ -5,7 +5,7 @@ Tous les résultats sont calculés et contrôlés par programme (`chk`) : une er
 Toutes les courbes, droites d’ajustement, nuages et solides sont tracés par calcul (`shared/g1.js`, `shared/t8.js`), jamais à main levée.
 
 ## Organisation
-- `content1/` : les 8 chapitres (`c1.js` … `c8.js`), le glossaire visuel (`gl_c1.js` … `gl_c8.js`), les contrôles blancs (`evals1.js`), le lien avec la 2de (`pont1.js`), les métiers (`metiers1.js`), les dessins « Je découvre » (`sk1.js`) ; `index.js` charge et vérifie le tout.
+- `content1/` : les 8 chapitres (`c1.js` … `c8.js`), le glossaire visuel (`gl_c1.js` … `gl_c8.js`), les contrôles blancs (`evals1.js`), le lien avec la 2de (`pont1.js`), les métiers (`metiers1.js`), les automatismes (`shared/auto1.js`), les dessins « Je découvre » (`sk1.js`) ; `index.js` charge et vérifie le tout.
 - `shared/` : `g1.js` (repère, courbes, moindres carrés), `train.js` (moteur des exercices) et `t1.js` … `t8.js` (documents de départ et exercices à support visuel, communs au manuel et à l’appli).
 - `lib/` : méthodes visuelles, scènes au trait (`scenes1.js`), pagination A4, couverture, QR codes, KaTeX.
 - `app/` : l’appli (`app3.js`, `app3.css`, `widgets.js` pour les simulateurs « Je manipule »).

@@ -18,8 +18,7 @@
         { t: 'Quelles sont les charges fixes du mois ?', kind: 'tap', cell: '0', v: a.cf, tol: .006, a: eur(a.cf, 0) },
         { t: 'Combien coûte la fabrication de 100 bougies ? (sans le loyer)', kind: 'num', v: 100 * a.cv, tol: .006, a: eur(100 * a.cv, 0) },
         { t: 'Quel est le coût total du mois pour 100 bougies ?', kind: 'num', v: C(a, 100), tol: .006, a: eur(C(a, 100), 0) },
-        { t: `Avec ${qt} bougies vendues dans le mois, Mia gagne-t-elle de l’argent ?`, kind: 'qcm', choices: ['oui', 'non'], ok: g > 0 ? 0 : 1, a: `${g > 0 ? 'oui' : 'non'} : ${qt} × ${a.p} − (${a.cf} + ${qt} × ${a.cv}) = ${fr(g)} €` },
-        { t: `Rappel : combien font ${a.m} × 25 ?`, kind: 'num', v: a.m * 25, tol: .01, a: String(a.m * 25) }] };
+        { t: `Avec ${qt} bougies vendues dans le mois, Mia gagne-t-elle de l’argent ?`, kind: 'qcm', choices: ['oui', 'non'], ok: g > 0 ? 0 : 1, a: `${g > 0 ? 'oui' : 'non'} : ${qt} × ${a.p} − (${a.cf} + ${qt} × ${a.cv}) = ${fr(g)} €` }] };
   };
 
   /* e1 · le bilan en pile : quatre barres à la même échelle */

@@ -19,8 +19,7 @@
         { t: 'De combien le nombre d’abonnés augmente-t-il chaque mois ?', kind: 'num', v: r, tol: .01, a: `+ ${r}` },
         { t: 'Combien d’abonnés prévoir au mois 6, si la hausse continue ?', kind: 'num', v: u(6), tol: .01, a: String(u(6)) },
         { t: 'Les points du graphique sont…', kind: 'qcm', choices: ['alignés', 'pas alignés'], ok: 0, a: 'alignés : la hausse est la même chaque mois' },
-        { t: 'Combien d’abonnés prévoir au mois 10 ?', kind: 'num', v: u(10), tol: .01, a: `${u0} + 10 × ${r} = ${u(10)}` },
-        { t: `Rappel : combien font ${r} × 8 ?`, kind: 'num', v: r * 8, tol: .01, a: String(r * 8) }] };
+        { t: 'Combien d’abonnés prévoir au mois 10 ?', kind: 'num', v: u(10), tol: .01, a: `${u0} + 10 × ${r} = ${u(10)}` }] };
   };
 
   /* e1 · suite arithmétique */
@@ -31,8 +30,33 @@
       hints: ['Pour passer d’un terme au suivant, on ajoute toujours la raison.', `Avec une raison négative, on enlève ${Math.abs(r)} à chaque fois.`, 'Une raison positive donne une suite croissante.'] };
   };
 
-  /* e2 · suite géométrique */
+  /* e2 · sens de variation d’une suite uₙ = f(n) */
   TR.c5e2 = R => {
+    const t = pick(R, ['dec', 'inc', 'ni']); let f, fx;
+    if (t === 'dec') { const A = pick(R, [2, 4, 5, 10]), B = pick(R, [12, 24, 36]); f = n => A + B / n; fx = `${A} + ${B} ÷ n`; }
+    else if (t === 'inc') { const c = pick(R, [1, 3, 5, 10]); f = n => n * n + c; fx = `n² + ${c}`; }
+    else { const c = pick(R, [2, 5, 10]); f = n => -n * n + 6 * n + c; fx = `− n² + 6 n + ${c}`; }
+    const N = [1, 2, 3, 4], ks = 'abcd'.split(''), d = N.slice(0, 3).map(n => f(n + 1) - f(n));
+    const ok = d.every(x => x > 0) ? 0 : d.every(x => x < 0) ? 1 : 2;
+    const items = N.map((n, i) => num(ks[i], f(n), 2, fr(rnd(f(n), 2)), t !== 'dec' && n > 0 ? [{ v: (t === 'ni' ? 1 : -1) * n * n + (t === 'ni' ? 6 * n : 0) + (f(n) - (t === 'ni' ? -n * n + 6 * n : n * n)), m: 'Attention au signe : − n² vaut − (n × n).' }] : []));
+    items.push(qcm('e', ['croissante', 'décroissante', 'ni l’une ni l’autre'], ok, ok === 0 ? 'croissante : toutes les différences sont positives' : ok === 1 ? 'décroissante : toutes les différences sont négatives' : 'ni l’une ni l’autre : la suite monte puis descend'));
+    const tabl = `<table class="dt tcx dt-sm dt-c"><thead><tr><th>n</th>${N.map(n => `<th>${n}</th>`).join('')}</tr></thead><tbody><tr><th>uₙ</th>${N.map((n, i) => `<td>${tb(ks[i], items[i].a, 14)}</td>`).join('')}</tr></tbody></table>`;
+    return { titre: 'Le sens de variation', consigne: `On donne uₙ = ${fx}. Calcule u₁ à u₄ (au centième si besoin), puis compare chaque terme au suivant.`, support: tabl + `<p class="tr-l">e. Sur ces termes, la suite semble :</p>`, items,
+      hints: ['Remplace n par 1, 2, 3 puis 4.', 'Calcule u₂ − u₁, u₃ − u₂ et u₄ − u₃.', 'Toutes positives : croissante ; toutes négatives : décroissante ; sinon, ni l’une ni l’autre.'] };
+  };
+
+  /* e3 · somme des premiers termes d’une suite arithmétique */
+  TR.c5e3 = R => {
+    const u0 = pick(R, [10, 20, 30, 50]), r = pick(R, [2, 4, 5, 10]), N = pick(R, [6, 8, 10, 12]), u = n => u0 + r * n, last = u(N - 1), S = N * (u0 + last) / 2;
+    const W = 600, H = 250, bw = Math.min(44, 480 / N), x0 = (W - N * bw) / 2, base = 220, k = 190 / last;
+    let bars = ''; for (let n = 0; n < N; n++) bars += `<rect x="${(x0 + n * bw + 3).toFixed(1)}" y="${(base - u(n) * k).toFixed(1)}" width="${(bw - 6).toFixed(1)}" height="${(u(n) * k).toFixed(1)}" fill="${BLUE}" opacity=".85"/>` + T((x0 + n * bw + bw / 2).toFixed(1), (base - u(n) * k - 5).toFixed(1), String(u(n)), { fs: 11, w: 600 });
+    const svg = `<svg viewBox="0 0 ${W} ${H}" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Les ${N} premiers termes en barres">${bars}<line x1="${x0}" y1="${base}" x2="${x0 + N * bw}" y2="${base}" stroke="${P.INK}" stroke-width="2"/>${T(x0 + bw / 2, base + 18, 'u₀', { fs: 12, c: 'ts' })}${T(x0 + (N - 0.5) * bw, base + 18, 'u' + String(N - 1).split('').map(c => '₀₁₂₃₄₅₆₇₈₉'[c]).join(''), { fs: 12, c: 'ts' })}</svg>`;
+    const items = [num('a', N, 0, String(N), [{ v: N - 1, m: `De u₀ à u${N - 1}, il y a ${N} termes : on compte aussi u₀.` }]), num('b', last, 0, String(last), [{ v: u(N), m: `Le dernier terme est u${N - 1} = u₀ + ${N - 1} × r.` }]), num('c', u0 + last, 0, String(u0 + last)), num('d', S, 0, String(S), [{ v: N * (u0 + last), m: 'Tu as oublié de diviser par 2.' }])];
+    return { titre: 'La somme des premiers termes', consigne: `Suite arithmétique : u₀ = ${u0}, raison r = ${r}. On additionne les termes de u₀ à u${N - 1}.`, support: svg + `<p class="tr-l">a. Nombre de termes : ${tb('a', items[0].a, 10)} &nbsp; b. Dernier terme : ${tb('b', items[1].a, 12)}</p><p class="tr-l">c. Premier + dernier : ${tb('c', items[2].a, 12)} &nbsp; d. Somme : ${tb('d', items[3].a, 14)}</p>`, items,
+      hints: ['Compte u₀ : de u₀ à u₉, il y a 10 termes.', 'Dernier terme = u₀ + (nombre de termes − 1) × r.', 'Somme = nombre de termes × (premier + dernier) ÷ 2.'] };
+  };
+  /* pour aller plus loin (programme de terminale) · suite géométrique */
+  TR.c5g1 = R => {
     const v0 = pick(R, [100, 200, 400, 500, 1000]), q = pick(R, [1.1, 1.2, 1.5, 2, 0.8, 0.5]), v = n => rnd(v0 * Math.pow(q, n), 4);
     const pc = rnd((q - 1) * 100, 0), w0 = pick(R, [40, 60, 80]), q2 = pick(R, [1.25, 1.5, 3, 0.75]);
     const items = [num('a', v(1), 2, fr(v(1))), num('b', v(2), 2, fr(v(2)), [{ v: v0 + 2 * (v(1) - v0), m: 'Tu as ajouté la même quantité. Dans une suite géométrique, on multiplie par q à chaque fois.' }]), num('c', v(3), 2, fr(v(3))), num('d', q2, 2, fr(q2), [{ v: rnd(w0 * q2 - w0, 2), m: 'Tu as fait une soustraction. La raison géométrique est un quotient : w₁ ÷ w₀.' }]), qcm('e', ['croissante', 'décroissante'], q > 1 ? 0 : 1, q > 1 ? `croissante : q = ${fr(q)} est plus grand que 1` : `décroissante : q = ${fr(q)} est entre 0 et 1`)];
@@ -40,8 +64,8 @@
       hints: ['Pour passer d’un terme au suivant, on multiplie par q.', 'v₂ = v₁ × q, puis v₃ = v₂ × q.', 'La raison q est w₁ ÷ w₀.'] };
   };
 
-  /* e3 · reconnaître une suite sur un graphique */
-  TR.c5e3 = R => {
+  /* pour aller plus loin · arithmétique ou géométrique ? */
+  TR.c5g2 = R => {
     const ari = R() < .5;
     let u, y1, st, rais, txt;
     if (ari) { const u0 = pick(R, [10, 20, 30, 70, 80]), r = pick(R, [10, 20, -10]); u = n => u0 + r * n; rais = r; txt = `r = ${sg(r)}`; }

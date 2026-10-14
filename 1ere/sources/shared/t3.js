@@ -30,8 +30,7 @@
         { t: 'Pour quel prix le bénéfice est-il le plus grand ?', kind: 'num', v: xs, tol: .006, a: `${xs} €` },
         { t: 'Quel est ce bénéfice maximal ?', kind: 'num', v: f(xs), tol: .006, a: String(f(xs)) },
         { t: `Pour un prix de ${r1} €, le bénéfice est…`, kind: 'qcm', choices: ['positif', 'nul', 'négatif'], ok: 1, a: 'nul : la courbe touche l’axe horizontal' },
-        { t: 'Pour un prix de 0 €, le stand gagne-t-il de l’argent ?', kind: 'qcm', choices: ['oui', 'non'], ok: f(0) > 0 ? 0 : 1, a: f(0) > 0 ? 'oui' : `non : B(0) = ${f(0)} est négatif` },
-        { t: 'Rappel : combien font (− 3)² ?', kind: 'num', v: 9, tol: .01, a: '9' }] };
+        { t: 'Pour un prix de 0 €, le stand gagne-t-il de l’argent ?', kind: 'qcm', choices: ['oui', 'non'], ok: f(0) > 0 ? 0 : 1, a: f(0) > 0 ? 'oui' : `non : B(0) = ${f(0)} est négatif` }] };
   };
 
   /* e1 · lire une parabole */

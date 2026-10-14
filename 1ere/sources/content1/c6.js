@@ -7,7 +7,8 @@ const RED = MCVP.RED, BLUE = MCVP.BLUE, GRN = MCVP.GRN, INK = MCVP.INK, ORG = MC
 const fr = (x, d = 2) => String(rnd(x, d)).replace('-', '− ').replace('.', ',');
 
 module.exports = function (chk) {
-  const c = { id: 'c6', n: 6, col: 'donnees', icone: '📊', dom: 'Statistique et probabilités · statistique à deux variables', titre: 'Deux variables liées : prévoir avec une droite' };
+  const c = { id: 'c6', n: 6, col: 'donnees', icone: '📊', dom: 'Statistique et probabilités · statistique à deux variables', titre: 'Statistique à deux variables quantitatives', sous: 'Prévoir avec une droite' };
+  c.parties = [{ t: 'Nuage de points et ajustement affine', n: [1, 2] }, { t: 'Qualité de l’ajustement et prévisions', n: [3, 4] }];
   c.travail = { question: `Une boutique en ligne a noté, pendant 8 mois, son ${H('budget publicitaire')} et son ${H('chiffre d’affaires')}. Plus elle dépense en publicité, plus elle vend… à peu près. Combien peut-elle espérer vendre avec 1 000 € de publicité ? Une droite bien choisie aide à le prévoir, avec prudence.` };
   c.objectifs = ['Je saurai représenter un nuage de points et calculer le point moyen.', 'Je saurai obtenir une droite d’ajustement avec un outil numérique.', 'Je saurai interpréter le coefficient de détermination R².', 'Je saurai faire une prévision et en discuter la fiabilité.'];
   c.depart = 'c6';

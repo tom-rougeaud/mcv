@@ -11,6 +11,7 @@ const HERE = __dirname, B = path.join(HERE, 'build');
 fs.mkdirSync(B, { recursive: true });
 
 const { MCVT } = require('./shared/train.js');
+const AUTO = require('./shared/auto1.js');
 const QR = JSON.parse(fs.readFileSync(path.join(HERE, 'lib', 'qr.json'), 'utf8'));
 const ERR = [];
 const chk = (ok, msg) => { if (!ok) ERR.push(msg); };
@@ -28,26 +29,30 @@ const trouTxt = h => h.replace(/⟦([^⟧]+)⟧/g, '<b>$1</b>');
 const qcmOpts = it => `<span class="opts">${it.qcm.choices.map((c, j) => opt(c, j === it.qcm.ok)).join('')}</span>`;
 
 /* ---------- « De la 2de à la 1re » ---------- */
-const pontBox = c => `<div class="blk pont3 c-${c.col}"><div class="pont3-h">🔗 De la 2de à la 1re</div><div class="pont3-g"><div class="pont3-a"><span class="pont3-k">En 2de, tu as appris</span><ul>${c.pont.de.map(x => `<li><b class="pont3-n">ch. ${x.n}</b> <i>${esc(x.titre)}</i> : ${x.sais}</li>`).join('')}</ul></div><div class="pont3-b"><span class="pont3-k">En 1re, tu vas plus loin</span><ul>${c.pont.plus.map(x => `<li>${x}</li>`).join('')}</ul></div></div></div>`;
+const pontBox = c => `<div class="blk pont3 c-${c.col}"><div class="pont3-h">🔗 De la 2de à la 1re : ce qui reste, ce qui change</div><div class="pont3-g"><div class="pont3-a"><span class="pont3-k">En 2de, tu as appris</span><ul>${c.pont.de.map(x => `<li><b class="pont3-n">ch. ${x.n}</b> <i>${esc(x.titre)}</i> : ${x.sais}</li>`).join('')}</ul><p class="pont3-ex"><b>Exemple de 2de</b> · ${c.pont.ex2}</p></div><div class="pont3-b"><span class="pont3-k">En 1re, la même situation va plus loin</span><p class="pont3-ex">${c.pont.ex1}</p></div></div><div class="pont3-g3"><div><span class="pont3-k">✅ Ce qui reste</span><ul>${c.pont.reste.map(x => `<li>${x}</li>`).join('')}</ul></div><div><span class="pont3-k">➕ Ce qui change</span><ul>${c.pont.change.map(x => `<li>${x}</li>`).join('')}</ul></div><div><span class="pont3-k">💼 À quoi ça sert</span><p>${c.pont.pourquoi}</p></div></div></div>`;
 /* ---------- un chapitre ---------- */
 function chapter(c) {
   const col = c.col, R = id => `<b data-numof="${c.id}-${id}">·</b>`;
   const fixed = [], ex = [], key = [], rep = [];
   /* 1. ouverture « Au travail » */
-  fixed.push(`<div class="blk op3 c-${col}"><div class="op3-h"><div><div class="ch-k">Chapitre ${c.n} · ${esc(c.dom)}</div><h2 class="fit">${c.titre}</h2></div><div class="qrbox">${QR[c.id].svg}<span>Ce chapitre<br>dans l’appli</span></div></div>
+  fixed.push(`<div class="blk op3 c-${col}"><div class="op3-h"><div><div class="ch-k">Chapitre ${c.n} · ${esc(c.dom)}</div><h2 class="fit">${c.titre}</h2><div class="op3-sous">${esc(c.sous)}</div></div><div class="qrbox">${QR[c.id].svg}<span>Ce chapitre<br>dans l’appli</span></div></div>
     <div class="op3-sc">${SC[c.id]()}</div>
     <div class="op3-q"><span class="op3-k">💼 Au travail</span><span class="mt-r">${c.metier.roles.map(r => `<span>${r}</span>`).join('')}</span><p>${c.travail.question}</p></div>
-    <div class="op3-o"><b>Dans ce chapitre</b><ul>${c.objectifs.map(o => `<li>${o}</li>`).join('')}</ul></div></div>`);
+    <div class="op3-o"><b>Le plan du chapitre</b><div class="plan3">${c.parties.map((p, k) => `<div class="plan3-p${p.n.some(j => c.notions[j - 1].hp) ? ' hp' : ''}"><span class="plan3-l">${'ABCDE'[k]}</span><div><b>${p.t}</b><span>${p.n.map(j => `${j}. ${c.notions[j - 1].titre}`).join(' · ')}</span></div></div>`).join('')}</div><b>Dans ce chapitre</b><ul>${c.objectifs.map(o => `<li>${o}</li>`).join('')}</ul></div></div>`);
   fixed.push(pontBox(c));
+  /* zone « Automatismes » : 5 questions flash, sans calculatrice */
+  const au = AUTO.gen(c.id, seedOf(c.id + '-auto'));
+  fixed.push(`<div class="blk auto3 c-${col}" data-sec="${c.id}-auto"><div class="auto3-h"><span class="ic">⚡</span>Automatismes<span class="sec-sub">5 minutes · sans calculatrice · les prérequis de 2de du chapitre et un intérêt simple</span></div><ol class="auto3-q">${au.map(q => `<li><span>${q.t}</span>${bl(26, q.a)}</li>`).join('')}</ol></div>`);
+  key.push({ k: 'auto', html: `<b>Automatismes</b> — ${au.map((q, i) => `${i + 1}. ${q.a}`).join(' ; ')}.` });
   /* 2. point de départ : un document du métier, 6 questions */
   const dp = MCVT.dep(c.depart, seedOf(c.id + '-dep'));
-  fixed.push(`<div class="blk dep3 c-${col}" data-sec="${c.id}-dep"><div class="dep3-h"><span class="ic">🚀</span>Point de départ<span class="sec-sub">un document du métier · 6 questions · sans calculatrice</span></div><div class="dep3-g"><div class="dep3-doc"><div class="dep3-t">${dp.titre}</div>${dp.doc}</div><ol class="dep3-q">${dp.qs.map(q => `<li><span class="dq-t">${q.t}</span>${q.kind === 'qcm' ? `<span class="opts">${q.choices.map((x, j) => opt(x, j === q.ok)).join('')}</span>` : bl(24, q.a)}</li>`).join('')}</ol></div></div>`);
+  fixed.push(`<div class="blk dep3 c-${col}" data-sec="${c.id}-dep"><div class="dep3-h"><span class="ic">🚀</span>Point de départ<span class="sec-sub">un document du métier · 5 questions · sans calculatrice</span></div><div class="dep3-g"><div class="dep3-doc"><div class="dep3-t">${dp.titre}</div>${dp.doc}</div><ol class="dep3-q">${dp.qs.map(q => `<li><span class="dq-t">${q.t}</span>${q.kind === 'qcm' ? `<span class="opts">${q.choices.map((x, j) => opt(x, j === q.ok)).join('')}</span>` : bl(24, q.a)}</li>`).join('')}</ol></div></div>`);
   key.push({ k: 'dep', html: `<b>Point de départ</b> — ${dp.qs.map((q, i) => `${i + 1}. ${q.a}`).join(' ; ')}.` });
   /* 3. la leçon : chaque notion en six temps */
   fixed.push(`<div class="blk sec-h kwn" data-sec="${c.id}-cours"><span class="ic">📘</span>La leçon<span class="sec-sub">je découvre, je comprends, je vois, je retiens</span></div>`);
   c.notions.forEach((nt, i) => {
     const a = AST[nt.astuce.k];
-    fixed.push(`<div class="blk nt3 kwn c-${col}"><div class="nt3-h"><span class="lc-n">${i + 1}</span>${nt.titre}</div><div class="nt3-g"><div class="nt3-d"><span class="t3">🔎 Je découvre</span><p>${nt.decouvre.txt}</p><div class="nt3-img">${nt.decouvre.img}</div></div><div class="nt3-c"><span class="t3">💬 Je comprends</span>${nt.comprends}</div></div></div>`);
+    fixed.push(`<div class="blk nt3 kwn c-${col}"><div class="nt3-k">Partie ${'ABCDE'[c.parties.findIndex(p => p.n.includes(i + 1))]} · ${c.parties.find(p => p.n.includes(i + 1)).t}${nt.hp ? ' <span class="hp3">➕ Pour aller plus loin · programme de terminale</span>' : ''}</div><div class="nt3-h"><span class="lc-n">${i + 1}</span>${nt.titre}</div><div class="nt3-g"><div class="nt3-d"><span class="t3">🔎 Je découvre</span><p>${nt.decouvre.txt}</p><div class="nt3-img">${nt.decouvre.img}</div></div><div class="nt3-c"><span class="t3">💬 Je comprends</span>${nt.comprends}</div></div></div>`);
     fixed.push(`<div class="blk nt3v c-${col}"><span class="t3">👀 Je vois</span>${nt.vois}<p class="nt3-leg">${nt.voisLeg}</p></div>`);
     fixed.push(`<div class="blk nt3r c-${col}"><div class="nt3-rg"><div class="lc-r"><span class="lc-t">📌 Je retiens</span>${nt.retiens}</div><div class="lc-e"><span class="lc-t2">Exemple</span>${nt.exemple}</div></div>${nt.wide || ''}<div class="nt3-ag"><div class="att">⚠️ <b>Attention</b> · ${nt.attention}</div><div class="ast3 ast-${nt.astuce.k}">${a[0]} <b>${a[1]}</b> · ${nt.astuce.t}</div></div></div>`);
   });
@@ -138,7 +143,7 @@ const pComp2 = `<div class="page c-algo"><div class="inner">
 </div><div class="foot"></div></div>`;
 const pToc = `<div class="page" data-recto="0"><div class="inner" data-sec="sommaire">
   <h1 class="pg-t">Sommaire</h1>
-  <div class="toc2"><div class="tc2 ann"><span class="tn2">🔗</span><div><b>De la 2de à la 1re</b><span>Ce que chaque chapitre reprend de la 2de, et ce qu’il approfondit</span></div><span class="tp2"><span data-pageof="pont">…</span></span></div>${DATA.map(c => `<div class="tc2 c-${c.col}"><span class="tn2">${c.n}</span><div><b>${esc(c.titre)}</b><span>${c.notions.map(n => n.titre).join(' · ')}</span></div><span class="tp2"><span data-pageof="${c.id}">…</span></span></div>`).join('')}
+  <div class="toc2"><div class="tc2 ann"><span class="tn2">🔗</span><div><b>De la 2de à la 1re</b><span>Ce que chaque chapitre reprend de la 2de, et ce qu’il approfondit</span></div><span class="tp2"><span data-pageof="pont">…</span></span></div>${DATA.map(c => `<div class="tc2 c-${c.col}"><span class="tn2">${c.n}</span><div><b>${esc(c.titre)}</b><span>${c.parties.map((p, k) => `${'ABCDE'[k]}. ${p.t}`).join(' · ')}</span></div><span class="tp2"><span data-pageof="${c.id}">…</span></span></div>`).join('')}
   <div class="tc2 ann"><span class="tn2">✔️</span><div><b>Réponses de « Je m’entraîne »</b><span>Pour vérifier seul, chapitre par chapitre</span></div><span class="tp2"><span data-pageof="rep">…</span></span></div><div class="tc2 ann"><span class="tn2">🔤</span><div><b>Glossaire visuel</b><span>Les mots de chaque chapitre, avec un schéma</span></div><span class="tp2"><span data-pageof="glo">…</span></span></div></div>
   <p class="pg-p small" style="margin-top:4mm">Programme de mathématiques de première professionnelle (BO spécial n° 5 du 11 avril 2019), avec le module « Calculs commerciaux et financiers » des spécialités sans physique-chimie.</p>
 </div><div class="foot"></div></div>`;
@@ -147,8 +152,8 @@ const pToc = `<div class="page" data-recto="0"><div class="inner" data-sec="somm
 const pontSec = `<section class="sec" data-key="pont" data-recto="0" data-run="De la 2de à la 1re" data-col="brand"><div class="blk chead kwn c-brand"><div class="ch-txt"><div class="ch-k">Avant de commencer</div><h2>🔗 De la 2de à la 1re</h2><p>Chaque chapitre de 1re part de ce que tu as appris en 2de, puis va plus loin. Avant un chapitre, relis les chapitres de 2de indiqués : ils sont aussi dans l’appli de 2de.</p></div></div>`
   + DATA.map(c => `<div class="blk pontl c-${c.col}"><span class="pontl-n">${c.n}</span><div class="pontl-t"><b>${esc(c.titre)}</b><span class="pontl-d">S’appuie sur la 2de : ${c.pont.de.map(x => `ch. ${x.n} <i>${esc(x.titre)}</i>`).join(' · ')}</span><span class="pontl-f">➜ ${c.pont.fil}</span></div></div>`).join('') + `</section>`;
 /* ---------- continuité 2de → 1re : version professeur ---------- */
-const pontProf = `<section class="sec" data-key="pontp" data-recto="0" data-run="Continuité 2de → 1re · version professeur" data-col="brand"><div class="blk chead kwn c-brand"><div class="ch-txt"><div class="ch-k">Version professeur</div><h2>🧭 Continuité 2de → 1re, chapitre par chapitre</h2><p>Pour chaque chapitre : les appuis du manuel de 2de, les automatismes à réactiver (point de départ, flash du début de séance), ce qui est réellement nouveau en 1re et les points de vigilance repérés dans les erreurs fréquentes.</p></div></div>`
-  + DATA.map(c => `<div class="blk pontp c-${c.col}"><h3><span class="pontl-n">${c.n}</span>${esc(c.titre)}</h3><p class="pontp-d"><b>Appuis en 2de</b> · ${c.pont.de.map(x => `ch. ${x.n} « ${esc(x.titre)} »`).join(' · ')}</p><table class="pontp-t"><tr><th>À réactiver</th><th>Nouveau en 1re</th><th>Vigilance</th></tr><tr><td><ul>${c.pont.reac.map(x => `<li>${x}</li>`).join('')}</ul></td><td><ul>${c.pont.plus.map(x => `<li>${x}</li>`).join('')}</ul></td><td><ul>${c.pont.vig.map(x => `<li>${x}</li>`).join('')}</ul></td></tr></table></div>`).join('') + `</section>`;
+const pontProf = `<section class="sec" data-key="pontp" data-recto="0" data-run="Continuité 2de → 1re · version professeur" data-col="brand"><div class="blk chead kwn c-brand"><div class="ch-txt"><div class="ch-k">Version professeur</div><h2>🧭 Continuité 2de → 1re, chapitre par chapitre</h2><p>Pour chaque chapitre : les capacités du programme de 1re couvertes et les parties du chapitre, les appuis du manuel de 2de, les automatismes à réactiver (zone ⚡ Automatismes, flash du début de séance) et les points de vigilance repérés dans les erreurs fréquentes.</p></div></div>`
+  + DATA.map(c => `<div class="blk pontp c-${c.col}"><h3><span class="pontl-n">${c.n}</span>${esc(c.titre)}</h3><p class="pontp-d"><b>Appuis en 2de</b> · ${c.pont.de.map(x => `ch. ${x.n} « ${esc(x.titre)} »`).join(' · ')}</p><table class="pontp-t"><tr><th>Capacités du programme de 1re</th><th>À réactiver (2de)</th><th>Vigilance</th></tr><tr><td><ul>${c.pont.prog.map(x => `<li>${x}</li>`).join('')}</ul><p class="pontp-pl"><b>Parties</b> · ${c.parties.map((p, i) => `${'ABCDE'[i]}. ${p.t}`).join(' · ')}</p></td><td><ul>${c.pont.reac.map(x => `<li>${x}</li>`).join('')}</ul></td><td><ul>${c.pont.vig.map(x => `<li>${x}</li>`).join('')}</ul></td></tr></table></div>`).join('') + `</section>`;
 
 /* ---------- chapitres ---------- */
 const chapSecs = CH.map(({ c, fixed, ex, ev }) => {

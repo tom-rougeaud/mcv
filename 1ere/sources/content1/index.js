@@ -12,7 +12,8 @@ module.exports = chk => {
     c.metier = METIERS[c.id]; c.eval = EVALS[c.id]; c.pont = PONT[c.id];
     chk(!!c.pont && c.pont.de.length >= 1 && c.pont.plus.length >= 2, `${c.id} : encart « De la 2de à la 1re »`);
     chk(!!c.metier && !!c.eval, `métier ou contrôle manquant : ${c.id}`);
-    chk(c.notions.length >= 3 && c.notions.length <= 4, `${c.id} : 3 ou 4 notions`);
+    chk(c.notions.length >= 3 && c.notions.length <= 6, `${c.id} : 3 à 6 notions`);
+    chk(!!c.parties && c.parties.flatMap(p => p.n).join() === c.notions.map((_, i) => i + 1).join(), `${c.id} : les parties couvrent toutes les notions, dans l’ordre`);
     chk(c.entraine.length === 3 && c.probs.length === 3, `${c.id} : 3 exercices et 3 problèmes`);
     chk(c.resolus.length === 2 && !!c.resolus[1].trous, `${c.id} : un résolu complet et un à trous`);
     return TEX.deep(c);

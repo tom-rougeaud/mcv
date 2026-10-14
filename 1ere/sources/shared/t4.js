@@ -19,8 +19,7 @@
         { t: `De combien varie-t-il entre la semaine ${k} et la semaine ${k + 1} (en k€) ?`, kind: 'num', v: steps[k], tol: .01, a: sg(steps[k]) },
         { t: 'Entre quelle semaine et la suivante la hausse est-elle la plus forte ? Donne la première semaine.', kind: 'num', v: jmax, tol: .01, a: String(jmax) },
         { t: `Entre les semaines ${jneg} et ${jneg + 1}, la courbe…`, kind: 'qcm', choices: ['monte', 'descend'], ok: 1, a: 'descend : la valeur diminue' },
-        { t: `Entre les semaines ${jmax} et ${jmax + 1}, la courbe…`, kind: 'qcm', choices: ['monte', 'descend'], ok: 0, a: 'monte : la valeur augmente' },
-        { t: 'Rappel : une droite passe par (0 ; 2) et (4 ; 10). Quelle est sa pente ?', kind: 'num', v: 2, tol: .01, a: '(10 − 2) ÷ 4 = 2' }] };
+        { t: `Entre les semaines ${jmax} et ${jmax + 1}, la courbe…`, kind: 'qcm', choices: ['monte', 'descend'], ok: 0, a: 'monte : la valeur augmente' }] };
   };
 
   /* e1 · lire la pente d’une tangente */

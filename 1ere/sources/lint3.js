@@ -20,7 +20,7 @@ const stat = { notions: 0, phrases: 0, consignes: 0, departs: 0, supports: 0 };
 raw.forEach((c, i) => {
   const F = full[i], id = c.id;
   /* volumes */
-  if (c.notions.length < 3 || c.notions.length > 4) err(`${id} : ${c.notions.length} notions (3 ou 4 attendues)`);
+  if (c.notions.length < 3 || c.notions.length > 6) err(`${id} : ${c.notions.length} notions (3 à 6 attendues)`);
   if (c.entraine.length !== 3) err(`${id} : ${c.entraine.length} exercices « Je m’entraîne »`);
   if (c.probs.length !== 3) err(`${id} : ${c.probs.length} problèmes`);
   if (c.mots.length < 5) err(`${id} : seulement ${c.mots.length} mots à connaître`);
@@ -55,7 +55,7 @@ raw.forEach((c, i) => {
   /* départ et entraînement : un support visuel pour chaque question, sur 50 tirages */
   for (let s = 1; s <= 50; s++) {
     const d = MCVT.dep(c.depart, s * 7919);
-    if (d.qs.length !== 6) err(`${id} départ : ${d.qs.length} questions`);
+    if (d.qs.length !== 5) err(`${id} départ : ${d.qs.length} questions`);
     if (!/<table|<svg|class="et3|class="aff3/.test(d.doc)) err(`${id} départ (tirage ${s}) : pas de document visuel`);
     d.qs.forEach(q => { if (words(q.t).length > L.consigne) err(`${id} départ : question de ${words(q.t).length} mots`); forbid(`${id} départ`, q.t + ' ' + q.a); });
     stat.departs++;

@@ -48,8 +48,7 @@
         { t: 'Quel est le rayon de la bougie A ?', kind: 'num', v: d / 2, tol: .01, a: `${d} ÷ 2 = ${d / 2} cm` },
         { t: 'Quel est le volume de la bougie C, en cm³ ?', kind: 'num', v: c * c * hb, tol: .01, a: `${c} × ${c} × ${hb} = ${c * c * hb} cm³` },
         { t: 'Quelle bougie a une pointe ?', kind: 'qcm', choices: ['A', 'B', 'C'], ok: 1, a: 'B : le cône a un sommet' },
-        { t: 'Combien de cm³ y a-t-il dans 1 litre ?', kind: 'num', v: 1000, tol: .01, a: '1 L = 1 dm³ = 1 000 cm³' },
-        { t: 'Rappel : combien font 3 × 3 × 3 ?', kind: 'num', v: 27, tol: .01, a: '27' }] };
+        { t: 'Combien de cm³ y a-t-il dans 1 litre ?', kind: 'num', v: 1000, tol: .01, a: '1 L = 1 dm³ = 1 000 cm³' }] };
   };
 
   /* e1 · un carton en perspective cavalière */

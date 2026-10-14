@@ -30,12 +30,23 @@
         { t: 'Combien de secteurs donnent un bon de 5 € ?', kind: 'num', v: p, tol: .01, a: String(p) },
         { t: 'Quelle est la probabilité de gagner le bon de 50 € ? (en décimal)', kind: 'num', v: pr(g, n), tol: .0006, a: `1 ÷ ${n} = ${fr(pr(g, n))}` },
         { t: 'Quel résultat est le plus probable ?', kind: 'qcm', choices: ['bon de 50 €', 'bon de 5 €', 'perdu'], ok: 2, a: `perdu : ${l} secteurs sur ${n}` },
-        { t: 'Quelle est la probabilité de gagner un bon (50 € ou 5 €) ? (en décimal)', kind: 'num', v: pr(g + p, n), tol: .0006, a: `${g + p} ÷ ${n} = ${fr(pr(g + p, n))}` },
-        { t: 'Rappel : écris 3 ÷ 10 en décimal.', kind: 'num', v: .3, tol: .0006, a: '0,3' }] };
+        { t: 'Quelle est la probabilité de gagner un bon (50 € ou 5 €) ? (en décimal)', kind: 'num', v: pr(g + p, n), tol: .0006, a: `${g + p} ÷ ${n} = ${fr(pr(g + p, n))}` }] };
   };
 
-  /* e1 · tickets : probabilité, contraire, réunion d’évènements incompatibles */
+  /* e1 · une loi de probabilité sans équiprobabilité (roue à secteurs inégaux) */
   TR.c7e1 = R => {
+    const p1 = pick(R, [.05, .1]), p2 = pick(R, [.15, .2, .25]), p3 = pick(R, [.1, .2, .3]), p4 = rnd(1 - p1 - p2 - p3, 2);
+    const parts = [[p1, C1, 'gros lot'], [p2, C2, 'petit lot'], [p3, '#9DB9EA', 'bon de réduction'], [p4, C3, 'perdu']];
+    let x = 40, s = ''; parts.forEach(([p, f, t], i) => { const w = p * 520; s += `<rect x="${x.toFixed(1)}" y="40" width="${w.toFixed(1)}" height="46" fill="${f}" stroke="${INK}" stroke-width="1.6"/>` + (w > 40 ? T((x + w / 2).toFixed(1), 69, i === 3 ? '?' : fr(p), { fs: 14 }) : '') + T((x + w / 2).toFixed(1), 110 + (i % 2) * 16, t, { fs: 12, c: 'ts' }); x += w; });
+    const svg = `<svg viewBox="0 0 600 140" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Probabilités des secteurs d’une roue">${s}${T(40, 28, '0', { fs: 12, a: 'start', c: 'ts' })}${T(560, 28, '1', { fs: 12, a: 'end', c: 'ts' })}</svg>`;
+    const tabl = `<table class="dt tcx dt-sm dt-c"><thead><tr><th>Issue</th><th>gros lot</th><th>petit lot</th><th>bon de réduction</th><th>perdu</th></tr></thead><tbody><tr><th>Probabilité</th><td>${fr(p1)}</td><td>${fr(p2)}</td><td>${fr(p3)}</td><td>${tb('a', fr(p4), 12)}</td></tr></tbody></table>`;
+    const items = [num('a', p4, 2, fr(p4), [{ v: rnd(p1 + p2 + p3, 2), m: 'C’est la somme des trois autres. La probabilité de « perdu » est 1 moins cette somme.' }]), num('b', rnd(p1 + p2, 2), 2, fr(rnd(p1 + p2, 2))), num('c', rnd(1 - p1 - p2, 2), 2, fr(rnd(1 - p1 - p2, 2)), [{ v: rnd(p1 + p2, 2), m: 'C’est P(gagner un lot). On demande l’évènement contraire : 1 − P(gagner un lot).' }]), qcm('d', ['oui', 'non'], 1, 'non : les issues n’ont pas toutes la même probabilité')];
+    return { titre: 'Une roue sans équiprobabilité', consigne: 'Les secteurs de la roue n’ont pas la même taille. Le tableau donne la probabilité de chaque issue.', support: svg + tabl + `<p class="tr-l">a. P(perdu) dans le tableau &nbsp; b. P(gagner un lot) = P(gros lot) + P(petit lot) = ${tb('b', items[1].a, 12)}</p><p class="tr-l">c. P(ne pas gagner de lot) = ${tb('c', items[2].a, 12)} &nbsp; d. Les issues sont-elles équiprobables ?</p>`, items,
+      hints: ['La somme des probabilités de toutes les issues vaut 1.', '« Gros lot » et « petit lot » sont incompatibles : on additionne.', 'Ne pas gagner de lot est le contraire de gagner un lot.'] };
+  };
+
+  /* pour aller plus loin · tickets : probabilité, contraire, réunion d’évènements incompatibles */
+  TR.c7t1 = R => {
     const n = pick(R, [20, 25, 40, 50]), g = pick(R, [1, 2]), p = pick(R, [3, 4, 5, 6]), l = n - g - p;
     const sv = grille(n, [[g, C1, 'gros lot'], [p, C2, 'petit lot'], [l, C3, 'perdu']], `${n} tickets`);
     const items = [num('a', pr(g, n), 3, fr(pr(g, n)), [{ v: g, m: 'Une probabilité est un quotient : cas favorables ÷ cas possibles.' }]), num('b', pr(g + p, n), 3, fr(pr(g + p, n)), [{ v: pr(p, n), m: 'Gagner un lot, c’est gagner le gros lot ou un petit lot : additionne les deux.' }]), num('c', pr(l, n), 3, fr(pr(l, n)), [{ v: pr(g + p, n), m: 'C’est la probabilité de gagner. Perdre est l’évènement contraire : 1 − P(gagner).' }]), qcm('d', ['oui', 'non'], 0, 'oui : un ticket ne peut pas être à la fois gros lot et petit lot')];
@@ -57,7 +68,7 @@
     const L = a + b, M = c + d, S = a + c;
     const items = [num('a', L, 0, String(L)), num('b', S, 0, String(S)), num('c', N, 0, String(N)), num('d', rnd(a / N, 3), 3, fr(rnd(a / N, 3)), [{ v: rnd(a / L, 3), m: 'Ici on prend un client parmi tous les clients : divise par le total général.' }]), num('e', rnd(a / L, 3), 3, fr(rnd(a / L, 3)), [{ v: rnd(a / N, 3), m: '« Parmi les clients en ligne » : divise par le total de la ligne « en ligne ».' }, { v: rnd(a / S, 3), m: 'Divise par le total des clients en ligne, pas par celui des satisfaits.' }])];
     const tabl = `<table class="dt tcx dt-sm dt-c"><thead><tr><th></th><th>satisfait</th><th>pas satisfait</th><th>total</th></tr></thead><tbody><tr><th>en ligne</th><td>${a}</td><td>${b}</td><td>${tb('a', String(L), 12)}</td></tr><tr><th>en magasin</th><td>${c}</td><td>${d}</td><td>${M}</td></tr><tr><th>total</th><td>${tb('b', String(S), 12)}</td><td>${b + d}</td><td>${tb('c', String(N), 12)}</td></tr></tbody></table>`;
-    return { titre: 'Un tableau croisé', consigne: 'Une enquête classe les clients selon leur mode d’achat et leur satisfaction. Complète les totaux (a, b, c), puis calcule les probabilités en décimal, arrondies au millième.', support: tabl + `<p class="tr-l">d. P(en ligne et satisfait) = ${tb('d', items[3].a, 14)}</p><p class="tr-l">e. Parmi les clients en ligne, probabilité d’être satisfait = ${tb('e', items[4].a, 14)}</p>`, items,
+    return { titre: 'Un tableau croisé', consigne: 'Une enquête classe les clients selon leur mode d’achat et leur satisfaction. Complète les totaux (a, b, c), puis calcule les probabilités en décimal, arrondies au millième.', support: tabl + `<p class="tr-l">d. P(en ligne et satisfait) = ${tb('d', items[3].a, 14)}</p><p class="tr-l">e. Probabilité qu’un client soit satisfait sachant qu’il achète en ligne : P<sub>en ligne</sub>(satisfait) = ${tb('e', items[4].a, 14)}</p>`, items,
       hints: ['Additionne chaque ligne et chaque colonne.', 'Pour un client pris parmi tous : divise par le total général.', '« Parmi les clients en ligne » : divise par le total de cette ligne.'] };
   };
   if (typeof module !== 'undefined') module.exports = { grille, venn };

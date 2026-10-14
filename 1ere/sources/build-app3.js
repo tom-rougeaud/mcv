@@ -11,7 +11,7 @@ const { SC } = require('./lib/scenes1');
 if (errs) { console.error(errs + ' erreur(s) de contenu'); process.exit(1); }
 
 /* on n’embarque que ce dont l’appli a besoin */
-const slim = c => ({ id: c.id, n: c.n, col: c.col, icone: c.icone, dom: c.dom, titre: c.titre, prepa: !!c.prepa, travail: c.travail, objectifs: c.objectifs, metier: c.metier, pont: c.pont, scene: SC[c.id](), depart: c.depart,
+const slim = c => ({ id: c.id, n: c.n, col: c.col, icone: c.icone, dom: c.dom, titre: c.titre, prepa: !!c.prepa, travail: c.travail, objectifs: c.objectifs, metier: c.metier, pont: c.pont, sous: c.sous, parties: c.parties, plusTr: c.plusTr || [], plusNote: c.plusNote || '', auto: c.auto, scene: SC[c.id](), depart: c.depart,
   notions: c.notions, mots: c.mots, resolus: c.resolus, entraine: c.entraine, bilan: c.bilan, words: c.words,
   probs: c.probs.map(pr), plusloin: { meca: c.plusloin.meca.map(m => ({ id: m.id, lc: m.lc, titre: m.titre, consigne: m.consigne, gen: m.gen, n: m.n })), probs: c.plusloin.probs.map(pr) },
   eval: { lieu: c.eval.lieu, duree: c.eval.duree, grille: c.eval.grille, exos: c.eval.exos.map(x => ({ t: x.t, intro: x.intro, qs: x.qs.map(q => ({ t: q.t, comp: q.comp, pts: q.pts, a: q.a, v: q.v, tol: q.tol, lab: q.lab })) })) } });
@@ -59,6 +59,7 @@ const html = `<!doctype html>
 <script>${js(rd('shared/gens.js'))}</script>
 <script>${js(rd('shared/g1.js'))}</script>
 <script>${js(rd('shared/train.js'))}</script>
+<script>${js(rd('shared/auto1.js'))}</script>
 ${[1, 2, 3, 4, 5, 6, 7, 8].map(n => `<script>${js(rd('shared/t' + n + '.js'))}</script>`).join('\n')}
 <script>${js(rd('app/widgets.js'))}</script>
 <script type="application/json" id="mcv-data">${json}</script>

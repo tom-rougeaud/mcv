@@ -22,8 +22,7 @@
         { t: 'Quand la température augmente, les ventes ont tendance à…', kind: 'qcm', choices: ['augmenter', 'diminuer', 'rester pareilles'], ok: 0, a: 'augmenter : le nuage monte vers la droite' },
         { t: 'Pour quelle température les ventes sont-elles les plus fortes ?', kind: 'num', v: t[imax], tol: .01, a: `${t[imax]} °C` },
         { t: 'Les points du nuage sont…', kind: 'qcm', choices: ['presque alignés', 'dispersés au hasard'], ok: 0, a: 'presque alignés : une droite peut les résumer' },
-        { t: 'Combien de points compte le nuage ?', kind: 'num', v: 7, tol: .01, a: '7' },
-        { t: 'Rappel : quelle est la moyenne de 10, 20 et 60 ?', kind: 'num', v: 30, tol: .01, a: '(10 + 20 + 60) ÷ 3 = 30' }] };
+        { t: 'Combien de points compte le nuage ?', kind: 'num', v: 7, tol: .01, a: '7' }] };
   };
 
   /* e1 · le point moyen */

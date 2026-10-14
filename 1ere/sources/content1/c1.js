@@ -8,7 +8,8 @@ const acco = (x1, x2, y, lab, fs = 15) => `<path d="M${x1} ${y}v7h${x2 - x1}v-7"
 const HACH = `<defs><pattern id="hh1" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#FFF0B8"/><line x1="0" y1="0" x2="0" y2="7" stroke="#B88A00" stroke-width="2.4"/></pattern></defs>`;
 
 module.exports = function (chk) {
-  const c = { id: 'c1', n: 1, col: 'nombre', icone: '💶', dom: 'Algèbre-analyse · calculs commerciaux et financiers', titre: 'Coûts, résultat et intérêts' };
+  const c = { id: 'c1', n: 1, col: 'nombre', icone: '💶', dom: 'Algèbre-analyse · calculs commerciaux et financiers', titre: 'Calculs commerciaux et financiers', sous: 'Coûts, résultat et intérêts' };
+  c.parties = [{ t: 'Coûts et résultat', n: [1, 2] }, { t: 'Intérêts simples', n: [3, 4] }];
   c.travail = { question: `Mia fabrique des bougies. Chaque mois, elle paie ${H('600 € de charges fixes')}, puis ${H('4 €')} par bougie fabriquée. Elle vend chaque bougie ${H('12 € HT')}. Si elle en vend ${H('100')}, que lui reste-t-il à la fin du mois ? Tu sauras répondre dès la première leçon, et trouver le seuil de rentabilité au chapitre 2.` };
   c.objectifs = ['Je saurai calculer un coût total, une recette et un résultat.', 'Je saurai calculer un coût moyen et un coût marginal.', 'Je saurai calculer des intérêts simples.', 'Je saurai passer d’un taux annuel à un taux mensuel, par quinzaine ou par jour.'];
   c.depart = 'c1';

@@ -12,7 +12,14 @@ for (const id of Object.keys(MCVT.TR)) for (let s = 1; s <= 1500; s++) { let e; 
   const ks = e.items.map(i => i.k); if (new Set(ks).size !== ks.length) { console.log('lettres', id); bad++; }
   if (/NaN|undefined|Infinity/.test(e.support + e.consigne)) { console.log('support', id, s); bad++; if (bad > 10) process.exit(1); } }
 for (const id of Object.keys(MCVT.DEP)) for (let s = 1; s <= 1500; s++) { let d; try { d = MCVT.dep(id, s); } catch (err) { console.log(id, s, err.message); bad++; break; } n++;
-  if (d.qs.length !== 6) { console.log('6 questions', id); bad++; }
+  if (d.qs.length !== 5) { console.log('5 questions', id); bad++; }
   d.qs.forEach((q, i) => { if (q.kind === 'qcm') chkItem(id + ':' + i, { qcm: { choices: q.choices, ok: q.ok }, a: q.a }); else chkItem(id + ':' + i, q); if (q.kind === 'tap' && !d.doc.includes(`data-cell="${q.cell}"`)) { console.log('case', id, q.cell); bad++; } });
   if (/NaN|undefined|Infinity/.test(d.doc)) { console.log('doc', id, s); bad++; } }
 console.log(`${Object.keys(MCVT.TR).length} exercices visuels · ${Object.keys(MCVT.DEP).length} points de départ · ${n} tirages · erreurs : ${bad}`);
+/* zones « Automatismes » : 5 questions, réponse affichée acceptée */
+{
+  const AU = require('./shared/auto1.js'), MC = require('./shared/gens.js').MCVG; let n2 = 0, b2 = 0;
+  for (const c of Object.keys(AU.A)) for (let s = 1; s <= 1500; s++) { const qs = AU.gen(c, s); if (qs.length !== 5) b2++; for (const q of qs) { n2++; const x = MC.parse(q.a.replace(/\s*€/, '').replace(/\s/g, '')); if (!(Math.abs(x - q.v) <= q.tol)) b2++; } }
+  console.log(`automatismes : ${Object.keys(AU.A).length} chapitres · ${n2} questions tirées · erreurs : ${b2}`);
+  if (b2) process.exitCode = 1;
+}

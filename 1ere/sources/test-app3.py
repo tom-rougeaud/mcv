@@ -52,8 +52,16 @@ async def run(p, vw, vh, label, full):
                         v = await page.evaluate(f"({FR})({q['v']})")
                         await page.fill(f'{li} .inp', v); await page.click(f'{li} [data-dv]')
                 ok = await page.evaluate("document.querySelectorAll('.dq.ok').length")
-                if ok != 6: bad(f'{label} {cid} départ : {ok}/6 justes')
+                if ok != len(d['qs']): bad(f'{label} {cid} départ : {ok}/{len(d["qs"])} justes')
                 else: stats['dep'] += 1
+                aq = await page.evaluate(f"MCVAUTO('{cid}')")
+                for j, q in enumerate(aq):
+                    v = await page.evaluate(f"({FR})({q['v']})")
+                    await page.fill(f'.aq[data-j="{j}"] .inp', v)
+                await page.click('[data-auto-check]')
+                ok = await page.evaluate("document.querySelectorAll('.aq.ok').length")
+                if ok != 5: bad(f'{label} {cid} automatismes : {ok}/5 justes')
+                else: stats['auto'] = stats.get('auto', 0) + 1
             if t == 'lecon':
                 for art in await page.query_selector_all('.nt'):
                     for _ in range(5):

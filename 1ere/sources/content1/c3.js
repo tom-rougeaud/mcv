@@ -6,7 +6,8 @@ const { SK } = require('./sk1');
 const RED = MCVP.RED, BLUE = MCVP.BLUE, GRN = MCVP.GRN;
 
 module.exports = function (chk) {
-  const c = { id: 'c3', n: 3, col: 'algebre', icone: '🏔️', dom: 'Algèbre-analyse · fonctions du second degré', titre: 'La parabole et le meilleur bénéfice' };
+  const c = { id: 'c3', n: 3, col: 'algebre', icone: '🏔️', dom: 'Algèbre-analyse · fonctions du second degré', titre: 'Fonctions polynômes de degré 2', sous: 'La parabole et le meilleur bénéfice' };
+  c.parties = [{ t: 'La parabole', n: [1] }, { t: 'Racines, forme factorisée et signe', n: [2, 3] }, { t: 'Sommet et extremum', n: [4] }];
   c.travail = { question: `Sur un marché, le bénéfice d’un stand dépend du prix de vente. Il vaut ${H('B(x) = − x² + 10 x − 16')} dizaines d’euros pour un prix de x euros. À quel prix faut-il vendre pour gagner le plus ? Et à partir de quel prix perd-on de l’argent ? Une courbe en forme d’arche te le dit.` };
   c.objectifs = ['Je saurai reconnaître une parabole et son sens.', 'Je saurai trouver les racines d’une fonction du second degré.', 'Je saurai étudier le signe avec la forme factorisée.', 'Je saurai trouver le sommet et l’extremum.'];
   c.depart = 'c3';
@@ -47,9 +48,9 @@ module.exports = function (chk) {
 
   c.notions = [
     { titre: 'La parabole : ax² + bx + c', decouvre: { txt: `Un stand gagne ${H('B(x) = − x² + 10x − 16')} dizaines d’euros à x euros le prix. Pour ${H('x = 3')}, que vaut B ? Quelle forme a la courbe ?`, img: SK.parabole() },
-      comprends: `<p>Une <b>fonction du second degré</b> s’écrit f(x) = ax² + bx + c, avec a différent de 0. Sa courbe est une <b>parabole</b>.</p><p>Le signe de <b>a</b> donne le sens. Si a est positif, la parabole est ouverte <b>vers le haut</b> : son sommet est le point le plus bas. Si a est négatif, elle est ouverte <b>vers le bas</b> : son sommet est le point le plus haut.</p><p>Pour tracer, on dresse un tableau de valeurs. Pour f(x) = x² − 4x + 3 :</p>${tab(['x', '0', '1', '2', '3', '4'], [['f(x)', '3', '0', '− 1', '0', '3']], 'dt-c')}<p>Les valeurs sont symétriques : f(0) = f(4) et f(1) = f(3).</p>`,
+      comprends: `<p>Une <b>fonction du second degré</b> s’écrit f(x) = ax² + bx + c, avec a différent de 0. Sa courbe est une <b>parabole</b>.</p><p>Le signe de <b>a</b> donne le sens. Si a est positif, la parabole est ouverte <b>vers le haut</b> : son sommet est le point le plus bas. Si a est négatif, elle est ouverte <b>vers le bas</b> : son sommet est le point le plus haut.</p><p>Pour tracer, on dresse un tableau de valeurs. Pour f(x) = x² − 4x + 3 :</p>${tab(['x', '0', '1', '2', '3', '4'], [['f(x)', '3', '0', '− 1', '0', '3']], 'dt-c')}<p>Les valeurs sont symétriques : f(0) = f(4) et f(1) = f(3).</p><p>L’<b>ordonnée à l’origine</b> est f(0) = c : la parabole coupe l’axe vertical au point (0 ; c). Pour B, B(0) = − 16.</p>`,
       vois: sens, voisLeg: 'Les deux paraboles ont le même sommet (0 ; 0). La bleue est ouverte vers le haut (a > 0), la rouge vers le bas (a < 0).',
-      retiens: `<p>${FM(R`f(x)=ax^2+bx+c \quad (a\neq 0)`)}</p><p><b>a &gt; 0</b> : vers le haut, sommet = minimum. <b>a &lt; 0</b> : vers le bas, sommet = maximum.</p>`,
+      retiens: `<p>${FM(R`f(x)=ax^2+bx+c \quad (a\neq 0)`)}</p><p><b>a &gt; 0</b> : vers le haut, sommet = minimum. <b>a &lt; 0</b> : vers le bas, sommet = maximum.</p><p>Ordonnée à l’origine : ${FM(R`f(0)=c`)}.</p>`,
       exemple: `<p>B(x) = − x² + 10x − 16 : a = − 1, vers le bas.</p><p>B(3) = − 9 + 30 − 16 = <b>5</b>.</p>`,
       attention: 'Dans − x², seul x est au carré : pour x = 3, − x² vaut − 9, pas + 9. Mets des parenthèses : − (3²).', astuce: { k: 'verif', t: 'Sur la calculatrice, écris (−3)² avec des parenthèses, et − 3² pour un « moins » devant le carré.' } },
     { titre: 'Les racines : f(x) = 0', decouvre: { txt: `Pour quels prix le stand ne gagne et ne perd rien ? C’est-à-dire ${H('B(x) = 0')}. Où cela se lit-il sur la courbe ?`, img: SK.racines() },
@@ -68,7 +69,7 @@ module.exports = function (chk) {
     { titre: 'Le sommet et l’extremum', decouvre: { txt: `À quel prix le stand gagne-t-il le plus d’argent ? Observe la courbe : deux prix symétriques donnent le même bénéfice, par exemple ${H('3 €')} et ${H('7 €')}.`, img: SK.sommet() },
       comprends: `<p>Le <b>sommet</b> est le point le plus haut (ou le plus bas) de la parabole. Sa valeur est l’<b>extremum</b> : un <b>maximum</b> si a &lt; 0, un <b>minimum</b> si a &gt; 0.</p><p>La parabole est symétrique par rapport à la droite verticale qui passe par le sommet : c’est l’<b>axe de symétrie</b>. L’abscisse du sommet est donc le <b>milieu des deux racines</b> : x<sub>S</sub> = (2 + 8) ÷ 2 = 5.</p><p>On calcule ensuite l’ordonnée : B(5) = − 25 + 50 − 16 = 9. Le bénéfice maximal est de 9 dizaines d’euros, soit 90 €, pour un prix de 5 €.</p>`,
       vois: sommet, voisLeg: 'Le trait rouge est l’axe de symétrie, x = 5. Les points verts (3 ; 5) et (7 ; 5) sont symétriques : même ordonnée.',
-      retiens: `<p>${FM(R`x_S=\dfrac{x_1+x_2}{2}=-\dfrac{b}{2a} \qquad y_S=f(x_S)`)}</p><p>Le sommet est le point <b>S(x<sub>S</sub> ; y<sub>S</sub>)</b>.</p>`,
+      retiens: `<p>${FM(R`x_S=\dfrac{x_1+x_2}{2} \qquad y_S=f(x_S)`)}</p><p class="small">Complément : on a aussi ${FM(R`x_S=-\dfrac{b}{2a}`)}.</p><p>Le sommet est le point <b>S(x<sub>S</sub> ; y<sub>S</sub>)</b>.</p>`,
       exemple: `<p>x<sub>S</sub> = (2 + 8) ÷ 2 = <b>5</b>.</p><p>B(5) = <b>9</b> : maximum atteint pour un prix de 5 €.</p>`,
       wide: K.prog('un tableau de valeurs', 'Une boucle <code>for</code> répète un calcul pour plusieurs valeurs de x. Elle affiche le tableau de valeurs de B.', `def B(x):\n    return -x**2 + 10*x - 16\n\nfor x in range(0, 11):\n    print(x, B(x))`, `<p class="prog-q">Quelle est la plus grande valeur affichée ? ${bl(14, '9')} Pour quel x ? ${bl(14, '5')}</p>`),
       attention: 'L’extremum est l’ordonnée du sommet (9), pas son abscisse (5). Le prix est 5 €, le bénéfice est 9.', astuce: { k: 'og', t: 'L’abscisse du sommet est toujours au milieu des deux racines. Si tu trouves un autre nombre, contrôle.' } }];

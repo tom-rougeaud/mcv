@@ -16,8 +16,7 @@
         { t: 'Combien coûte l’offre A pour 2 jours ?', kind: 'num', v: A(2), tol: .006, a: eur(A(2), 0) },
         { t: `Pour ${j1} jours, quelle offre est la moins chère ?`, kind: 'qcm', choices: ['offre A', 'offre B'], ok: A(j1) < B(j1) ? 0 : 1, a: `${A(j1) < B(j1) ? 'offre A' : 'offre B'} : ${A(j1)} € contre ${B(j1)} €` },
         { t: `Pour ${j2} jours, quelle offre est la moins chère ?`, kind: 'qcm', choices: ['offre A', 'offre B'], ok: A(j2) < B(j2) ? 0 : 1, a: `${A(j2) < B(j2) ? 'offre A' : 'offre B'} : ${A(j2)} € contre ${B(j2)} €` },
-        { t: 'Pour combien de jours les deux offres coûtent-elles pareil ?', kind: 'num', v: o.j0, tol: .01, a: `${o.j0} jours` },
-        { t: `Rappel : combien font ${o.b} × 5 ?`, kind: 'num', v: o.b * 5, tol: .01, a: String(o.b * 5) }] };
+        { t: 'Pour combien de jours les deux offres coûtent-elles pareil ?', kind: 'num', v: o.j0, tol: .01, a: `${o.j0} jours` }] };
   };
   /* e1 · image et antécédent */
   TR.c2e1 = R => {

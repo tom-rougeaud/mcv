@@ -9,9 +9,10 @@ const PI = Math.PI;
 const Tf = (x, y, s, fill, o = {}) => `<text x="${x}" y="${y}" font-size="${o.fs || 14}" text-anchor="${o.a || 'middle'}" font-weight="700" fill="${fill}">${s}</text>`;
 
 module.exports = function (chk) {
-  const c = { id: 'c8', n: 8, col: 'geometrie', icone: '📦', dom: 'Géométrie · géométrie dans l’espace', titre: 'Solides, volumes et emballages' };
+  const c = { id: 'c8', n: 8, col: 'geometrie', icone: '📦', dom: 'Géométrie · géométrie dans l’espace', titre: 'Géométrie dans l’espace', sous: 'Solides, volumes et emballages' };
+  c.parties = [{ t: 'Représenter un solide', n: [1] }, { t: 'Volumes des solides usuels', n: [2, 3] }, { t: 'Sections et solides composés', n: [4, 5] }];
   c.travail = { question: `L’Atelier Mia lance des bougies en forme de ${H('cylindre')}, de ${H('cône')} et de ${H('boule')}. Combien de cire faut-il pour chacune ? Dans quelle boîte les ranger pour perdre le moins de place ? Pour répondre, il faut savoir dessiner un solide, calculer son volume et imaginer ce qu’on voit quand on le coupe.` };
-  c.objectifs = ['Je saurai lire et compléter un solide en perspective cavalière.', 'Je saurai calculer le volume d’un prisme, d’un cylindre, d’une pyramide et d’un cône.', 'Je saurai calculer le volume d’une boule.', 'Je saurai reconnaître la section d’un solide par un plan.'];
+  c.objectifs = ['Je saurai lire et compléter un solide en perspective cavalière.', 'Je saurai calculer le volume d’un prisme, d’un cylindre, d’une pyramide et d’un cône.', 'Je saurai calculer le volume d’une boule.', 'Je saurai reconnaître la section d’un solide par un plan.', 'Je saurai calculer le volume d’un solide composé.'];
   c.depart = 'c8';
 
   /* 1. perspective cavalière d’un carton 30 × 20 × 15 cm (échelle 6 px/cm, fuyantes à 45°, coefficient 0,5) */
@@ -47,6 +48,18 @@ module.exports = function (chk) {
   const secs = S(600, 300, pick4.map((sx, i) => st(i + 1, `<g transform="translate(${(i % 2) * 300} ${Math.floor(i / 2) * 150 - 34}) scale(.75)">${sx.draw(200, 200)}</g>` + T((i % 2) * 300 + 150, Math.floor(i / 2) * 150 + 140, `${['pavé', 'cylindre', 'cône', 'pyramide'][i]} → ${sx.rep}`, { fs: 14, c: 'kt' }))).join(''),
   'Sections par un plan parallèle à une face ou à la base : rectangle, disque, disque plus petit, carré plus petit');
 
+  /* 5. solide composé : une bougie « maison » = cube de 6 cm + pyramide de hauteur 4 cm */
+  const Vcube = 6 * 6 * 6, Vpyr = 6 * 6 * 4 / 3;
+  chk(Vcube === 216 && Vpyr === 48 && Vcube + Vpyr === 264 && rnd(512 - 45 * PI, 2) === 370.63, 'c8 solide composé');
+  const pm = G.cav(210, 250, 22), vm = (x, y, z) => pm(x, y, z);
+  const Am = vm(0, 0, 0), Bm = vm(6, 0, 0), Cm = vm(6, 6, 0), Dm = vm(0, 6, 0), Em = vm(0, 0, 6), Fm = vm(6, 0, 6), Gm = vm(6, 6, 6), Hm = vm(0, 6, 6), Sm = vm(3, 10, 3);
+  const cube = G.poly([Am, Bm, Cm, Dm], { fill: '#F3E1C7', op: .7 }) + G.poly([Bm, Fm, Gm, Cm], { fill: '#F3E1C7', op: .45 }) + [[Am, Em], [Em, Fm], [Em, Hm]].map(([a, b]) => G.L(a, b, { dash: 1, w: 1.8 })).join('') + [[Am, Bm], [Bm, Cm], [Cm, Dm], [Dm, Am], [Bm, Fm], [Fm, Gm], [Gm, Cm]].map(([a, b]) => G.L(a, b)).join('');
+  const toit = G.poly([Dm, Cm, Sm], { fill: '#FDE3E0', op: .8 }) + G.poly([Cm, Gm, Sm], { fill: '#FDE3E0', op: .55 }) + [[Gm, Hm], [Hm, Dm], [Hm, Sm]].map(([a, b]) => G.L(a, b, { dash: 1, w: 1.8 })).join('') + [[Dm, Sm], [Cm, Sm], [Gm, Sm]].map(([a, b]) => G.L(a, b)).join('');
+  const compo = S(600, 290, st(1, cube + G.cote([Am[0], Am[1] + 14], [Bm[0], Bm[1] + 14], '6 cm', { dy: 18 }) + T(470, 200, 'cube : 6³ = 216 cm³', { fs: 14, c: 'kt' }))
+    + st(2, toit + G.L(Sm, [Sm[0], vm(3, 6, 3)[1]], { stroke: RED, w: 1.4, dash: 1 }) + T(Sm[0] + 8, (Sm[1] + vm(3, 6, 3)[1]) / 2, 'h = 4 cm', { fs: 13, a: 'start', c: 'kt' }) + T(470, 120, 'pyramide : 36 × 4 ÷ 3 = 48 cm³', { fs: 14, c: 'kt' }))
+    + st(3, T(470, 260, 'total : 216 + 48 = 264 cm³', { fs: 16, c: 'kt' })),
+  'Une bougie formée d’un cube de 6 centimètres surmonté d’une pyramide de 4 centimètres de haut');
+
   c.notions = [
     { titre: 'Représenter un solide en perspective', decouvre: { txt: `Pour une fiche produit, il faut dessiner un carton de ${H('30 × 20 × 15 cm')} sur une feuille plate. Comment montrer qu’il a une profondeur ?`, img: SK.cartons() },
       comprends: `<p>Les <b>solides usuels</b> sont le cube, le pavé droit et le prisme droit. Ce sont aussi le cylindre, la pyramide, le cône et la boule.</p><p>Pour les dessiner, on utilise la <b>perspective cavalière</b>.</p><ul><li>La face avant est dessinée en <b>vraie grandeur</b>.</li><li>Les arêtes qui partent vers l’arrière s’appellent les <b>fuyantes</b>. Elles sont parallèles et inclinées, souvent à 45°.</li><li>Leur longueur est multipliée par un <b>coefficient</b>, souvent 0,5.</li><li>Les <b>arêtes cachées</b> sont en pointillés.</li></ul><p>Ici, la profondeur de 15 cm est dessinée 7,5 cm (à l’échelle du dessin).</p>`,
@@ -69,11 +82,17 @@ module.exports = function (chk) {
       exemple: `<p>r = 3 cm : V = 36 π ≈ <b>113,10 cm³</b>.</p><p>r = 4 cm : V ≈ <b>268,08 cm³</b>.</p>`,
       attention: 'Dans la formule, r est au cube (r × r × r), et on multiplie par 4/3, pas par 4.', astuce: { k: 'vite', t: 'Sur la calculatrice : 4 ÷ 3 × π × 3 ^ 3. Contrôle : le résultat est plus petit que le cube qui contient la boule.' } },
     { titre: 'Les sections planes', decouvre: { txt: `Mia coupe ses bougies avant de les emballer. Quelle forme voit-on sur la face coupée d’un ${H('pavé')}, d’un ${H('cylindre')} ou d’un ${H('cône')} ?`, img: SK.pyramide() },
-      comprends: `<p>Quand on coupe un solide par un plan, la face obtenue est une <b>section plane</b>.</p><ul><li>Pavé coupé parallèlement à une face : un <b>rectangle</b> identique à cette face.</li><li>Cylindre coupé parallèlement à la base : un <b>disque</b> de même rayon. Coupé par un plan qui contient l’axe : un <b>rectangle</b>.</li><li>Cône ou pyramide coupés parallèlement à la base : un disque ou un polygone <b>plus petit</b>, une <b>réduction</b> de la base.</li><li>Boule coupée par un plan : toujours un <b>disque</b>.</li></ul><p>Pour un cône de rayon 4 cm et de hauteur 12 cm, coupé à mi-hauteur, la section est un disque de rayon 4 × 1/2 = 2 cm.</p>`,
+      comprends: `<p>Quand on coupe un solide par un plan, la face obtenue est une <b>section plane</b>.</p><ul><li>Pavé coupé parallèlement à une face : un <b>rectangle</b> identique à cette face.</li><li>Cylindre coupé parallèlement à la base : un <b>disque</b> de même rayon. Coupé par un plan qui contient l’axe : un <b>rectangle</b>.</li><li>Cône ou pyramide coupés parallèlement à la base : un disque ou un polygone <b>plus petit</b>, une <b>réduction</b> de la base.</li><li>Boule coupée par un plan : toujours un <b>disque</b>.</li></ul><p>Pour un cône de rayon 4 cm et de hauteur 12 cm, coupé à mi-hauteur, la section est un disque de rayon 4 × 1/2 = 2 cm.</p><p>Avec <b>GeoGebra 3D</b>, on construit le solide et un plan, puis l’outil « Intersection de deux surfaces » trace la section. En déplaçant le plan, on voit la section changer.</p>`,
       vois: secs, voisLeg: 'La section est en rouge. Pour le cône et la pyramide, elle est plus petite que la base.',
       retiens: `<p>Plan parallèle à la base d’un cône ou d’une pyramide : section = <b>réduction</b> de la base, de coefficient ${FM(R`k=\dfrac{\text{distance au sommet}}{\text{hauteur}}`)}.</p>`,
       exemple: `<p>Cône r = 4 cm, coupé à mi-hauteur : rayon <b>2 cm</b>.</p><p>Cylindre coupé parallèlement à la base : disque de rayon <b>r</b>.</p>`,
-      attention: 'La section d’un cylindre parallèle à la base a le même rayon que la base ; celle d’un cône non.', astuce: { k: 'sens', t: 'Imagine que tu tranches l’objet avec un couteau : la section est la forme de la tranche.' } }];
+      attention: 'La section d’un cylindre parallèle à la base a le même rayon que la base ; celle d’un cône non.', astuce: { k: 'sens', t: 'Imagine que tu tranches l’objet avec un couteau : la section est la forme de la tranche.' } },
+    { titre: 'Les solides composés', decouvre: { txt: `La bougie « maison » est un ${H('cube de 6 cm')} surmonté d’une ${H('pyramide de 4 cm de haut')}. Combien de cire faut-il ?`, img: SK.cartons() },
+      comprends: `<p>Un <b>solide composé</b> est formé de plusieurs solides usuels collés ensemble, ou d’un solide dans lequel on a creusé un autre solide.</p><p>Pour calculer son volume, on le <b>découpe</b> en solides usuels, on calcule chaque volume, puis on les <b>additionne</b>. Si une partie est creusée, on la <b>soustrait</b>.</p><p>Bougie maison : cube 6 × 6 × 6 = 216 cm³ ; pyramide 6 × 6 × 4 ÷ 3 = 48 cm³. Volume total : 264 cm³.</p><p>Bougeoir creusé : un cube de 8 cm dans lequel on creuse un cylindre de rayon 3 cm et de hauteur 5 cm. Volume : 512 − π × 9 × 5 ≈ 370,63 cm³.</p>`,
+      vois: compo, voisLeg: 'Étape 1 : le cube. Étape 2 : la pyramide posée dessus, de même base. Étape 3 : on additionne.',
+      retiens: `<p>Solide assemblé : ${FM(R`V=V_1+V_2`)} · Solide creusé : ${FM(R`V=V_1-V_2`)}</p><p>On nomme chaque solide usuel avant de calculer.</p>`,
+      exemple: `<p>Maison : 216 + 48 = <b>264 cm³</b>.</p><p>Bougeoir : 512 − 141,37 ≈ <b>370,63 cm³</b>.</p>`,
+      attention: 'La face commune entre deux solides n’ajoute pas de volume : ne la compte pas deux fois.', astuce: { k: 'og', t: 'Contrôle : le volume d’un solide creusé est toujours plus petit que celui du bloc de départ.' } }];
 
   c.mots = [['solide', 'objet de l’espace qui a un volume', 'Le cône est un solide.'], ['perspective cavalière', 'façon de dessiner un solide sur une feuille', 'Le carton est dessiné en perspective cavalière.'], ['fuyante', 'arête dessinée vers l’arrière, inclinée et réduite', 'Les fuyantes sont parallèles.'], ['arête cachée', 'arête qu’on ne voit pas, dessinée en pointillés', 'Le pavé a trois arêtes cachées.'], ['cylindre', 'solide à deux bases en disques identiques', 'La bougie A est un cylindre.'], ['cône', 'solide à base en disque qui se termine en pointe', 'Le volume du cône est le tiers de celui du cylindre.'], ['pyramide', 'solide à base polygonale qui se termine en pointe', 'La pyramide a une base carrée.'], ['boule', 'solide plein entouré par une sphère', 'La bougie boule a un rayon de 3 cm.'], ['section plane', 'face obtenue en coupant un solide par un plan', 'La section du cylindre est un disque.']];
 
@@ -106,7 +125,7 @@ module.exports = function (chk) {
       err: { 0: [{ v: 201.06, m: 'Dans la formule, r est au cube : 4³ = 64.' }], 1: [{ v: 1608.5, m: 'Le rayon est 4 cm : π × 4² × 8.' }], 3: [{ v: 512, m: 'C’est le volume du cube. Enlève le volume de la bougie.' }] },
       hints: ['Boule : 4/3 × π × r³.', 'Cylindre : π × r² × h.', 'Volume vide = volume de la boîte − volume de la bougie.'], pouce: 'Calcule les deux volumes vides : le plus petit indique la boîte la plus ajustée.', corr: '1. ≈ 268,08 cm³. 2. ≈ 402,12 cm³. 3. ≈ 134,04 cm³. 4. ≈ 243,92 cm³. 5. La boîte cylindrique.' })];
 
-  c.bilan = [['Je sais lire et compléter un solide en perspective cavalière.', ['e1', 'p1']], ['Je sais calculer le volume d’un prisme, d’un cylindre, d’une pyramide et d’un cône.', ['e2', 'p2']], ['Je sais calculer le volume d’une boule.', ['p3']], ['Je sais reconnaître la section d’un solide par un plan.', ['e3']]];
+  c.bilan = [['Je sais lire et compléter un solide en perspective cavalière.', ['e1', 'p1']], ['Je sais calculer le volume d’un prisme, d’un cylindre, d’une pyramide et d’un cône.', ['e2', 'p2']], ['Je sais calculer le volume d’une boule.', ['p3']], ['Je sais reconnaître la section d’un solide par un plan.', ['e3']], ['Je sais calculer le volume d’un solide composé.', ['p3']]];
   c.words = require('./gl1')('c8');
   c.plusloin = { meca: [], probs: [] };
   return c;

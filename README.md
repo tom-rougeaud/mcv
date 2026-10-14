@@ -79,8 +79,8 @@ Dans le dossier [`1ere/`](1ere/) : l’appli qui accompagne le manuel **Maths et
 
 👉 En ligne : https://tom-rougeaud.github.io/mcv/1ere/
 
-- **8 chapitres** : coûts, résultat et intérêts · résolution graphique · second degré · dérivation · suites · statistique à deux variables · probabilités · géométrie dans l’espace
-- En tête de chaque chapitre, l’encart **« De la 2de à la 1re »** : ce que le chapitre reprend du manuel de 2de, et ce qu’il approfondit (avec un lien vers l’appli de 2de)
+- **8 chapitres aux titres du programme**, découpés en parties A, B, C : calculs commerciaux et financiers · résolution graphique · fonctions polynômes de degré 2 · fonction dérivée et étude des variations · suites numériques · statistique à deux variables quantitatives · probabilités · géométrie dans l’espace
+- En tête de chaque chapitre, **« De la 2de à la 1re »** : la même situation traitée en 2de puis en 1re, ce qui reste, ce qui change (lien vers l’appli de 2de), puis une zone **⚡ Automatismes**
 - Leçon en 4 notions avec méthode visuelle animée, encadrés « Je programme » (Python) et « Je raisonne », exercices résolus, simulateur « Je manipule » avec un défi, exercices à support visuel dont les nombres changent à chaque essai, problèmes du métier, sujet « vers le bac », contrôle blanc sur 20 et PDF du chapitre
 - Graphiques, droites d’ajustement et solides calculés par programme ; glossaire visuel de 72 mots
 - Progression enregistrée **uniquement sur l’appareil** (export / import / effacement), aucune donnée envoyée ; un seul fichier HTML, sans CDN ni police externe

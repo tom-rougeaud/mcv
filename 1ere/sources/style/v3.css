@@ -181,3 +181,21 @@ table.evg3{table-layout:fixed;width:100%}
 .pontp-t{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9.2pt}
 .pontp-t th{background:var(--tt);color:var(--cc);font:800 9pt 'Inter';text-align:left;padding:1mm 1.6mm;border:1px solid #CBD2E6}
 .pontp-t td{vertical-align:top;border:1px solid #CBD2E6;padding:1mm 1.6mm}.pontp-t ul{margin:0;padding-left:3.6mm}.pontp-t li{margin:.4mm 0;line-height:1.3}
+.pont3-ex{font-size:10pt;margin:1.4mm 0 0;line-height:1.38}
+.pont3-g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;margin-top:2.4mm}
+.pont3-g3>div{background:#fff;border:1.2px solid #DCE2F2;border-radius:3mm;padding:2mm 2.4mm}
+.pont3-g3 p{margin:0;font-size:10pt;line-height:1.35}
+.pontp-pl{font-size:8.8pt;margin:1mm 0 0;color:var(--soft)}
+.op3-sous{font:700 12pt 'Inter';color:var(--soft);margin-top:.6mm}
+.plan3{display:grid;gap:1.4mm;margin:1.2mm 0 2.4mm}
+.plan3-p{display:flex;gap:2.4mm;align-items:flex-start;background:#fff;border-radius:2.6mm;padding:1.4mm 2.4mm}
+.plan3-p.hp{border:1.4px dashed var(--cc)}
+.plan3-l{flex:none;display:inline-grid;place-items:center;width:6.4mm;height:6.4mm;border-radius:50%;background:var(--cc);color:#fff;font:800 10pt 'Inter'}
+.plan3-p b{display:block;font:800 10.4pt 'Inter'}.plan3-p span{font-size:9.4pt;color:var(--soft)}
+.nt3-k{font:800 8.6pt 'Inter';text-transform:uppercase;letter-spacing:.04em;color:var(--cc);margin:0 0 1mm}
+.hp3{display:inline-block;text-transform:none;letter-spacing:0;background:#FFF0B8;color:#755C00;border-radius:99px;padding:.2mm 2.4mm;margin-left:1.6mm;font:800 8.4pt 'Inter'}
+.auto3{margin:3mm 0;border:2px dashed var(--cc);border-radius:4mm;padding:2.4mm 3.4mm;background:linear-gradient(135deg,#FFF8DB,#fff);break-inside:avoid}
+.auto3-h{display:flex;align-items:center;gap:2mm;font:800 12.5pt 'Inter';color:var(--cc)}.auto3-h .sec-sub{margin-left:2mm}
+.auto3-q{display:grid;grid-template-columns:1fr 1fr;gap:1.6mm 6mm;margin:2mm 0 0;padding-left:5mm}
+.auto3-q li{font-size:10.2pt;line-height:1.3}.auto3-q li span{display:block}
+.plan3-p .plan3-l{color:#fff;font:800 10pt 'Inter'}
