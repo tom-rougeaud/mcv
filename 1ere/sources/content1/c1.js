@@ -1,4 +1,4 @@
-/* Chapitre 1 · Calculs commerciaux et financiers — 1re Bac Pro (BO spécial n° 5 du 11 avril 2019). */
+/* Chapitre 1 · Calculs commerciaux et financiers — 1re Bac Pro (arrêté du 3 février 2020, BO spécial n° 1 du 6 février 2020). */
 'use strict';
 const K = require('./kit1');
 const { rnd, H, FM, R, Q, BQ, PB, prog, S, T, Rc, Ln, Ar, Br, st, Sketch, MCVP, bl } = K;

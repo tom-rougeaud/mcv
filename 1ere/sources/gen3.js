@@ -146,7 +146,7 @@ const pToc = `<div class="page" data-recto="0"><div class="inner" data-sec="somm
   <h1 class="pg-t">Sommaire</h1>
   <div class="toc2"><div class="tc2 ann"><span class="tn2">🔗</span><div><b>De la 2de à la 1re</b><span>Ce que chaque chapitre reprend de la 2de, et ce qu’il approfondit</span></div><span class="tp2"><span data-pageof="pont">…</span></span></div>${DATA.map(c => `<div class="tc2 c-${c.col}"><span class="tn2">${c.n}</span><div><b>${esc(c.titre)}</b><span>${c.parties.map((p, k) => `${'ABCDE'[k]}. ${p.t}`).join(' · ')}</span></div><span class="tp2"><span data-pageof="${c.id}">…</span></span></div>`).join('')}
   <div class="tc2 ann"><span class="tn2">✔️</span><div><b>Réponses de « Je m’entraîne »</b><span>Pour vérifier seul, chapitre par chapitre</span></div><span class="tp2"><span data-pageof="rep">…</span></span></div><div class="tc2 ann"><span class="tn2">🔤</span><div><b>Glossaire visuel</b><span>Les mots de chaque chapitre, avec un schéma</span></div><span class="tp2"><span data-pageof="glo">…</span></span></div></div>
-  <p class="pg-p small" style="margin-top:4mm">Programme de mathématiques de première professionnelle (BO spécial n° 5 du 11 avril 2019), avec le module « Calculs commerciaux et financiers » des spécialités sans physique-chimie.</p>
+  <p class="pg-p small" style="margin-top:4mm">Programme de mathématiques de première professionnelle (arrêté du 3 février 2020, BO spécial n° 1 du 6 février 2020), avec le module « Calculs commerciaux et financiers » des spécialités sans physique-chimie.</p>
 </div><div class="foot"></div></div>`;
 
 /* ---------- « De la 2de à la 1re » : vue d’ensemble (élève et professeur) ---------- */

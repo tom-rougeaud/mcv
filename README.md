@@ -87,6 +87,21 @@ Dans le dossier [`1ere/`](1ere/) : l’appli qui accompagne le manuel **Maths et
 
 ---
 
+## 🆕 Maths et MCV · Tle (manuel + appli)
+
+Dans le dossier [`terminale/`](terminale/) : l’appli qui accompagne le manuel **Maths et MCV · Tle Bac Pro Métiers de la relation client**.
+
+👉 En ligne : https://tom-rougeaud.github.io/mcv/terminale/
+
+- **7 chapitres aux titres du programme** (groupement sans physique-chimie), découpés en parties A, B, C : suites numériques · calculs commerciaux et financiers · fonctions polynômes de degré 3 · fonctions exponentielles et logarithme décimal · statistique à deux variables · probabilités · exponentielle et logarithme népérien (programme complémentaire « poursuite d’études », badge ➕)
+- En tête de chaque chapitre, **« De la 1re à la terminale »** : la même situation traitée en 1re puis en terminale, ce qui reste, ce qui change (lien vers l’appli de 1re), puis une zone **⚡ Automatismes**
+- Exemples construits sur des **données réelles sourcées** : ventes en ligne (Fevad), inflation (Insee), Livret A et LEP (info.gouv.fr), taux d’usure (Banque de France)
+- Leçon avec méthode visuelle animée, encadrés « Je programme » (Python) et « Je raisonne », exercices résolus, simulateur « Je manipule » avec un défi, exercices à support visuel dont les nombres changent à chaque essai, problèmes du métier, sujet « vers le bac »
+- Chaque chapitre se termine par une **évaluation au format CCF** (45 min, sur 10, avec appel) ; **trois sujets de CCF complets** avec chrono de 45 minutes dans l’appli, et en PDF
+- Progression enregistrée **uniquement sur l’appareil** (export / import / effacement), aucune donnée envoyée ; un seul fichier HTML, sans CDN ni police externe
+
+---
+
 ## 📄 Licence
 
 **CC BY-NC 4.0** : libre de partage et d’adaptation, avec mention de l’auteur, pour un usage non commercial.

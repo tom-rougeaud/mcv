@@ -97,7 +97,7 @@ table{width:100%;border-collapse:collapse;font-size:9.6pt}th,td{border:1px solid
 <tr><td>Usage réel par des élèves</td><td><span class="tag mid">non testé</span></td></tr></table></div>
 
 <h2><b>9</b>Sources et licence</h2>
-<div class="box"><p>Programme de mathématiques de première professionnelle (BO spécial n° 5 du 11 avril 2019), avec le module « Calculs commerciaux et financiers ». Le résumé du programme utilisé pour construire la progression vient d’un document académique : à recouper avec le texte officiel du BO. Les chapitres de 2de cités sont ceux du manuel « Maths et MCV · 2de ».</p>
+<div class="box"><p>Programme de mathématiques de première professionnelle (arrêté du 3 février 2020, BO spécial n° 1 du 6 février 2020), avec le module « Calculs commerciaux et financiers ». Le résumé du programme utilisé pour construire la progression vient d’un document académique : à recouper avec le texte officiel du BO. Les chapitres de 2de cités sont ceux du manuel « Maths et MCV · 2de ».</p>
 <p>Tom Rougeaud · licence <b>CC BY-NC 4.0</b>.</p></div>
 </body></html>`;
 fs.writeFileSync(path.join(__dirname, 'notice.html'), html);
