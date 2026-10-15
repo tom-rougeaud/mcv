@@ -100,18 +100,9 @@ Dans le dossier [`terminale/`](terminale/) : l’appli qui accompagne le manuel 
 - Chaque chapitre se termine par une **évaluation au format CCF** (45 min, sur 10, avec appel) ; **trois sujets de CCF complets** avec chrono de 45 minutes dans l’appli, et en PDF
 - Progression enregistrée **uniquement sur l’appareil** (export / import / effacement), aucune donnée envoyée ; un seul fichier HTML, sans CDN ni police externe
 
-## 🆕 3ème Série Pro (manuel + appli)
+## 🆕 3ème Série Pro
 
-Dans le dossier [`3eme/`](3eme/) : l’appli et le manuel de mathématiques **3ème Série Pro**, pour la 3e Prépa-Métiers et le brevet série professionnelle.
-
-👉 En ligne : https://tom-rougeaud.github.io/mcv/3eme/
-
-- **10 chapitres du cycle 4** : nombres entiers et arithmétique · fractions, puissances et écriture scientifique · calcul littéral et équations · proportionnalité, pourcentages et grandeurs composées · fonctions linéaires et affines · statistiques · probabilités · Pythagore et trigonométrie · échelles, agrandissements et Thalès · espace, transformations et programmes
-- **Une notion, une page** : 🔎 Je découvre → 🧭 La méthode → ✅ La solution → 📌 Je retiens → ✏️ À moi ; la page « Je fais le point » porte **10 automatismes du brevet**
-- Situations de **pop culture avec des données réelles sourcées** : Les Simpson, One Piece, Pokémon, Netflix, Avengers, fréquentation des cinémas (CNC)… ; un **métier par chapitre** avec ses formations (CAP, Bac pro)
-- Simulateur « Je manipule » avec un défi, exercices dont les nombres changent à chaque essai, programmes Scratch, problèmes « vers le brevet »
-- Chaque chapitre se termine par une **évaluation sur 20 au format du brevet** ; **trois sujets blancs complets** avec chrono dans l’appli, et en PDF
-- Progression enregistrée **uniquement sur l’appareil** (export / import / effacement), aucune donnée envoyée ; un seul fichier HTML, sans CDN ni police externe
+La 3e Prépa-Métiers a son propre dépôt : https://github.com/tom-rougeaud/3eme (en ligne : https://tom-rougeaud.github.io/3eme/).
 
 ---
 
