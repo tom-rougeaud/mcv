@@ -213,3 +213,11 @@ table.evg3{table-layout:fixed;width:100%}
 .dz-l li i{color:#545B7A;font-size:8.6pt}
 .detz .lines{margin-top:1mm}
 .cc .dz-e{margin:0}.cc .dz-t{font-size:10.4pt}.cc .dz-l li{font-size:10pt}
+
+/* version professeur : le corrigé détaillé est dans l’exercice */
+.dq{margin:.8mm 0 0 7mm;padding:.5mm 2.4mm .6mm;border-left:3px solid #D0021B;background:#FFF3F3;border-radius:0 2mm 2mm 0;font-size:9.2pt;line-height:1.25;color:#B0021A;break-inside:avoid}
+.dq b{color:#1D2240;margin-right:.8mm}.dq i{color:#545B7A;font-size:8.4pt}
+.dz-in{margin:1.6mm 0 0;border:1.6px dashed #E7A3AB;border-radius:3mm;padding:1.2mm 3mm;background:#FFF8F8}
+.dz-h{font:800 9.6pt 'Inter';color:#D0021B;margin:0 0 .6mm}
+.dz-in .dz-e{margin:0}.dz-in .dz-t{display:none}.dz-in .dz-l li{font-size:9.2pt}
+.evq .dq{margin-left:0}

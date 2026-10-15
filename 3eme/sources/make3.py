@@ -36,7 +36,6 @@ def meta(path, title, res, log, prof):
     top = add('Trois sujets blancs du brevet', 'dnb')
     for k in 'ABC': add(f'Sujet {k}', f'dnb-{k}', top)
     add('Réponses de « Je m’entraîne »', 'rep'); add('Glossaire visuel', 'glo')
-    if prof: add('Corrigé', 'corr')
     w.page_mode = '/UseOutlines'
     w._root_object[NameObject('/Lang')] = TextStringObject('fr-FR')
     w.add_metadata({'/Title': title, '/Author': 'Tom Rougeaud', '/Subject': 'Maths · 3ème Série Pro — CC BY-NC 4.0'})

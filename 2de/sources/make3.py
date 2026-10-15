@@ -34,7 +34,6 @@ def meta(path, title, res, log, prof):
         for k, t in [('-dep', 'Point de départ'), ('-cours', 'La leçon'), ('-meth', 'Méthodes'), ('-x', 'Je m’entraîne, je résous'), ('-ev', 'S’évaluer')]:
             add(t, c['id'] + k, top)
     add('Réponses de « Je m’entraîne »', 'rep'); add('Glossaire visuel', 'glo')
-    if prof: add('Corrigé', 'corr')
     w.page_mode = '/UseOutlines'
     w._root_object[NameObject('/Lang')] = TextStringObject('fr-FR')
     w.add_metadata({'/Title': title, '/Author': 'Tom Rougeaud', '/Subject': 'Maths et MCV · 2de Bac Pro — CC BY-NC 4.0'})

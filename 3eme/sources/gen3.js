@@ -255,7 +255,7 @@ const doc = (title, body, cls) => `<!doctype html><html lang="fr"><head><meta ch
 <body class="${cls}" data-foot="${esc(FOOT)}"><div id="flow">${anchors(typo(body))}</div><div id="out"></div>${cls === 'prof' ? typo(detsHtml()) : ''}${TPL}<script>${PAG}</script></body></html>`;
 const front = pCover + pGuide + pComp1 + pComp2 + pToc;
 fs.writeFileSync(path.join(B, 'eleve.html'), doc('Maths · 3ème Série Pro — manuel', front + pontSec + chapSecs + dnbSecs + repSec + glo, 'eleve'));
-fs.writeFileSync(path.join(B, 'prof.html'), doc('Maths · 3ème Série Pro — version professeur', front + pontSec + pontProf + chapSecs + dnbSecs + repSec + glo + corr, 'prof'));
+fs.writeFileSync(path.join(B, 'prof.html'), doc('Maths · 3ème Série Pro — version professeur', front + pontSec + pontProf + chapSecs + dnbSecs + repSec+ glo, 'prof'));
 const nEx = CH.reduce((a, x) => a + x.rep.length + x.c.probs.length, 0);
 fs.writeFileSync(path.join(B, 'log.json'), JSON.stringify({ version: 3, chapitres: DATA.map(c => ({ id: c.id, n: c.n, titre: c.titre })), exercices: nEx, mots: DATA.reduce((a, c) => a + c.words.length, 0) }, null, 1));
 console.log(`chapitres : ${DATA.length} · exercices du manuel : ${nEx} · contrôles de calcul : OK`);

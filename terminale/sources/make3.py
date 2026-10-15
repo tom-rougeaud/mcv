@@ -36,7 +36,6 @@ def meta(path, title, res, log, prof):
     top = add('Trois sujets de CCF', 'ccf')
     for k in 'ABC': add(f'Sujet {k}', f'ccf-{k}', top)
     add('Réponses de « Je m’entraîne »', 'rep'); add('Glossaire visuel', 'glo')
-    if prof: add('Corrigé', 'corr')
     w.page_mode = '/UseOutlines'
     w._root_object[NameObject('/Lang')] = TextStringObject('fr-FR')
     w.add_metadata({'/Title': title, '/Author': 'Tom Rougeaud', '/Subject': 'Maths et MCV · Tle Bac Pro — CC BY-NC 4.0'})

@@ -7,6 +7,27 @@
   const flow = document.getElementById('flow'), out = document.getElementById('out');
   const res = { secs: {}, words: {}, num: {}, errors: [], warnings: [], pages: 0, notes: 0, fits: 0 };
   const tpl = id => document.getElementById(id).content.firstElementChild.cloneNode(true);
+  // version professeur : le corrigé détaillé de chaque exercice est rangé DANS l’exercice (sous chaque question quand c’est possible,
+  // sinon en fin de bloc), donc toujours sur la même page que lui ; il compte dans la mise en page
+  if (PROF && document.getElementById('dets')) {
+    const SRCD = {}; document.querySelectorAll('#dets .dz-src').forEach(d => { const e = d.querySelector('.dz-e'); if (e) SRCD[d.dataset.for] = { h: d.innerHTML, li: [...e.querySelectorAll('.dz-l > li')].map(l => l.innerHTML) }; });
+    const mk = (cls, html) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; return d; };
+    const whole = (e, id) => e.appendChild(mk('dz-in', '<div class="dz-h">✔️ Corrigé détaillé</div>' + SRCD[id].h));
+    const byId = {}; flow.querySelectorAll('[data-det]').forEach(e => { (byId[e.dataset.det] = byId[e.dataset.det] || []).push(e); });
+    for (const [id, list] of Object.entries(byId)) {
+      const s = SRCD[id]; if (!s) continue;
+      const evq = list.filter(e => e.classList.contains('evq'));
+      if (evq.length) { if (evq.length === s.li.length) evq.forEach((e, k) => e.appendChild(mk('dq', s.li[k]))); else whole(evq[evq.length - 1], id); res.dets = (res.dets || 0) + 1; continue; }
+      list.forEach(e => {
+        const box = e.querySelector(':scope > .exb') || e;
+        const us = [...box.querySelectorAll('.pq, .qq')].filter(u => !u.parentElement.closest('.pq, .qq'));
+        if ((e.classList.contains('pb3') || e.classList.contains('evx')) && us.length === s.li.length) us.forEach((u, k) => u.appendChild(mk('dq', s.li[k]))); else whole(e, id);
+        res.dets = (res.dets || 0) + 1;
+      });
+    }
+    Object.keys(SRCD).forEach(id => { if (!byId[id] && !/-r2$/.test(id)) res.errors.push('Corrigé détaillé sans exercice : ' + id); });
+    document.getElementById('dets').remove();
+  }
   function newPage(run, col, cols) {
     const p = document.createElement('div'); p.className = 'page' + (col ? ' c-' + col : '') + (run ? ' cont' : '');
     p.innerHTML = (run ? `<div class="run">${run}</div>` : '') + `<div class="inner${cols ? ' cols2' : ''}"></div><div class="foot"></div>`;
@@ -105,11 +126,12 @@
         if (units().length < 3) return false;
         lead.forEach(x => el.appendChild(x)); el.appendChild(b); fitAll(b);
         const au = b.querySelector(':scope > .autr'); if (au) b.removeChild(au);
+        const dzi = b.querySelector(':scope > .dz-in'); if (dzi) b.removeChild(dzi);
         const moved = []; while (over(el) && units().length > 2) { const u = units().pop(); moved.unshift(u); u.remove(); }
-        if (over(el) || !moved.length) { const box = b.querySelector(':scope > .exb'); moved.forEach(u => box.appendChild(u)); if (au) b.appendChild(au); el.removeChild(b); lead.forEach(x => el.removeChild(x)); return false; }
+        if (over(el) || !moved.length) { const box = b.querySelector(':scope > .exb'); moved.forEach(u => box.appendChild(u)); if (au) b.appendChild(au); if (dzi) b.appendChild(dzi); el.removeChild(b); lead.forEach(x => el.removeChild(x)); return false; }
         const cont = document.createElement('div'); cont.className = b.className.replace(/\bpb3\b/, 'pb3c') + ' keep cont';
         const t = b.querySelector('.ext'); cont.innerHTML = `<div class="exh"><span class="ext">${t ? t.innerHTML : ''} <span class="suite">(suite)</span></span></div><div class="exb"></div>`;
-        const dst = cont.querySelector('.exb'); moved.forEach(u => dst.appendChild(u)); if (au) cont.appendChild(au); if (b.dataset.det) cont.dataset.det = b.dataset.det;
+        const dst = cont.querySelector('.exb'); moved.forEach(u => dst.appendChild(u)); if (au) cont.appendChild(au); if (dzi) cont.appendChild(dzi); if (b.dataset.det) cont.dataset.det = b.dataset.det;
         queue.splice(0, i + 1, cont); res.splits = (res.splits || 0) + 1; return true;
       };
       if (el.children.length && half()) continue;
@@ -147,29 +169,6 @@
     runs.filter(r => r.length > 1).forEach(pcs => { const anchor = pcs[0].previousElementSibling; const sorted = pcs.slice().sort((x, y) => (+x.querySelector('[data-numof]').textContent || 0) - (+y.querySelector('[data-numof]').textContent || 0)); pcs.forEach(x => x.remove()); let ref = anchor; sorted.forEach(x => { if (ref) ref.after(x); else inn.prepend(x); ref = x; }); }); });
   // corrigé express : dans l’ordre des numéros d’exercice
   document.querySelectorAll('.cc').forEach(cc => { const ps = [...cc.querySelectorAll(':scope > p')]; ps.sort((x, y) => (+x.querySelector('.cn').textContent || 0) - (+y.querySelector('.cn').textContent || 0)).forEach(x => cc.appendChild(x)); });
-  // version professeur : les zones « Mes notes » reçoivent le corrigé détaillé des exercices de la page (ou de la page précédente)
-  const dets = document.getElementById('dets');
-  if (PROF && dets) {
-    const SRC = {}; dets.querySelectorAll('.dz-src').forEach(d => { SRC[d.dataset.for] = d.innerHTML; });
-    const shown = new Set(); let prev = [];
-    [...out.children].forEach(pg => {
-      const here = [...new Set([...pg.querySelectorAll('[data-det]')].map(e => e.dataset.det))].filter(id => SRC[id]);
-      const cand = [...prev, ...here].filter((id, i, a) => !shown.has(id) && a.indexOf(id) === i);
-      prev = here;
-      const notes = pg.querySelector('.inner > .blk.notes'); if (!notes || !cand.length) return;
-      const h = notes.getBoundingClientRect().height + parseFloat(getComputedStyle(notes).marginTop || 0);
-      const z = document.createElement('div'); z.className = 'blk detz'; z.style.height = h + 'px';
-      z.innerHTML = '<h3>✔️ Corrigé détaillé</h3><div class="dz-b"></div>'; const b = z.querySelector('.dz-b');
-      notes.replaceWith(z); let n = 0;
-      for (const id of cand) { const e = document.createElement('div'); e.innerHTML = SRC[id]; const it = e.firstElementChild; b.appendChild(it);
-        if (z.scrollHeight > z.clientHeight + 1) b.removeChild(it); else { shown.add(id); n++; } }
-      if (!n) { z.replaceWith(notes); return; }
-      res.dets = (res.dets || 0) + n;
-      const rest = (z.clientHeight - (b.getBoundingClientRect().bottom - z.getBoundingClientRect().top)) / MM;
-      if (rest > 16) { const l = document.createElement('div'); l.className = 'lines'; l.innerHTML = '<i></i>'.repeat(Math.floor((rest - 4) / 10)); z.appendChild(l); if (z.scrollHeight > z.clientHeight + 1) z.removeChild(l); }
-    });
-    dets.remove();
-  }
   // contrôles : rien ne déborde, ni en bas ni à droite
   [...out.children].forEach((p, i) => { const el = p.querySelector('.inner'); if (el && over(el)) res.errors.push('Page ' + (i + 1) + ' déborde');
     if (PROF) return;
