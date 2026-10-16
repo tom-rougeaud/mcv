@@ -206,7 +206,7 @@ const corr = `<section class="sec corr" data-key="corr" data-recto="1" data-run=
 /* ---------- styles et document ---------- */
 const SRC = path.join(HERE, 'style');
 const FONTS = fs.readFileSync(path.join(SRC, 'fonts.css'), 'utf8');
-const ROOT = `:root{--ink:#1D2240;--soft:#545B7A;--brand:#8A5F00;--accent:#F5C827;
+const ROOT = `:root{--ink:#1D2240;--soft:#545B7A;--brand:#444DB0;--accent:#6B74D1;
 --c-verbe:#1E7F45;--t-verbe:#DCF4E4;--c-algebre:#C2332A;--t-algebre:#FDE3E0;--c-nombre:#1D5FC2;--t-nombre:#E0EBFD;--c-fonction:#B05200;--t-fonction:#FFE7D1;
 --c-geometrie:#7438C0;--t-geometrie:#EEE3FB;--c-mesure:#08767C;--t-mesure:#D6F2F2;--c-algo:#AA2272;--t-algo:#FBE0EF;--c-donnees:#755C00;--t-donnees:#FFF0B8}
 ${['verbe', 'algebre', 'nombre', 'fonction', 'geometrie', 'mesure', 'algo', 'donnees'].map(c => `.c-${c}{--cc:var(--c-${c});--tt:var(--t-${c})}`).join('\n')}`;

@@ -34,7 +34,7 @@ const CSS = ['print.css', 'n3.css', 'mcv.css'].map(f => rd('style/' + f)).join('
   .replace(/@page\{[^}]*\}/g, '').replace(/html,body\{margin:0;padding:0;background:#fff\}/, 'html,body{margin:0;padding:0}');
 const APPCSS = rd('app/app.css') + '\n' + rd('app/app3.css');
 const js = s => s.replace(/<\/script/gi, '<\\/script');
-const FAV = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#2B2D7C"/><text x="32" y="47" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#FFC233" text-anchor="middle">Σ</text></svg>`);
+const FAV = 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="#609BBD"/><text x="32" y="47" font-family="Arial,sans-serif" font-size="44" font-weight="700" fill="#1D2240" text-anchor="middle">Σ</text></svg>`);
 
 const html = `<!doctype html>
 <html lang="fr">
@@ -43,7 +43,7 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Maths et MCV · 2de</title>
 <meta name="description" content="Mathématiques de 2de Bac Pro Métiers de la relation client : un document du métier pour démarrer, des leçons animées, des méthodes pas à pas, de l’entraînement corrigé et expliqué, des problèmes du commerce, de la vente et de l’accueil.">
-<meta name="theme-color" content="#2B2D7C">
+<meta name="theme-color" content="#2A6A8C">
 <meta name="author" content="Tom Rougeaud">
 <link rel="icon" href="${FAV}">
 <style>${FONTS}</style>

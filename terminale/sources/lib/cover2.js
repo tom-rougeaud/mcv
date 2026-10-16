@@ -1,8 +1,8 @@
-/* Couverture « Maths et MCV · Tle » : page or (#F5C827), motifs dessinés à main levée, peu opaques,
+/* Couverture « Maths et MCV · Tle » : page indigo (#6B74D1), motifs dessinés à main levée, peu opaques,
    qui évoquent les 7 chapitres de terminale (suites, intérêts composés, cubique, exponentielle, nuage de points, arbre pondéré).
    Titre, nom de l’auteur en bas, QR code vers l’appli. viewBox 840 × 1188 (1 unité = 0,25 mm). */
 'use strict';
-const YEL = '#F5C827', W = '#FFFFFF', MOT = '#4A3700';
+const YEL = '#F5C827', W = '#FFFFFF', MOT = '#1D2240';
 /* tirage reproductible pour le tremblé du trait */
 function rng(seed) { let a = seed >>> 0; return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 let R = rng(7);
@@ -66,10 +66,7 @@ const M = {
 function cover(o = {}) {
   R = rng(7);
   const qr = o.qr || '';
-  let s = `<svg viewBox="0 0 840 1188" xmlns="http://www.w3.org/2000/svg" class="cvsvg"><defs>
-<linearGradient id="cvbg" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="#FCE27C"/><stop offset=".5" stop-color="#F5C827"/><stop offset="1" stop-color="#E2A600"/></linearGradient>
-<radialGradient id="cvglow" cx=".25" cy=".2" r=".7"><stop offset="0" stop-color="#FFF6D0" stop-opacity=".6"/><stop offset="1" stop-color="#FFF6D0" stop-opacity="0"/></radialGradient></defs>
-<rect width="840" height="1188" fill="url(#cvbg)"/><rect width="840" height="1188" fill="url(#cvglow)"/>`;
+  let s = `<svg viewBox="0 0 840 1188" xmlns="http://www.w3.org/2000/svg" class="cvsvg"><rect width="840" height="1188" fill="#6B74D1"/>`;
   // motifs : [nom, x, y, rotation, échelle, opacité]
   const L = [['expo', 150, 140, -6, 1, .22], ['bars', 660, 150, 6, .95, .2], ['qn', 420, 150, 0, .9, .16], ['star', 290, 60, 0, 1, .3],
     ['coins', 130, 380, 4, .9, .2], ['cubic', 720, 400, -5, .95, .2], ['log', 330, 330, -6, .7, .16], ['pct', 560, 320, 10, .8, .14],

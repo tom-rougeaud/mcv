@@ -111,7 +111,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
 /* ---- 1re : encadrés Je programme / Je raisonne ---- */
 .prog,.rais{margin:12px 0 4px;border-radius:14px;padding:10px 14px}
 .prog{background:#F3F6FF;border:1.5px solid #B9C7F2}.rais{background:#FFF8E1;border:1.5px solid #F3D88A}
-.prog-h,.rais-h{font:800 15px 'Inter',system-ui,sans-serif;color:#0E6B4C;margin-bottom:4px}
+.prog-h,.rais-h{font:800 15px 'Inter',system-ui,sans-serif;color:#1F7A3A;margin-bottom:4px}
 .prog pre{font:600 14px/1.45 ui-monospace,Menlo,Consolas,monospace;background:#fff;border:1px solid #D5DCF1;border-radius:10px;padding:8px 12px;margin:6px 0;overflow-x:auto;white-space:pre;color:#1D2240}
 .prog code,.rais code{font:600 14px ui-monospace,Menlo,Consolas,monospace;background:#fff;border-radius:5px;padding:0 4px}
 .prog-q{font-weight:700}
@@ -134,6 +134,6 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
 .plan-l{flex:none;display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--cc);color:#fff;font-weight:800}
 .pont-ex{margin:8px 0 0;line-height:1.45}.pont-g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}.pont-g3>div{border:2px solid var(--line);border-radius:14px;padding:8px 10px}.pont-g3 p{margin:0}
 @media (max-width:640px){.pont-g3{grid-template-columns:1fr}}
-.auto{border:2px dashed var(--cc);border-radius:18px;padding:12px 14px;margin:14px 0;background:linear-gradient(135deg,#FFF8DB,#fff)}
+.auto{border:2px dashed var(--cc);border-radius:18px;padding:12px 14px;margin:14px 0;background:#FFF8DB}
 .auto-q{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;padding-left:20px}.auto-q p{margin:0 0 4px}.aq .inp{max-width:160px}.aq.ok .inp{border-color:var(--ok)}.aq.ko .inp{border-color:var(--ko)}.afb{margin-left:6px}
 @media (max-width:640px){.auto-q{grid-template-columns:1fr}}

@@ -190,7 +190,7 @@ const corr = `<section class="sec corr" data-key="corr" data-recto="1" data-run=
 /* ---------- styles et document ---------- */
 const SRC = path.join(HERE, 'style');
 const FONTS = fs.readFileSync(path.join(SRC, 'fonts.css'), 'utf8');
-const ROOT = `:root{--ink:#1D2240;--soft:#545B7A;--brand:#2B2D7C;--accent:#FFC233;
+const ROOT = `:root{--ink:#1D2240;--soft:#545B7A;--brand:#1F7A3A;--accent:#FFC233;
 --c-verbe:#1E7F45;--t-verbe:#DCF4E4;--c-algebre:#C2332A;--t-algebre:#FDE3E0;--c-nombre:#1D5FC2;--t-nombre:#E0EBFD;--c-fonction:#B05200;--t-fonction:#FFE7D1;
 --c-geometrie:#7438C0;--t-geometrie:#EEE3FB;--c-mesure:#08767C;--t-mesure:#D6F2F2;--c-algo:#AA2272;--t-algo:#FBE0EF;--c-donnees:#755C00;--t-donnees:#FFF0B8}
 ${['verbe', 'algebre', 'nombre', 'fonction', 'geometrie', 'mesure', 'algo', 'donnees'].map(c => `.c-${c}{--cc:var(--c-${c});--tt:var(--t-${c})}`).join('\n')}`;
@@ -203,7 +203,7 @@ const CSS = ['print.css', 'n3.css', 'mcv.css', 'v3.css'].map(f => fs.readFileSyn
   + `
 .page.cover2{padding:0}.cvfull,.cvfull svg{width:210mm;height:297mm;display:block}
 .cvsvg text{font-family:'Inter',${FALL}}
-.owner{display:grid;grid-template-columns:auto 1fr auto 40mm;gap:3mm;align-items:end;font:800 11pt 'Inter',${FALL};color:#2B2D7C;margin-top:4mm}.owner i{border-bottom:2px dashed #9aa3c7;height:8mm}
+.owner{display:grid;grid-template-columns:auto 1fr auto 40mm;gap:3mm;align-items:end;font:800 11pt 'Inter',${FALL};color:#1F7A3A;margin-top:4mm}.owner i{border-bottom:2px dashed #9aa3c7;height:8mm}
 .tbl.cons2{width:100%;font-size:10.2pt}.tbl.cons2 td,.tbl.cons2 th{text-align:left;border:1px solid #C9D1EA;padding:1mm 2.4mm}.tbl.cons2 td:nth-child(2){font-weight:700}`;
 const PAG = fs.readFileSync(path.join(HERE, 'lib', 'paginate.js'), 'utf8');
 const TPL = `<template id="notesTpl"><div class="blk notes"><h3>📝 Mes notes</h3><div class="lines"></div></div></template>`;
