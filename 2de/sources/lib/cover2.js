@@ -72,8 +72,8 @@ function cover(o = {}) {
   // titre
   s += `<g font-family="Inter">`;
   s += `<rect x="70" y="420" width="700" height="330" rx="40" fill="#1D2240" opacity=".92"/>`;
-  s += `<text x="110" y="492" font-size="26" font-weight="800" fill="${YEL}" letter-spacing="6">MATHÉMATIQUES · 2de BAC PRO</text>`;
-  s += `<text x="104" y="598" font-size="104" font-weight="800" fill="${W}" letter-spacing="-2">Maths et MCV</text>`;
+  s += `<text x="110" y="492" font-size="24" font-weight="800" fill="${YEL}" letter-spacing="3" textLength="620" lengthAdjust="spacingAndGlyphs">MATHÉMATIQUES · 2de BAC PRO</text>`;
+  s += `<text x="104" y="598" font-size="96" font-weight="800" fill="${W}" letter-spacing="-2" textLength="620" lengthAdjust="spacingAndGlyphs">Maths et MCV</text>`;
   s += `</g>` + `<path d="${line(110, 628, 470, 622, 2.5)}" fill="none" stroke="${YEL}" stroke-width="9" stroke-linecap="round"/>`;
   s += `<g font-family="Inter"><text x="110" y="690" font-size="38" font-weight="700" fill="${W}">Métiers de la relation client</text>`;
   s += `<text x="110" y="728" font-size="27" font-weight="700" fill="${YEL}">Commerce · Vente · Accueil</text></g>`;
