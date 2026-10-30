@@ -57,10 +57,13 @@ const html = `<!doctype html>
 <main id="main" tabindex="-1"><noscript><p>Cette application a besoin de JavaScript.${HASPDF ? ` Le manuel PDF reste disponible : <a href="${PDF}">télécharger le manuel</a>.` : ''}</p></noscript></main>
 <footer class="foot2">Maths et MCV · 2de — Tom Rougeaud · CC BY-NC 4.0 · <a href="#/confidentialite">Confidentialité</a> · <a href="#/donnees">Mes données</a> · <a href="../">Tout le programme</a></footer>
 <script>${js(rd('shared/gens.js'))}</script>
+<script>${js(rd('shared/pie.js'))}</script>
 <script>${js(rd('shared/train.js'))}</script>
 <script>${js(rd('app/widgets.js'))}</script>
 <script type="application/json" id="mcv-data">${json}</script>
 <script>${js(rd('app/app3.js'))}</script>
+<script>${js(rd('lib/svgfit.js'))}</script>
+<script>try { MCVfit.watch(document.getElementById('main')); } catch (e) { }</script>
 </body>
 </html>
 `;

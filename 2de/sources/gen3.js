@@ -189,7 +189,7 @@ const CSS = ['print.css', 'n3.css', 'mcv.css', 'v3.css'].map(f => fs.readFileSyn
 .cvsvg text{font-family:'Inter',${FALL}}
 .owner{display:grid;grid-template-columns:auto 1fr auto 40mm;gap:3mm;align-items:end;font:800 11pt 'Inter',${FALL};color:#2A6A8C;margin-top:4mm}.owner i{border-bottom:2px dashed #9aa3c7;height:8mm}
 .tbl.cons2{width:100%;font-size:10.2pt}.tbl.cons2 td,.tbl.cons2 th{text-align:left;border:1px solid #C9D1EA;padding:1mm 2.4mm}.tbl.cons2 td:nth-child(2){font-weight:700}`;
-const PAG = fs.readFileSync(path.join(HERE, 'lib', 'paginate.js'), 'utf8');
+const PAG = fs.readFileSync(path.join(HERE, 'lib', 'svgfit.js'), 'utf8') + '\n' + fs.readFileSync(path.join(HERE, 'lib', 'paginate.js'), 'utf8');
 const TPL = `<template id="notesTpl"><div class="blk notes"><h3>📝 Mes notes</h3><div class="lines"></div></div></template>`;
 const FOOT = 'Maths et MCV · 2de Bac Pro // T. Rougeaud';
 const typo = h => h.split(/(<pre[\s\S]*?<\/pre>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>)/).map((part, i) => i % 2 ? part : part.replace(/>([^<]+)</g, (m, t) => '>' + t.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ').replace(/(\d) (%|€)/g, '$1 $2').replace(/([+−]) (\d)/g, '$1 $2') + '<')).join('');

@@ -12,8 +12,8 @@ const FEVAD = [[2017, 80.5], [2018, 91.3], [2019, 101.8], [2020, 110.4], [2021, 
 
 const SK = {
   /* chapitre 1 · suites */
-  fevad: () => { const g = MCVP.plot({ W: 200, H: 130, ml: 30, mr: 8, mt: 10, mb: 22, fs: 9, x: [2016.5, 2023.5, 1], y: [0, 160, 40], xt: FEVAD.map(([a]) => [a, String(a).slice(2)]), grid: false });
-    return SV(g.base + FEVAD.map(([a, v]) => `<rect x="${(g.X(a - .32)).toFixed(1)}" y="${g.Y(v).toFixed(1)}" width="${(g.X(a + .32) - g.X(a - .32)).toFixed(1)}" height="${(g.Y(0) - g.Y(v)).toFixed(1)}" class="k"/>`).join('') + tt(112, 16, 'Md€ · Fevad', 10, { c: 'ts' }), 'Chiffre d’affaires du commerce en ligne de 2017 à 2023 : les barres montent chaque année'); },
+  fevad: () => { const g = MCVP.plot({ W: 200, H: 130, ml: 30, mr: 8, mt: 10, mb: 22, fs: 9, x: [2016.5, 2023.5, 1], y: [0, 160, 40], xt: FEVAD.map(([a]) => [a, String(a).slice(2)]), mt: 14 });
+    return SV(g.base + FEVAD.map(([a, v]) => `<rect x="${(g.X(a - .32)).toFixed(1)}" y="${g.Y(v).toFixed(1)}" width="${(g.X(a + .32) - g.X(a - .32)).toFixed(1)}" height="${(g.Y(0) - g.Y(v)).toFixed(1)}" class="k"/>`).join('') + FEVAD.map(([a, v]) => tt(g.X(a).toFixed(1), (g.Y(v) - 3).toFixed(1), String(v).replace('.', ','), 7.2, { c: 'tx' })).join('') + tt(112, 10, 'Md€ · Fevad', 9, { c: 'ts' }), 'Chiffre d’affaires du commerce en ligne de 2017 à 2023, en milliards d’euros, avec la valeur de chaque barre'); },
   box: () => { const K = Sketch(511); let s = fill(46, 52, 108, 58, .9) + K.P(K.poly([[46, 52], [154, 52], [154, 110], [46, 110]], true)) + K.P(K.poly([[46, 52], [70, 30], [178, 30], [154, 52]], true)) + K.P(K.poly([[154, 52], [178, 30], [178, 88], [154, 110]], true));
     s += K.P(K.line(100, 52, 124, 30), { w: 2 }) + tt(100, 86, 'box', 16) + `<rect x="12" y="8" width="62" height="24" rx="12" class="k"/>` + tt(43, 25, '+ 5 %', 13, { c: 'tw' }) + tt(100, 126, 'chaque mois', 11);
     return SV(s, 'Un colis d’abonnement et une étiquette « + 5 % »'); },

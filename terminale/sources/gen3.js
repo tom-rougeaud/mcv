@@ -223,7 +223,7 @@ const CSS = ['print.css', 'n3.css', 'mcv.css', 'v3.css'].map(f => fs.readFileSyn
 .ccfhow{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin:3mm 0}.ccfhow div{border:2px solid var(--cc);border-radius:4mm;padding:2.4mm 3.4mm;background:var(--tt)}.ccfhow b{display:block;font:800 12pt 'Inter',${FALL};color:#1D2240}.ccfhow span{font-size:10pt;line-height:1.3}.ccfadv{border-left:5px solid var(--cc);background:#FFFBEA;border-radius:3mm;padding:2mm 4mm;font-size:10.4pt}.ccfctx{font-size:10.6pt;margin:1mm 0 2mm}
 .evccf{font-size:9.6pt;margin:1.4mm 0 0;color:#545B7A}.appel3{margin:1.6mm 0 .4mm;border:2px dashed var(--cc);border-radius:3mm;padding:1.4mm 3mm;font-size:9.8pt;background:#fff}.appel3 b{color:var(--cc)}
 .tbl.cons2{width:100%;font-size:10.2pt}.tbl.cons2 td,.tbl.cons2 th{text-align:left;border:1px solid #C9D1EA;padding:1mm 2.4mm}.tbl.cons2 td:nth-child(2){font-weight:700}`;
-const PAG = fs.readFileSync(path.join(HERE, 'lib', 'paginate.js'), 'utf8');
+const PAG = fs.readFileSync(path.join(HERE, 'lib', 'svgfit.js'), 'utf8') + '\n' + fs.readFileSync(path.join(HERE, 'lib', 'paginate.js'), 'utf8');
 const TPL = `<template id="notesTpl"><div class="blk notes"><h3>📝 Mes notes</h3><div class="lines"></div></div></template>`;
 const FOOT = 'Maths et MCV · Tle Bac Pro // T. Rougeaud';
 const typo = h => h.split(/(<pre[\s\S]*?<\/pre>|<style[\s\S]*?<\/style>|<svg[\s\S]*?<\/svg>)/).map((part, i) => i % 2 ? part : part.replace(/>([^<]+)</g, (m, t) => '>' + t.replace(/ ([?!:;»])/g, ' $1').replace(/« /g, '« ').replace(/(\d) (%|€)/g, '$1 $2').replace(/([+−]) (\d)/g, '$1 $2') + '<')).join('');

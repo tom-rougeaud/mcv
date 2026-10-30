@@ -3,6 +3,8 @@
   'use strict';
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
   const { fr, rnd, tb, T, num, qcm, pick, int, shuffle, P, xs: XS } = H;
+  const PIE = typeof module !== 'undefined' ? require('./pie.js') : root.MCVPIE;
+  const WC = { '#C2332A': PIE.col(2), '#FFC233': PIE.col(0), '#DCE2F2': PIE.col(5) };
   const C1 = '#C2332A', C2 = '#FFC233', C3 = '#DCE2F2', INK = P.INK;
   const pr = (k, n) => rnd(k / n, 4);
   /* grille de n cases colorées (exact : une case = une issue) */
@@ -21,9 +23,9 @@
   DEP.c7 = R => {
     const n = pick(R, [8, 10]), g = 1, p = pick(R, [2, 3]), l = n - g - p, cols = shuffle(R, [...Array(g).fill(C1), ...Array(p).fill(C2), ...Array(l).fill(C3)]);
     let s = ''; const cx = 300, cy = 140, r = 118;
-    cols.forEach((c, i) => { const a0 = -Math.PI / 2 + i * 2 * Math.PI / n, a1 = a0 + 2 * Math.PI / n; s += `<path d="M${cx} ${cy}L${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)}Z" fill="${c}" stroke="${INK}" stroke-width="2"/>`; });
+    cols.forEach((c, i) => { const a0 = -Math.PI / 2 + i * 2 * Math.PI / n, a1 = a0 + 2 * Math.PI / n; s += `<path d="M${cx} ${cy}L${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)}Z" fill="${WC[c]}" stroke="#111111" stroke-width="2.2" stroke-linejoin="round"/>`; });
     s += `<polygon points="${cx - 10},8 ${cx + 10},8 ${cx},28" fill="${INK}"/>` + `<circle cx="${cx}" cy="${cy}" r="9" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
-    const leg = [[C1, 'bon de 50 €'], [C2, 'bon de 5 €'], [C3, 'perdu']].map(([c, t], i) => `<rect x="450" y="${70 + i * 30}" width="18" height="18" rx="3" fill="${c}" stroke="${INK}"/>` + T(476, 84 + i * 30, t, { fs: 14, a: 'start', w: 600 })).join('');
+    const leg = [[C1, 'bon de 50 €'], [C2, 'bon de 5 €'], [C3, 'perdu']].map(([c, t], i) => `<rect x="450" y="${70 + i * 30}" width="18" height="18" rx="3" fill="${WC[c]}" stroke="#111111" stroke-width="1.6"/>` + T(476, 84 + i * 30, t, { fs: 14, a: 'start', w: 600 })).join('');
     const svg = `<svg viewBox="0 0 600 270" class="pic vis" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Roue partagée en ${n} secteurs égaux">${s}${leg}</svg>`;
     return { titre: 'La roue du jeu-concours', doc: `<div class="wfig">${svg}</div><p class="srcl">Roue de ${n} secteurs égaux, lancée une fois par client. Jeu fictif.</p>`,
       qs: [{ t: 'Combien la roue a-t-elle de secteurs ?', kind: 'num', v: n, tol: .01, a: String(n) },

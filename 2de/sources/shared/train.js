@@ -7,6 +7,7 @@
   'use strict';
   const MC = typeof module !== 'undefined' ? require('./gens.js').MCVG : root.MCVG;
   const { fr, rnd, rng } = MC;
+  const PIE = typeof module !== 'undefined' ? require('./pie.js') : root.MCVPIE;
   const NB = ' ';
   const eur = (x, d = 2) => fr(x, d) + NB + '€', pct = x => fr(x) + NB + '%';
   const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -85,7 +86,7 @@
     const h = ['9 h', '10 h', '11 h', '12 h'], N = v.reduce((a, b) => a + b), mx = v.indexOf(Math.max(...v));
     const W = 600, H = 220, X = i => 90 + i * 120, Y = c => 180 - c * 8;
     let s = `<line x1="60" x2="580" y1="180" y2="180" stroke="#1D2240" stroke-width="2"/><line x1="60" x2="60" y1="40" y2="180" stroke="#1D2240" stroke-width="2"/>`;
-    for (let c = 0; c <= 16; c += 4) s += `<line x1="60" x2="580" y1="${Y(c)}" y2="${Y(c)}" stroke="#DCE2F2"/>` + T(50, Y(c) + 5, c, { fs: 12, a: 'end', c: 'ts' });
+    for (let c = 0; c <= 16; c += 2) s += `<line x1="60" x2="580" y1="${Y(c)}" y2="${Y(c)}" stroke="#C4CCE4"/>` + T(50, Y(c) + 5, c, { fs: 12, a: 'end', c: 'ts' });
     v.forEach((c, i) => { s += `<rect x="${X(i)}" y="${Y(c)}" width="70" height="${c * 8}" rx="4" class="k" data-cell="${i}"/>` + T(X(i) + 35, 198, h[i] + '–' + (parseInt(h[i]) + 1) + ' h', { fs: 13 }); });
     s += T(320, 22, 'Clients à l’accueil, samedi matin', { fs: 15 }) + T(20, 110, 'clients', { fs: 12, c: 'ts', r: -90 });
     const big = Math.max(...v), small = Math.min(...v), dbl = big === 2 * small;
@@ -263,12 +264,11 @@
   /* ======================= 6 · Probabilités ======================= */
   DEP.c6 = R => {
     const n = 10, g = 1, m = pick(R, [2, 3, 4]), z = n - g - m;
-    const cols = ['#FFC233', 'var(--cc)', '#E1E6F5'], lab = ['bon de 20 €', '− 10 %', 'merci'];
-    let s = '', a0 = -90; const seg = []; for (let i = 0; i < g; i++) seg.push(0); for (let i = 0; i < m; i++) seg.push(1); for (let i = 0; i < z; i++) seg.push(2);
-    seg.forEach((k, i) => { const a1 = a0 + 36, r = 90, cx = 150, cy = 110, p = a => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
-      const [x1, y1] = p(a0), [x2, y2] = p(a1); s += `<path d="M${cx} ${cy}L${x1.toFixed(1)} ${y1.toFixed(1)}A${r} ${r} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}Z" fill="${cols[k]}" stroke="#fff" stroke-width="2"/>`; a0 = a1; });
-    s += `<path d="M150 8L142 24H158Z" fill="#1D2240"/>`;
-    lab.forEach((l, i) => { s += `<rect x="290" y="${60 + i * 36}" width="22" height="22" rx="4" fill="${cols[i]}" stroke="#C9D1EA"/>` + T(322, 77 + i * 36, `${l} : ${[g, m, z][i]} secteur${[g, m, z][i] > 1 ? 's' : ''}`, { fs: 15, a: 'start' }); });
+    const cols = [0, 1, 5], lab = ['bon de 20 €', '− 10 %', 'merci'];
+    const seq = []; for (let i = 0; i < g; i++) seq.push(cols[0]); for (let i = 0; i < m; i++) seq.push(cols[1]); for (let i = 0; i < z; i++) seq.push(cols[2]);
+    let s = PIE.wheel({ cx: 150, cy: 110, r: 90, seq, bw: 2.2 });
+    s += `<path d="M150 8L142 24H158Z" fill="#111111"/>`;
+    lab.forEach((l, i) => { s += PIE.chip(290, 60 + i * 36, cols[i], 22) + T(322, 77 + i * 36, `${l} : ${[g, m, z][i]} secteur${[g, m, z][i] > 1 ? 's' : ''}`, { fs: 15, a: 'start' }); });
     return { titre: 'La roue de la fête des mères', doc: svg(600, 220, s, 'Roue de jeu'),
       qs: [{ t: 'Combien la roue a-t-elle de secteurs en tout ?', kind: 'num', v: n, tol: .5, a: String(n) },
         { t: 'Combien de secteurs donnent « − 10 % » ?', kind: 'num', v: m, tol: .5, a: String(m) },
@@ -279,10 +279,9 @@
   };
   TR.c6e1 = R => {
     let n, c; do { n = pick(R, [8, 10, 12, 20]); const r = 1 + Math.floor(R() * (n / 2)), b = 1 + Math.floor(R() * (n / 3)); c = [r, b, n - r - b]; } while (c[2] < 1);
-    const cols = ['#C2332A', '#1D5FC2', '#FFC233'], nm = ['rouge', 'bleu', 'jaune'];
-    let s = '', a0 = -90; const seg = []; c.forEach((k, i) => { for (let j = 0; j < k; j++) seg.push(i); });
-    seg.forEach(k => { const a1 = a0 + 360 / n, r = 80, cx = 110, cy = 96, p = a => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)]; const [x1, y1] = p(a0), [x2, y2] = p(a1);
-      s += `<path d="M${cx} ${cy}L${x1.toFixed(1)} ${y1.toFixed(1)}A${r} ${r} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}Z" fill="${cols[k]}" stroke="#fff" stroke-width="2"/>`; a0 = a1; });
+    const cols = [2, 1, 0], nm = ['rouge', 'bleu', 'jaune'];
+    const seq = []; c.forEach((k, i) => { for (let j = 0; j < k; j++) seq.push(cols[i]); });
+    let s = PIE.wheel({ cx: 110, cy: 96, r: 80, seq, bw: 2.2 });
     s += T(110, 192, `${n} secteurs identiques`, { fs: 13, c: 'ts' });
     const P = x => rnd(x / n, 4), fq = (x) => `${x}/${n} = ${fr(P(x))}`;
     const items = [num('a', P(c[0]), 2, fq(c[0]), [{ v: c[0], m: 'Une probabilité est une fraction : cas favorables ÷ cas possibles.' }]), num('b', P(c[1]), 2, fq(c[1])), num('c', P(n - c[0]), 2, fq(n - c[0]), [{ v: P(c[0]), m: '« Pas rouge » : c’est l’événement contraire, 1 − P(rouge).' }]), num('d', P(c[1] + c[2]), 2, fq(c[1] + c[2]))];

@@ -1,6 +1,7 @@
 /* Chapitre 6 · Fluctuation et probabilités — version 3 (BO 2019, 2de pro). */
 'use strict';
 const K = require('../lib/kit3');
+const PIE = require('../shared/pie.js');
 const { rnd, H, FM, M, R, adapt } = K;
 const { S, T, Rc, Ln, Ar, Br, st } = require('../lib/visu');
 const P = require('../lib/pics');
@@ -14,7 +15,8 @@ module.exports = function (chk) {
   c.depart = 'c6';
 
   /* ---------- méthodes visuelles ---------- */
-  const miniRoue = `<svg viewBox="0 0 170 100" class="pic" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="une roue de 12 secteurs">${Array.from({ length: 12 }, (_, i) => { const a0 = -Math.PI / 2 + i * Math.PI / 6, a1 = a0 + Math.PI / 6, r = 42, cx = 85, cy = 54; return `<path d="M${cx} ${cy}L${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)}Z" class="${i === 0 ? 'k' : i <= 3 ? 'k2' : 'wh'} ks" stroke-width="1.4"/>`; }).join('')}<path d="M85 8 l-6 -8 h12 z" class="k"/></svg>`;
+  const roueSeq = [2, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1];
+  const miniRoue = `<svg viewBox="0 0 170 100" class="pic" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="une roue de 12 secteurs">${PIE.wheel({ cx: 85, cy: 56, r: 40, seq: roueSeq, bw: 1.6 })}<path d="M85 10 l-6 -9 h12 z" class="k"/></svg>`;
   // 1. la ligne des probabilités
   const lx = p => 50 + p * 500;
   const ligne = S(600, 256, st(1, `<rect x="50" y="70" width="500" height="16" rx="8" class="k2 ks" stroke-width="2"/>` + [[0, '0'], [.5, '0,5'], [1, '1']].map(([p, t]) => Ln(lx(p), 62, lx(p), 94, { w: 2.4 }) + T(lx(p), 54, t, { fs: 16 })).join('') + T(lx(0), 116, 'impossible', { fs: 13, c: 'kt' }) + T(lx(.5), 116, 'une chance sur deux', { fs: 13, c: 'kt' }) + T(lx(1), 116, 'certain', { fs: 13, c: 'kt' }) + T(300, 24, 'on lance un dé à 6 faces', { fs: 13, c: 'ts' }))
@@ -22,9 +24,8 @@ module.exports = function (chk) {
     + st(3, Br(lx(0), lx(1 / 6), 182, 'P(6) = 1/6', { fs: 13 }) + Br(lx(1 / 6), lx(1), 182, 'P(pas 6) = 5/6', { fs: 13 }))
     + st(4, T(300, 244, 'un événement et son contraire se partagent la ligne : 1/6 + 5/6 = 1', { fs: 14, c: 'kt' })), 'La ligne des probabilités, de 0 (impossible) à 1 (certain)');
   // 2. la roue de 12 secteurs
-  const sect = (i, cls) => { const a0 = -Math.PI / 2 + i * Math.PI / 6, a1 = a0 + Math.PI / 6, r = 90, cx = 150, cy = 125; return `<path d="M${cx} ${cy}L${(cx + r * Math.cos(a0)).toFixed(1)} ${(cy + r * Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(cx + r * Math.cos(a1)).toFixed(1)} ${(cy + r * Math.sin(a1)).toFixed(1)}Z" class="${cls} ks" stroke-width="2"/>`; };
-  const roue = S(600, 250, st(1, Array.from({ length: 12 }, (_, i) => sect(i, i === 0 ? 'k' : i <= 3 ? 'k2' : 'wh')).join('') + `<path d="M150 22 l-9 -16 h18 z" class="k"/>` + T(150, 240, '12 secteurs identiques', { fs: 13, c: 'ts' }))
-    + st(2, Rc(300, 40, 22, 22, { c: 'k', rx: 4 }) + T(332, 57, '1 panier garni', { fs: 15, a: 'start' }) + Rc(300, 76, 22, 22, { c: 'k2', rx: 4 }) + T(332, 93, '3 bons de − 20 %', { fs: 15, a: 'start' }) + Rc(300, 112, 22, 22, { c: 'wh', rx: 4 }) + T(332, 129, '8 bons de − 5 %', { fs: 15, a: 'start' }))
+  const roue = S(600, 250, st(1, PIE.wheel({ cx: 150, cy: 125, r: 90, seq: roueSeq, bw: 2.2 }) + `<path d="M150 22 l-9 -16 h18 z" class="k"/>` + T(150, 240, '12 secteurs identiques', { fs: 13, c: 'ts' }))
+    + st(2, PIE.chip(300, 40, 2, 22) + T(332, 57, '1 panier garni', { fs: 15, a: 'start' }) + PIE.chip(300, 76, 0, 22) + T(332, 93, '3 bons de − 20 %', { fs: 15, a: 'start' }) + PIE.chip(300, 112, 1, 22) + T(332, 129, '8 bons de − 5 %', { fs: 15, a: 'start' }))
     + st(3, T(300, 176, 'P(panier) = 1 ÷ 12 ≈ 0,083', { fs: 16, c: 'kt', a: 'start' }) + T(300, 202, 'P(− 20 %) = 3 ÷ 12 = 0,25', { fs: 16, c: 'kt', a: 'start' }))
     + st(4, T(300, 232, 'cas favorables ÷ cas possibles', { fs: 14, a: 'start' })), 'Une roue de 12 secteurs coloriés');
   // 3. l’arbre et le tableau

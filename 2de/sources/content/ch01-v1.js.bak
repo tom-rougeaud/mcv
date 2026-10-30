@@ -1,0 +1,396 @@
+/* Chapitre 1 · Prix, marges et TVA
+   Programme de seconde professionnelle (BO spécial n° 5 du 11 avril 2019), module « Calculs commerciaux
+   et financiers » : pourcentages, coefficients multiplicateurs ; prix, coût, marge, taxe, taux.
+   Tous les résultats sont calculés ici (aucune réponse écrite à la main) et contrôlés par chk(). */
+'use strict';
+const { rnd, fr, eur, pct, cm, bl, lines, work, opt, frac, V, K, esc, NB } = require('../lib/util');
+const D = require('../lib/docs');
+const G = require('../lib/charts');
+const P = require('../lib/pics');
+const { Chapter } = require('../lib/blocks');
+
+const ERR = [];
+const chk = (c, m) => { if (!c) ERR.push(m); };
+const near = (a, b, e = 1e-9) => Math.abs(a - b) < e;
+const ca = (a, w) => `<span class="cellans"${w ? ` style="min-width:${w}mm"` : ''} data-a="${esc(a)}"></span>`;
+const q = (n, t) => `<p class="q"><span class="qn">${n}</span>${t}</p>`;
+const rep = (lab, w, a, u = '') => `<p class="ans"><span>${lab}</span>${bl(w, a)}${u ? `<span class="u">${u}</span>` : ''}</p>`;
+
+module.exports = function () {
+  const C = Chapter({ id: 'c1', n: 1, col: 'nombre', dom: 'Calculs commerciaux', titre: 'Prix, marges et TVA', icone: '🏷️' });
+
+  /* ================= OUVERTURE ================= */
+  C.head({
+    intro: 'Fixer un prix, afficher une promotion, contrôler un ticket de caisse : tous les métiers de la vente utilisent les pourcentages.',
+    obj: ['Appliquer un pourcentage et utiliser un coefficient multiplicateur.', 'Calculer un taux d’évolution, enchaîner plusieurs évolutions.', 'Passer d’un prix hors taxes à un prix toutes taxes comprises, et inversement.', 'Calculer une marge, un taux de marge et un taux de marque.'],
+    bo: 'Programme : calculs commerciaux et financiers · pourcentages · coefficients multiplicateurs.'
+  });
+  // situation : veste coupe-vent
+  const S_PA = 32.5, S_COEF = 2.4, S_TTC = rnd(S_PA * S_COEF), S_HT = rnd(S_TTC / 1.2), S_TVA = rnd(S_TTC - S_HT), S_MARGE = rnd(S_HT - S_PA);
+  chk(S_TTC === 78 && S_HT === 65 && S_TVA === 13 && S_MARGE === 32.5, 'situation');
+  C.situation({
+    titre: 'Une nouvelle veste en rayon',
+    html: `<p>Inès est en période de formation en milieu professionnel chez <b>Cap Rando</b>, une boutique d’articles de randonnée. Sa tutrice lui confie la mise en rayon d’une nouvelle veste coupe-vent.</p><p>Sur la facture du fournisseur, la veste est achetée <b>${eur(S_PA)} HT</b>. Pour fixer ses prix, la boutique multiplie le prix d’achat HT par un <b>coefficient de vente de ${fr(S_COEF)}</b> : elle obtient ainsi le prix de vente TTC (TVA à 20 %).</p>`,
+    q: 'Quel prix Inès doit-elle écrire sur l’étiquette, et combien la boutique gagne-t-elle sur chaque veste vendue ?',
+    retour: 'Vous répondrez à cette question dans l’exercice « Retour sur la situation », à la fin du chapitre.',
+    doc: D.doc('', 'Extrait de la facture du fournisseur', D.table(['Désignation', 'Qté', 'P.U. HT', 'Montant HT'], [['Veste coupe-vent', '12', fr(S_PA, 2) + '\u00A0€', fr(12 * S_PA, 2) + '\u00A0€']], 'dt-sm'), { cls: 'docx-sm' }) + D.etiq({ nom: 'Veste coupe-vent', det: 'Imperméable · tailles S à XXL', prix: '<span class="et-q">? ? ?</span>', unit: 'prix TTC' })
+  });
+  C.mots(['le pourcentage', 'le coefficient multiplicateur', 'le taux d’évolution', 'le prix hors taxes (HT)', 'la TVA', 'le prix toutes taxes comprises (TTC)', 'le prix d’achat', 'le coût d’achat', 'la marge brute', 'le taux de marge', 'le taux de marque', 'le coefficient de vente']);
+
+  /* ================= JE ME SOUVIENS ================= */
+  C.flash([
+    ['10 % de 340 € =', bl(16, '34 €')], ['25 % de 48 =', bl(16, '12')],
+    [`${frac(3, 4)} = …… %`, bl(16, '75 %')], ['0,07 = …… %', bl(16, '7 %')],
+    ['15 % en écriture décimale :', bl(14, '0,15')], ['18 € sur 120 € : …… %', bl(14, '15 %')],
+    ['5 % de 60 € =', bl(16, '3 €')], ['27,4583 € arrondi au centime :', bl(16, '27,46 €')],
+    ['2 kg coûtent 4,80 €. 5 kg coûtent :', bl(14, '12 €')], ['120 × 1,2 =', bl(16, '144')]
+  ]);
+  chk(rnd(340 * .1) === 34 && rnd(48 * .25) === 12 && rnd(18 / 120 * 100) === 15 && rnd(27.4583) === 27.46 && rnd(4.8 / 2 * 5) === 12 && rnd(120 * 1.2) === 144, 'flash');
+
+  /* ================= ACTIVITÉS ================= */
+  C.sec('🔎', 'Activités', 'act', 'pour découvrir');
+  C.activite(1, 'Une veste, trois prix', `<div class="two w2"><div><p>Sur le ticket de caisse d’un client, on lit : « Veste coupe-vent 78,00 € — dont TVA 20 % : 13,00 € ». Le prix de la veste sans la TVA est 65 €.</p>
+    ${q('a.', `${V('Calculez')} 20 % de 65 €.`)}${rep('', 22, '65 × 0,2 = 13 €')}
+    ${q('b.', `${V('Ajoutez')} ce montant à 65 €. Que retrouvez-vous ?`)}${rep('', 60, '65 + 13 = 78 € : le prix payé par le client')}
+    ${q('c.', `${V('Calculez')} 65 × 1,2. Que constatez-vous ?`)}${rep('', 60, '65 × 1,2 = 78 : même résultat')}
+    ${q('d.', `${V('Expliquez')} pourquoi multiplier par 1,2 revient à ajouter 20 %.`)}${lines(2, '65 + 0,2 × 65 = 65 × (1 + 0,2) = 65 × 1,2')}</div>
+    <div>${D.ticket({ mag: 'CAP RANDO', adr: ['12 rue du Lac', '21000 Dijon'], lignes: [['Veste coupe-vent', 78, 'B', 'CV-204 · gris L']], total: 78, pay: 'Carte bancaire', tva: [['B', '20 %', 65, 13, 78]], foot: ['Merci de votre visite', 'Échange sous 30 jours'] })}</div></div>`, ['app', 'rea']);
+  // activité 2 : évolutions successives
+  const A2 = [50, rnd(50 * .8), rnd(50 * .8 * .9), rnd(50 * .7)];
+  chk(A2[1] === 40 && A2[2] === 36 && A2[3] === 35, 'act2');
+  C.activite(2, '− 20 % puis − 10 % : est-ce − 30 % ?', `<p>Pendant les soldes, une boutique baisse le prix d’une paire de chaussures de 20 %. La deuxième semaine, elle accorde une nouvelle baisse de 10 % sur le prix déjà soldé. Une cliente dit : « Au total, j’ai eu − 30 % ». La paire coûtait ${eur(50)} avant les soldes.</p>
+    <div class="two"><div>${q('a.', `${V('Calculez')} le prix après la baisse de 20 %.`)}${rep('', 24, '40 €')}${q('b.', `${V('Calculez')} le prix après la baisse supplémentaire de 10 %.`)}${rep('', 24, '36 €')}${q('c.', `${V('Calculez')} le prix si l’on avait baissé directement de 30 %.`)}${rep('', 24, '35 €')}</div>
+    <div>${q('d.', `La cliente a-t-elle raison ? ${V('Calculez')} la baisse totale en euros, puis en pourcentage du prix de départ.`)}${rep('', 50, 'Non : 14 € de baisse, soit 28 %')}${q('e.', `${V('Calculez')} 0,8 × 0,9. Quel lien faites-vous avec la question d ?`)}${rep('', 56, '0,72 : on garde 72 %, la baisse est de 28 %')}</div></div>`, ['ana', 'val']);
+
+  /* ================= COURS ================= */
+  C.sec('📘', 'Le cours', 'cours');
+  C.cours({ n: 1, titre: 'Pourcentage d’une quantité, proportion',
+    ess: `<p>Prendre <b>t %</b> d’une quantité Q, c’est calculer Q × ${frac('t', 100)}.</p><p>La <b>proportion</b> (ou part) d’une partie dans un total est ${frac('partie', 'total')} ; on l’exprime en pourcentage en la multipliant par 100.</p>`,
+    ad: `<p>« t % » veut dire « t pour 100 ». Pour prendre 15 % d’un prix, on multiplie ce prix par 0,15.</p><p>Pour trouver une part, on divise la partie par le total.</p>`,
+    ill: P.pourcentage(),
+    ex: `<p>15 % de 240 € : 240 × 0,15 = 36 €. · 36 clients sur 240 : 36 ÷ 240 = 0,15, soit 15 %.</p>` });
+  C.cours({ n: 2, titre: 'Le coefficient multiplicateur',
+    ess: `<p>Augmenter une valeur de t %, c’est la multiplier par <b>CM = 1 + ${frac('t', 100)}</b>.</p><p>Diminuer une valeur de t %, c’est la multiplier par <b>CM = 1 − ${frac('t', 100)}</b>.</p><p>Valeur d’arrivée = valeur de départ × CM.</p>`,
+    ad: `<p>+ 20 % : on multiplie par 1,2.</p><p>− 30 % : il reste 70 %, on multiplie par 0,7.</p><p>Si CM &gt; 1, c’est une hausse ; si CM &lt; 1, c’est une baisse.</p>`,
+    ill: P.fleche('50 €', '35 €', '× 0,7', '− 30 %'),
+    ex: `<p>Un casque à 80 € augmente de 5 % : 80 × 1,05 = 84 €. · Une veste à 120 € baisse de 25 % : 120 × 0,75 = 90 €.</p>` });
+  C.cours({ n: 3, titre: 'Le taux d’évolution',
+    ess: `<p>Quand une valeur passe de V<sub>0</sub> (départ) à V<sub>1</sub> (arrivée), le <b>taux d’évolution</b> est t = ${frac('V<sub>1</sub> − V<sub>0</sub>', 'V<sub>0</sub>')}, exprimé en %.</p><p>On a aussi CM = ${frac('V<sub>1</sub>', 'V<sub>0</sub>')} et t = CM − 1.</p>`,
+    ad: `<p>On calcule l’écart entre les deux valeurs, puis on le compare à la valeur de départ.</p><p>Un taux négatif indique une baisse.</p>`,
+    ill: P.evol(),
+    ex: `<p>Le chiffre d’affaires passe de 12${NB}500 € à 13${NB}750 € : (13${NB}750 − 12${NB}500) ÷ 12${NB}500 = 0,1, soit + 10 %.</p>`,
+    att: 'On divise toujours par la valeur de départ.' });
+  C.cours({ n: 4, titre: 'Évolutions successives, retour à la valeur de départ',
+    ess: `<p>Le coefficient global de plusieurs évolutions successives est le <b>produit</b> des coefficients : CM = CM<sub>1</sub> × CM<sub>2</sub>.</p><p>Pour retrouver une valeur de départ, on divise : V<sub>0</sub> = V<sub>1</sub> ÷ CM.</p>`,
+    ad: `<p>Les pourcentages successifs ne s’additionnent pas : on multiplie les coefficients.</p><p>Pour « revenir en arrière », on divise par le coefficient.</p>`,
+    ill: P.retour('60 €', '42 €', '0,7'),
+    ex: `<p>− 20 % puis − 10 % : 0,8 × 0,9 = 0,72, soit une baisse de 28 %. · Un article soldé − 30 % coûte 42 € : prix avant soldes 42 ÷ 0,7 = 60 €.</p>`,
+    att: 'Une baisse de 20 % suivie d’une hausse de 20 % ne ramène pas au prix de départ : 0,8 × 1,2 = 0,96.' });
+  chk(rnd(.8 * 1.2) === .96 && rnd(42 / .7) === 60, 'cours4');
+  C.cours({ n: 5, titre: 'Prix hors taxes, TVA, prix toutes taxes comprises',
+    ess: `<p>La <b>TVA</b> (taxe sur la valeur ajoutée) est payée par le client ; l’entreprise la reverse à l’État.</p><p>Montant de TVA = prix HT × taux de TVA.</p><p>Prix TTC = prix HT + TVA = prix HT × (1 + taux).</p>`,
+    ad: `<p><b>HT</b> : le prix avant la taxe. <b>TTC</b> : ce que le client paie en caisse.</p><p>Avec une TVA à 20 %, on multiplie le prix HT par 1,2 ; pour revenir au prix HT, on divise le prix TTC par 1,2.</p>`,
+    ill: P.ttc(),
+    wide: `<table class="tbl tvat"><tr><th>Taux</th><th>Pour quoi ? (exemples)</th><th>CM</th></tr><tr><td><b>20 %</b> taux normal</td><td>la plupart des biens et des services : vêtements, sport, multimédia…</td><td>1,2</td></tr><tr><td><b>10 %</b></td><td>restauration, transport de voyageurs, hébergement</td><td>1,1</td></tr><tr><td><b>5,5 %</b></td><td>produits alimentaires, livres</td><td>1,055</td></tr><tr><td><b>2,1 %</b></td><td>médicaments remboursés par la Sécurité sociale</td><td>1,021</td></tr></table><p class="srcl">Taux de TVA en France métropolitaine. Source : economie.gouv.fr, janvier 2026.</p>`,
+    ex: `<p>Menu à 15 € HT, TVA 10 % : 15 × 1,1 = 16,50 € TTC. · Casque à 54 € TTC, TVA 20 % : 54 ÷ 1,2 = 45 € HT.</p>`,
+    att: 'Le prix HT n’est pas le prix TTC « moins 20 % » : 54 − 20 % = 43,20 €, ce n’est pas 45 €.' });
+  chk(rnd(15 * 1.1) === 16.5 && rnd(54 / 1.2) === 45 && rnd(54 * .8) === 43.2, 'cours5');
+  C.cours({ n: 6, titre: 'Du coût d’achat au prix de vente : la marge',
+    ess: `<p>Coût d’achat HT = prix d’achat HT + frais d’achat (transport…).</p><p><b>Marge brute</b> = prix de vente HT − coût d’achat HT.</p><table class="fml"><tr><td><b>Taux de marge</b></td><td>= ${frac('marge brute', 'coût d’achat HT')}</td></tr><tr><td><b>Taux de marque</b></td><td>= ${frac('marge brute', 'prix de vente HT')}</td></tr><tr><td><b>Coefficient de vente</b></td><td>= ${frac('prix de vente TTC', 'prix d’achat HT')}</td></tr></table>`,
+    ad: `<p>La marge, c’est ce qui reste au magasin sur le prix HT, une fois la marchandise payée. Elle sert à payer les salaires, le loyer, l’électricité…</p><p>Le taux de marge compare la marge à ce que l’article a coûté ; le taux de marque la compare au prix de vente.</p>`,
+    wide: `<div class="cbig">${G.stack({ title: 'Prix TTC de la veste coupe-vent de la situation (en €)', parts: [{ name: 'coût d’achat HT', v: S_PA, color: '#9DB9EA', ink: '#1D2240' }, { name: 'marge brute', v: S_MARGE, color: '#1D5FC2' }, { name: 'TVA', v: S_TVA, color: '#FFC233', ink: '#3F2A00' }], total: `prix TTC : ${eur(S_TTC)}`, fmt: v => fr(v, 2) })}</div>`,
+    ex: `<p>Veste achetée 32,50 € HT et vendue 65 € HT : marge = 65 − 32,50 = 32,50 € ; taux de marge = 32,50 ÷ 32,50 = 100 % ; taux de marque = 32,50 ÷ 65 = 50 %.</p>`,
+    att: 'La marge se calcule toujours avec des prix HT : la TVA n’appartient pas au magasin.' });
+  C.encart({ ic: '📢', titre: 'Ce que dit la loi : annoncer une réduction de prix',
+    html: `<p>Toute annonce de réduction de prix (prix barré, « − 30 % »…) doit indiquer <b>le prix le plus bas pratiqué par le vendeur pendant les 30 jours qui précèdent</b> la promotion. La réduction se calcule à partir de ce prix. La règle s’applique en magasin comme en ligne.</p><p>Autrement dit : un magasin ne peut pas augmenter un prix juste avant une promotion pour afficher ensuite une remise plus forte.</p>`,
+    src: 'Code de la consommation, article L112-1-1 · fiche pratique DGCCRF, août 2026.' });
+
+  /* ================= MÉTHODES ================= */
+  C.sec('🧭', 'Les méthodes', 'meth');
+  const M1 = rnd(44.9 * .65); chk(M1 === 29.19, 'M1');
+  C.methode({ n: 1, titre: 'Appliquer une évolution avec le coefficient multiplicateur', outil: '🧮 calculatrice',
+    steps: ['Repérer s’il s’agit d’une hausse ou d’une baisse, et le taux t.', 'Écrire le coefficient : 1 + t ÷ 100 (hausse) ou 1 − t ÷ 100 (baisse).', 'Multiplier la valeur de départ par le coefficient.', 'Arrondir au centime, puis vérifier le sens : une hausse donne un résultat plus grand.'],
+    enonce: 'Un sac à dos à 44,90 € est soldé − 35 %. Calculer son prix soldé.',
+    rows: [['Baisse de 35 % : coefficient', '1 − 0,35 = 0,65'], ['Prix soldé', '44,90 × 0,65 = 29,185'], ['Arrondi au centime', '29,19 €'], ['Vérification', '29,19 € &lt; 44,90 € ✓']],
+    rep: 'Le sac à dos soldé coûte 29,19 €.' });
+  const M2h = rnd(359 / 1.2), M2t = rnd(359 - M2h); chk(M2h === 299.17 && M2t === 59.83, 'M2');
+  C.methode({ n: 2, titre: 'Retrouver un prix HT, ou un prix avant une évolution', outil: '🧮 calculatrice',
+    steps: ['Repérer la valeur d’arrivée et le coefficient de l’évolution.', 'Diviser la valeur d’arrivée par le coefficient.', 'Contrôler en refaisant le calcul dans l’autre sens (multiplication).'],
+    enonce: 'Une trottinette coûte 359 € TTC (TVA 20 %). Calculer son prix HT et le montant de la TVA.',
+    rows: [['Coefficient de la TVA à 20 %', '1,2'], ['Prix HT', '359 ÷ 1,2 ≈ 299,17 €'], ['Montant de la TVA', '359 − 299,17 = 59,83 €'], ['Contrôle', '299,17 × 1,2 ≈ 359,00 € ✓']],
+    rep: 'Prix HT : 299,17 € ; TVA : 59,83 €.' });
+  const G_C = 9.6, G_TTC = 24.9, G_HT = rnd(G_TTC / 1.2), G_M = rnd(G_HT - G_C), G_TM = rnd(G_M / G_C * 100, 1), G_TQ = rnd(G_M / G_HT * 100, 1);
+  chk(G_HT === 20.75 && G_M === 11.15 && G_TM === 116.1 && G_TQ === 53.7, 'M3 ' + [G_HT, G_M, G_TM, G_TQ]);
+  C.methode({ n: 3, titre: 'Calculer une marge et ses taux', outil: '📊 tableur',
+    steps: ['Écrire tous les prix en HT (diviser le prix TTC par le coefficient de la TVA).', 'Calculer la marge : prix de vente HT − coût d’achat HT.', 'Taux de marge : marge ÷ coût d’achat HT ; taux de marque : marge ÷ prix de vente HT.', 'Exprimer les taux en pourcentage et arrondir au dixième.'],
+    enonce: 'Une gourde isotherme a un coût d’achat de 9,60 € HT. Elle est vendue 24,90 € TTC (TVA 20 %). Calculer la marge, le taux de marge et le taux de marque.',
+    extra: `<div class="me-sheet">${D.sheet({ cols: ['A', 'B', 'C', 'D', 'E', 'F', 'G'], sel: 'E2', fx: '=D2-B2', rows: [['Article', 'Coût HT', 'Prix TTC', 'Prix HT', 'Marge', 'Tx marge', 'Tx marque'], ['Gourde', '9,60', '24,90', '20,75', '11,15', '116,1 %', '53,7 %']] })}<p class="small">Formules : D2 <code>=C2/1,2</code> · E2 <code>=D2-B2</code> · F2 <code>=E2/B2</code> · G2 <code>=E2/D2</code> (cellules F2 et G2 au format pourcentage).</p></div>`,
+    rows: [['Prix de vente HT', '24,90 ÷ 1,2 = 20,75 €'], ['Marge', '20,75 − 9,60 = 11,15 €'], ['Taux de marge', '11,15 ÷ 9,60 ≈ 1,161 → 116,1 %'], ['Taux de marque', '11,15 ÷ 20,75 ≈ 0,537 → 53,7 %']],
+    rep: 'Marge : 11,15 € ; taux de marge : 116,1 % ; taux de marque : 53,7 %.' });
+  const M4a = rnd(21.5 / 25, 4), M4 = rnd(M4a * 1.1, 4); chk(M4a === .86 && M4 === .946, 'M4');
+  C.methode({ n: 4, titre: 'Calculer un taux d’évolution, enchaîner des évolutions', outil: '🧮 calculatrice',
+    steps: ['Calculer chaque coefficient : CM = V<sub>1</sub> ÷ V<sub>0</sub>, ou 1 ± t ÷ 100.', 'Multiplier les coefficients des évolutions successives.', 'Calculer le taux : t = CM − 1, puis l’écrire en % avec son signe.'],
+    enonce: 'Le prix d’un article passe de 25 € à 21,50 €, puis augmente de 10 %. Calculer le taux d’évolution global.',
+    rows: [['Première évolution', '21,50 ÷ 25 = 0,86'], ['Deuxième évolution', '1 + 0,10 = 1,1'], ['Coefficient global', '0,86 × 1,1 = 0,946'], ['Taux global', '0,946 − 1 = − 0,054']],
+    rep: 'Le prix a baissé de 5,4 % au total.' });
+
+  /* ================= VOCABULAIRE ================= */
+  C.sec('🔤', 'Les mots du chapitre', 'mots', 'à retrouver dans le glossaire');
+  [
+    { id: 'pourcentage', mot: 'le pourcentage', abr: '%', pic: P.pourcentage(), def: 'Nombre de parts sur 100.', formule: '15 % = 15 ÷ 100 = 0,15', phrase: '15 % des clients paient avec leur téléphone.' },
+    { id: 'cm', mot: 'le coefficient multiplicateur', abr: 'CM', pic: P.coef(), def: 'Nombre par lequel on multiplie une valeur pour lui appliquer une évolution.', formule: 'CM = 1 + t ÷ 100 (hausse) ; CM = 1 − t ÷ 100 (baisse)', phrase: 'Le coefficient multiplicateur d’une baisse de 25 % est 0,75.' },
+    { id: 'taux-evol', mot: 'le taux d’évolution', abr: 't', pic: P.evol(), def: 'Variation d’une valeur rapportée à sa valeur de départ.', formule: 't = (V₁ − V₀) ÷ V₀ ; positif : hausse ; négatif : baisse', phrase: 'Le taux d’évolution du chiffre d’affaires est de + 8 %.' },
+    { id: 'ht', mot: 'hors taxes', abr: 'HT', pic: P.ht(), def: 'Se dit d’un prix sans la TVA.', phrase: 'Les prix des fournisseurs sont exprimés hors taxes.' },
+    { id: 'tva', mot: 'la TVA', abr: 'taxe sur la valeur ajoutée', pic: P.tva(), def: 'Impôt payé par le client sur ses achats, collecté par l’entreprise et reversé à l’État.', formule: 'TVA = prix HT × taux', phrase: 'Sur ce ticket, la TVA à 20 % s’élève à 13 €.' },
+    { id: 'ttc', mot: 'toutes taxes comprises', abr: 'TTC', pic: P.ttc(), def: 'Se dit d’un prix qui comprend la TVA : c’est le prix payé par le client.', formule: 'prix TTC = prix HT × (1 + taux)', phrase: 'Les prix affichés en magasin sont des prix TTC.' },
+    { id: 'pa', mot: 'le prix d’achat', pic: P.achat(), def: 'Prix payé par le magasin au fournisseur pour une marchandise, en général HT.', phrase: 'Le prix d’achat de la veste est de 32,50 € HT.' },
+    { id: 'cout', mot: 'le coût d’achat', pic: P.cout(), def: 'Prix d’achat auquel on ajoute les frais d’achat (transport, emballage…).', formule: 'coût d’achat HT = prix d’achat HT + frais', sens: 'Dans la vie courante, « coût » et « prix » s’emploient souvent l’un pour l’autre ; en gestion, le coût comprend les frais.', phrase: 'Avec les frais de port, le coût d’achat d’une lampe est de 13,30 € HT.' },
+    { id: 'marge', mot: 'la marge brute', pic: P.marge(), def: 'Différence entre le prix de vente HT et le coût d’achat HT.', formule: 'marge = prix de vente HT − coût d’achat HT', sens: 'Dans la vie courante, la marge est aussi l’espace blanc au bord d’une page.', phrase: 'Sur chaque veste, la boutique réalise une marge brute de 32,50 €.' },
+    { id: 'tx-marge', mot: 'le taux de marge', pic: P.tmarge(), def: 'Marge exprimée en pourcentage du coût d’achat HT.', phrase: 'Le taux de marge de la gourde est de 116,1 %.' },
+    { id: 'tx-marque', mot: 'le taux de marque', pic: P.tmarque(), def: 'Marge exprimée en pourcentage du prix de vente HT.', sens: 'Rien à voir avec la marque d’un produit (son nom commercial).', phrase: 'Le taux de marque doit rester supérieur à 35 %.' },
+    { id: 'coef-v', mot: 'le coefficient de vente', pic: P.coefv(), def: 'Nombre par lequel le magasin multiplie le prix d’achat HT pour obtenir le prix de vente TTC.', phrase: 'Avec un coefficient de vente de 2,4, un article acheté 10 € HT est vendu 24 € TTC.' }
+  ].forEach(C.vcard);
+  // retenir les mots (dans la double page du vocabulaire)
+  const VQ = [['Le prix payé par le client en caisse est un prix', 'TTC'], ['Pour baisser un prix de 15 %, on le multiplie par le', 'coefficient multiplicateur'], ['Prix d’achat HT + frais de transport HT =', 'coût d’achat HT'], ['Prix de vente HT − coût d’achat HT =', 'marge brute'], ['La marge divisée par le prix de vente HT donne le', 'taux de marque'], ['(V₁ − V₀) ÷ V₀ est le', 'taux d’évolution']];
+  C.raw(`<div class="blk vq"><div class="vq-h">🧩 Je retiens les mots</div><p class="small">${V('Complétez')} chaque phrase avec un mot de la liste.</p><div class="bank">${['marge brute', 'TTC', 'taux d’évolution', 'coefficient multiplicateur', 'taux de marque', 'coût d’achat HT'].map(w => `<span class="tag">${w}</span>`).join('')}</div>${VQ.map((r, i) => `<p class="vq-l"><span class="jms-n">${i + 1}</span><span>${r[0]} ${bl(36, r[1])}</span></p>`).join('')}</div>`);
+  C.raw(`<div class="blk vq"><div class="vq-h">⚖️ Ne pas confondre</div><table class="tbl vqt"><tr><td>On divise la marge par le <b>coût d’achat HT</b></td><td>${ca('taux de marge', 24)}</td></tr><tr><td>On divise la marge par le <b>prix de vente HT</b></td><td>${ca('taux de marque', 24)}</td></tr><tr><td>Le prix sans la TVA</td><td>${ca('prix HT', 24)}</td></tr><tr><td>Le prix avec la TVA</td><td>${ca('prix TTC', 24)}</td></tr><tr><td>− 20 % puis + 20 %</td><td>${ca('× 0,96 : − 4 %', 24)}</td></tr></table></div>`);
+
+  /* ================= EXERCICES ================= */
+  C.sec('✏️', 'Les exercices', 'ex', 'corrigés et coups de pouce en fin de manuel');
+  C.palier(1, 'Les calculs de base, pour gagner en assurance.');
+
+  // E1
+  const E1 = [[20, 45], [5, 260], [75, 36], [12.5, 80], [2, 1450], [30, 19.9]];
+  const E1r = E1.map(([t, v]) => rnd(v * t / 100));
+  chk(E1r.join() === '9,13,27,10,29,5.97', 'E1 ' + E1r);
+  C.exo({ id: 'e1', pal: 1, comps: ['rea'], titre: 'Pourcentages de tête',
+    body: `<p>${V('Calculez')}, sans calculatrice si possible.</p><div class="flash">${E1.map(([t, v], i) => `<span>${'abcdef'[i]}. ${fr(t)} % de ${i === 2 || i === 3 ? fr(v) : eur(v, v % 1 ? 2 : 0)} = ${bl(18, i === 2 || i === 3 ? fr(E1r[i]) : eur(E1r[i], E1r[i] % 1 ? 2 : 0))}</span>`).join('')}</div>`,
+    corr: E1r.map((r, i) => `${'abcdef'[i]}. ${i === 2 || i === 3 ? fr(r) : eur(r, r % 1 ? 2 : 0)}`).join(' ; '),
+    pouce: '10 % : on divise par 10 ; 5 % : la moitié de 10 % ; 75 % : les trois quarts ; 12,5 % : le huitième.' });
+
+  // E2
+  const E2a = rnd(85 / 250 * 100), E2b = rnd(17 / 85 * 100); chk(E2a === 34 && E2b === 20, 'E2');
+  C.exo({ id: 'e2', pal: 1, comps: ['app', 'rea'], titre: 'D’où viennent les clients ?',
+    body: `<p>Une boutique de prêt-à-porter interroge 250 clients : 85 sont venus après avoir vu une publicité sur les réseaux sociaux. Parmi ces 85 clients, 17 ont acheté un article en promotion.</p>${q('a.', `${V('Calculez')} la part, en pourcentage, des clients venus grâce à la publicité.`)}${rep('', 24, '34 %')}${q('b.', `${V('Calculez')} la part, en pourcentage, des clients ayant acheté en promotion parmi ceux venus grâce à la publicité.`)}${rep('', 24, '20 %')}`,
+    corr: `a. 85 ÷ 250 = 0,34, soit 34 %. b. 17 ÷ 85 = 0,2, soit 20 %.`,
+    pouce: 'Part = partie ÷ total. Attention au « total » de la question b : ce sont les 85 clients, pas les 250.' });
+
+  // E3
+  const E3a = [['+ 20 %', '1,2'], ['− 15 %', '0,85'], ['+ 5,5 %', '1,055'], ['− 40 %', '0,6'], ['− 2,5 %', '0,975'], ['+ 100 %', '2']];
+  const E3b = [['1,08', '+ 8 %'], ['0,92', '− 8 %'], ['0,7', '− 30 %'], ['1,35', '+ 35 %'], ['1,021', '+ 2,1 %'], ['0,5', '− 50 %']];
+  C.exo({ id: 'e3', pal: 1, comps: ['rea'], titre: 'Évolutions et coefficients',
+    body: `<p>${V('Complétez')} les tableaux.</p><table class="tbl tnum wfull"><tr><th>Évolution</th>${E3a.map(r => `<td>${r[0]}</td>`).join('')}</tr><tr><th>Coefficient</th>${E3a.map(r => `<td class="fill">${ca(r[1])}</td>`).join('')}</tr></table><table class="tbl tnum wfull"><tr><th>Coefficient</th>${E3b.map(r => `<td>${r[0]}</td>`).join('')}</tr><tr><th>Évolution</th>${E3b.map(r => `<td class="fill">${ca(r[1])}</td>`).join('')}</tr></table>`,
+    corr: E3a.map(r => `${r[0]} → ${r[1]}`).join(' ; ') + ' · ' + E3b.map(r => `${r[0]} → ${r[1]}`).join(' ; ') + '.' });
+
+  // E4
+  const E4 = [[60, 15], [129, -20], [7.5, 4], [49.99, -30]], E4r = E4.map(([v, t]) => rnd(v * (1 + t / 100)));
+  chk(E4r.join() === '69,103.2,7.8,34.99', 'E4 ' + E4r);
+  C.exo({ id: 'e4', pal: 1, comps: ['rea'], titre: 'Nouveaux prix',
+    body: `<p>${V('Calculez')} chaque nouveau prix à l’aide d’un coefficient multiplicateur. Arrondissez au centime.</p><div class="calcs">${E4.map(([v, t], i) => `<div class="calc"><span class="calc-n">${'abcd'[i]}</span><div class="ct">${eur(v)} ${t > 0 ? 'augmente' : 'baisse'} de ${fr(Math.abs(t))} %.</div><div class="ans"><span>Calcul :</span>${bl(30, `${fr(v)} × ${cm(1 + t / 100)}`)}<span>Prix :</span>${bl(18, eur(E4r[i]))}</div></div>`).join('')}</div>`,
+    corr: E4.map(([v, t], i) => `${'abcd'[i]}. ${fr(v)} × ${cm(1 + t / 100)} = ${eur(E4r[i])}`).join(' ; ') + '.' });
+
+  // E5 HT ↔ TTC
+  const E5 = [
+    { art: 'Baskets de running', t: 20, ht: 75 }, { art: 'Livre de cuisine', t: 5.5, ht: 18.96 },
+    { art: 'Menu au restaurant', t: 10, ttc: 16.5 }, { art: 'Panier de légumes', t: 5.5, ttc: 12.66 }, { art: 'Coque de téléphone', t: 20, ttc: 23.94 }];
+  E5.forEach(r => { if (r.ht != null) { r.ttc2 = rnd(r.ht * (1 + r.t / 100)); r.tva = rnd(r.ht * r.t / 100); } else { r.ht2 = rnd(r.ttc / (1 + r.t / 100)); r.tva = rnd(r.ttc - r.ht2); } });
+  chk(E5[0].ttc2 === 90 && E5[0].tva === 15 && E5[1].ttc2 === 20 && E5[1].tva === 1.04 && E5[2].ht2 === 15 && E5[3].ht2 === 12 && E5[3].tva === .66 && E5[4].ht2 === 19.95 && E5[4].tva === 3.99, 'E5 ' + JSON.stringify(E5));
+  C.exo({ id: 'e5', pal: 1, comps: ['rea'], titre: 'Du HT au TTC, et inversement',
+    body: `<p>${V('Complétez')} le tableau. Arrondissez au centime.</p><table class="tbl tnum wfull"><tr><th>Article</th><th>Taux de TVA</th><th>Prix HT</th><th>Montant de TVA</th><th>Prix TTC</th></tr>${E5.map(r => `<tr><td class="tl">${r.art}</td><td>${fr(r.t)} %</td><td${r.ht == null ? ' class="fill"' : ''}>${r.ht != null ? eur(r.ht) : ca(eur(r.ht2))}</td><td class="fill">${ca(eur(r.tva))}</td><td${r.ttc == null ? ' class="fill"' : ''}>${r.ttc != null ? eur(r.ttc) : ca(eur(r.ttc2))}</td></tr>`).join('')}</table>`,
+    corr: E5.map(r => r.ht != null ? `${r.art} : TVA ${eur(r.tva)}, TTC ${eur(r.ttc2)}` : `${r.art} : HT ${eur(r.ht2)}, TVA ${eur(r.tva)}`).join(' ; ') + '.',
+    pouce: 'Du HT au TTC : on multiplie par (1 + taux). Du TTC au HT : on divise par (1 + taux). La TVA est la différence TTC − HT.' });
+
+  // E6 marges
+  const E6 = [{ a: 'Casquette', c: 6.4, v: 16 }, { a: 'Sac à dos 30 L', c: 28, v: 49 }, { a: 'Lampe frontale', c: 15.5, tm: 60 }, { a: 'Paire de bâtons', v: 54, m: 18 }];
+  E6.forEach(r => { if (r.c != null && r.v != null) { r.m = rnd(r.v - r.c); r.tm = rnd(r.m / r.c * 100, 1); } else if (r.tm != null) { r.m = rnd(r.c * r.tm / 100); r.v = rnd(r.c + r.m); } else { r.c = rnd(r.v - r.m); r.tm = rnd(r.m / r.c * 100, 1); } });
+  chk(E6[0].m === 9.6 && E6[0].tm === 150 && E6[1].m === 21 && E6[1].tm === 75 && E6[2].m === 9.3 && E6[2].v === 24.8 && E6[3].c === 36 && E6[3].tm === 50, 'E6 ' + JSON.stringify(E6));
+  const gv = (r, k, given) => given ? `<td>${k === 'tm' ? pct(r[k]) : eur(r[k])}</td>` : `<td class="fill">${ca(k === 'tm' ? pct(r[k]) : eur(r[k]))}</td>`;
+  C.exo({ id: 'e6', pal: 1, comps: ['rea'], titre: 'Marges en rayon',
+    body: `<p>Tous les prix sont hors taxes. ${V('Complétez')} le tableau.</p><table class="tbl tnum wfull"><tr><th>Article</th><th>Coût d’achat HT</th><th>Prix de vente HT</th><th>Marge brute</th><th>Taux de marge</th></tr>
+      <tr><td class="tl">${E6[0].a}</td>${gv(E6[0], 'c', 1)}${gv(E6[0], 'v', 1)}${gv(E6[0], 'm')}${gv(E6[0], 'tm')}</tr>
+      <tr><td class="tl">${E6[1].a}</td>${gv(E6[1], 'c', 1)}${gv(E6[1], 'v', 1)}${gv(E6[1], 'm')}${gv(E6[1], 'tm')}</tr>
+      <tr><td class="tl">${E6[2].a}</td>${gv(E6[2], 'c', 1)}${gv(E6[2], 'v')}${gv(E6[2], 'm')}${gv(E6[2], 'tm', 1)}</tr>
+      <tr><td class="tl">${E6[3].a}</td>${gv(E6[3], 'c')}${gv(E6[3], 'v', 1)}${gv(E6[3], 'm', 1)}${gv(E6[3], 'tm')}</tr></table>`,
+    corr: E6.map(r => `${r.a} : coût ${eur(r.c)}, vente ${eur(r.v)}, marge ${eur(r.m)}, taux de marge ${pct(r.tm)}`).join(' ; ') + '.',
+    pouce: 'Lampe : la marge vaut 60 % du coût d’achat. Bâtons : coût d’achat = prix de vente − marge.' });
+
+  // E7 vrai / faux
+  const E7 = [['Diminuer un prix de 25 %, c’est le multiplier par 0,25.', false, 'faux : on multiplie par 0,75'], ['Augmenter un prix de 10 %, puis le baisser de 10 %, ramène au prix de départ.', false, 'faux : 1,1 × 0,9 = 0,99, soit − 1 %'], ['Un coefficient multiplicateur de 1,03 correspond à une hausse de 3 %.', true, 'vrai'], ['Avec une TVA à 5,5 %, le prix TTC est supérieur au prix HT.', true, 'vrai : on multiplie par 1,055'], ['Si le taux de marge est de 100 %, le prix de vente HT est le double du coût d’achat HT.', true, 'vrai : la marge est égale au coût d’achat']];
+  C.exo({ id: 'e7', pal: 1, comps: ['val'], titre: 'Vrai ou faux ?',
+    body: `<p>${V('Cochez')} la bonne case, puis ${V('justifiez')} les affirmations fausses sur votre cahier.</p><table class="tbl vf">${E7.map((r, i) => `<tr><td class="tl">${'abcde'[i]}. ${r[0]}</td><td>${opt('Vrai', r[1])}</td><td>${opt('Faux', !r[1])}</td></tr>`).join('')}</table>`,
+    corr: E7.map((r, i) => `${'abcde'[i]}. ${r[2]}`).join(' ; ') + '.' });
+
+  // E8 étiquettes
+  const E8kg = rnd(3.45 * 4), E8lot = rnd(6.2 * 2), E8t = rnd((E8lot / E8kg - 1) * 100, 1);
+  chk(E8kg === 13.8 && E8lot === 12.4 && E8t === -10.1, 'E8 ' + E8t);
+  C.exo({ id: 'e8', pal: 1, comps: ['app', 'rea'], titre: 'Le prix au kilo',
+    body: `<p>En magasin, le prix à l’unité de mesure (au kilo, au litre…) doit être affiché à côté du prix de vente : il permet de comparer des produits vendus dans des quantités différentes.</p><div class="two w3"><div class="etiqs">${D.etiq({ nom: 'Café moulu pur arabica', det: 'paquet de 250 g', prix: '3,45 €', unit: `prix au kg : 13,80${NB}€` })}${D.etiq({ nom: 'Café moulu pur arabica', det: 'lot de 2 paquets de 250 g', prix: '6,20 €', unit: 'prix au kg : ……', badge: 'LOT' })}</div><div>${q('a.', `${V('Vérifiez')} le prix au kilo du paquet de 250 g.`)}${rep('', 36, '3,45 × 4 = 13,80 €')}${q('b.', `${V('Calculez')} le prix au kilo du lot.`)}${rep('', 36, '6,20 × 2 = 12,40 €')}${q('c.', `${V('Calculez')} le taux d’évolution du prix au kilo entre le paquet et le lot. Arrondissez au dixième.`)}${rep('', 36, '12,40 ÷ 13,80 − 1 ≈ − 10,1 %')}</div></div>`,
+    corr: `a. 250 g × 4 = 1 kg : 3,45 × 4 = 13,80 €. b. Le lot pèse 500 g : 6,20 × 2 = 12,40 € le kilo. c. 12,40 ÷ 13,80 ≈ 0,899 : environ − 10,1 %.`,
+    pouce: 'Dans 1 kg, il y a 4 fois 250 g et 2 fois 500 g.' });
+
+  /* ---------- palier 2 ---------- */
+  C.palier(2, 'Des situations de magasin, en plusieurs étapes.');
+  // E9 ticket
+  const T9 = [['Pommes Golden', rnd(1.5 * 2.29), 'A', '1,500 kg × 2,29 €/kg'], ['Lait demi-écrémé 6 × 1 L', 6.54, 'A'], ['Pain de campagne 400 g', 2.1, 'A'], ['Lessive liquide 2 L', 8.99, 'B'], ['Éponges grattantes × 3', 2.49, 'B'], ['Jus d’orange 1 L', 2.35, 'A']];
+  const TA = rnd(T9.filter(l => l[2] === 'A').reduce((s, l) => s + l[1], 0)), TB = rnd(T9.filter(l => l[2] === 'B').reduce((s, l) => s + l[1], 0)), TT = rnd(TA + TB);
+  const HA = rnd(TA / 1.055), VA = rnd(TA - HA), HB = rnd(TB / 1.2), VB = rnd(TB - HB), PV = rnd((VA + VB) / TT * 100, 1);
+  chk(T9[0][1] === 3.44 && TA === 14.43 && TB === 11.48 && TT === 25.91 && HA === 13.68 && VA === .75 && HB === 9.57 && VB === 1.91 && PV === 10.3, 'E9 ' + [T9[0][1], TA, TB, TT, HA, VA, HB, VB, PV]);
+  C.exo({ id: 'e9', pal: 2, comps: ['app', 'rea'], titre: 'Le ticket de caisse',
+    body: `<div class="two w2"><div>${q('a.', `${V('Vérifiez')} le montant de la ligne « Pommes Golden ».`)}${rep('', 40, '1,5 × 2,29 = 3,435 ≈ 3,44 €')}${q('b.', `${V('Calculez')} le total TTC des articles de code A, puis de code B.`)}${rep('A :', 20, eur(TA))}${rep('B :', 20, eur(TB))}${q('c.', `${V('Complétez')} le tableau de TVA en bas du ticket. Arrondissez au centime.`)}${q('d.', `${V('Calculez')} la part de la TVA dans le total payé, en pourcentage (au dixième).`)}${rep('', 40, `${fr(rnd(VA + VB), 2)} ÷ ${fr(TT, 2)} ≈ ${pct(PV)}`)}</div>
+      <div>${D.ticket({ mag: 'SUPÉRETTE DU CANAL', adr: ['4 place du Marché', '21300 Chenôve'], lignes: T9, total: TT, pay: 'Carte bancaire', tva: [['A', '5,5 %', `<span class="cellans" data-a="${fr(HA, 2)}"></span>`, `<span class="cellans" data-a="${fr(VA, 2)}"></span>`, TA], ['B', '20 %', `<span class="cellans" data-a="${fr(HB, 2)}"></span>`, `<span class="cellans" data-a="${fr(VB, 2)}"></span>`, TB]], foot: ['Ticket n° 0412 · caisse 2', 'A : TVA 5,5 % · B : TVA 20 %'] })}<p class="srcl">Commerce fictif.</p></div></div>`,
+    corr: `a. 1,5 × 2,29 = 3,435 ≈ 3,44 €. b. A : ${eur(TA)} ; B : ${eur(TB)}. c. A : HT ${eur(HA)}, TVA ${eur(VA)} ; B : HT ${eur(HB)}, TVA ${eur(VB)}. d. ${fr(rnd(VA + VB), 2)} ÷ ${fr(TT, 2)} ≈ ${pct(PV)}.`,
+    pouce: 'Pour chaque code, prix HT = total TTC ÷ coefficient de la TVA (1,055 pour A, 1,2 pour B), puis TVA = TTC − HT.' });
+
+  // E10 coefficient de vente
+  const E10 = [['Chaussettes de marche', 4.5], ['Gants coupe-vent', 9.75], ['Veste polaire', 22.9]].map(([a, p]) => [a, p, rnd(p * 2.4)]);
+  const POL = 54.9, POLht = rnd(POL / 1.2), POLm = rnd(POLht - 22.9);
+  chk(E10[0][2] === 10.8 && E10[1][2] === 23.4 && E10[2][2] === 54.96 && POLht === 45.75 && POLm === 22.85, 'E10');
+  C.exo({ id: 'e10', pal: 2, comps: ['rea', 'ana'], titre: 'Le coefficient de vente de Cap Rando',
+    body: `<p>Cap Rando obtient ses prix de vente TTC en multipliant le prix d’achat HT par 2,4.</p>${q('a.', `${V('Complétez')} le tableau.`)}<table class="tbl tnum"><tr><th>Article</th><th>Prix d’achat HT</th><th>Prix de vente TTC</th></tr>${E10.map(r => `<tr><td class="tl">${r[0]}</td><td>${eur(r[1])}</td><td class="fill">${ca(eur(r[2]), 22)}</td></tr>`).join('')}</table>${q('b.', `La boutique arrondit ses prix à un prix finissant par « ,90 », juste en dessous du prix calculé. ${V('Indiquez')} le prix affiché pour la veste polaire.`)}${rep('', 22, eur(POL))}${q('c.', `${V('Calculez')} le prix de vente HT de la veste polaire affichée à ce prix, puis la marge brute réalisée.`)}${rep('Prix HT :', 22, eur(POLht))}${rep('Marge :', 22, eur(POLm))}`,
+    corr: E10.map(r => `${r[0]} : ${eur(r[2])}`).join(' ; ') + `. b. ${eur(POL)}. c. ${fr(POL, 2)} ÷ 1,2 = ${eur(POLht)} ; marge = ${fr(POLht, 2)} − 22,90 = ${eur(POLm)}.` });
+
+  // E11 frais de port
+  const L_n = 24, L_pu = 12.4, L_port = 21.6, L_m = rnd(L_n * L_pu), L_c = rnd(L_m + L_port), L_cu = rnd(L_c / L_n), L_vht = rnd(29.9 / 1.2), L_marge = rnd(L_vht - L_cu), L_tm = rnd(L_marge / L_cu * 100, 1);
+  chk(L_m === 297.6 && L_c === 319.2 && L_cu === 13.3 && L_vht === 24.92 && L_marge === 11.62 && L_tm === 87.4, 'E11 ' + [L_m, L_c, L_cu, L_vht, L_marge, L_tm]);
+  C.exo({ id: 'e11', pal: 2, comps: ['app', 'rea'], titre: 'Avec les frais de port',
+    body: `${D.doc('', 'Bon de commande n° 2025-118 · Lumitrek (fournisseur)', D.table(['Article', 'Qté', 'P.U. HT', 'Montant HT'], [['Lampe frontale 350 lumens', String(L_n), eur(L_pu), ca(eur(L_m))], ['Frais de port (forfait)', '1', eur(L_port), eur(L_port)], ['<b>Total HT</b>', '', '', ca(eur(L_c))]], 'dt-sm'))}
+      ${q('a.', `${V('Complétez')} le bon de commande.`)}${q('b.', `${V('Calculez')} le coût d’achat HT d’une lampe, frais de port compris.`)}${rep('', 30, `${fr(L_c, 2)} ÷ ${L_n} = ${eur(L_cu)}`)}${q('c.', `La lampe est vendue 29,90 € TTC (TVA 20 %). ${V('Calculez')} la marge brute réalisée sur une lampe, puis le taux de marge (au dixième).`)}${rep('Marge :', 26, eur(L_marge))}${rep('Taux de marge :', 22, pct(L_tm))}`,
+    corr: `a. ${eur(L_m)} ; total ${eur(L_c)}. b. ${fr(L_c, 2)} ÷ ${L_n} = ${eur(L_cu)}. c. Prix HT : 29,90 ÷ 1,2 ≈ ${eur(L_vht)} ; marge : ${fr(L_vht, 2)} − ${fr(L_cu, 2)} = ${eur(L_marge)} ; taux de marge : ${fr(L_marge, 2)} ÷ ${fr(L_cu, 2)} ≈ ${pct(L_tm)}.`,
+    pouce: 'Le coût d’achat comprend les frais de port : on répartit le total HT de la commande sur les 24 lampes.' });
+
+  // E12 chiffre d'affaires
+  const CAm = ['sept.', 'oct.', 'nov.', 'déc.', 'janv.'], CAv = [18400, 19320, 23184, 30139.2, 21097.44];
+  const CAt = CAv.slice(1).map((v, i) => rnd((v / CAv[i] - 1) * 100, 1)), CAg = rnd((CAv[4] / CAv[0] - 1) * 100, 1);
+  chk(CAt.join() === '5,20,30,-30' && CAg === 14.7, 'E12 ' + CAt + ' ' + CAg);
+  C.exo({ id: 'e12', pal: 2, comps: ['app', 'rea', 'val'], titre: 'Le chiffre d’affaires de la boutique',
+    body: `<div class="wfig">${G.bars({ title: 'Chiffre d’affaires mensuel de la boutique Cap Rando', cats: CAm.map((m, i) => m + (i < 4 ? ' 2025' : ' 2026')), values: CAv, yLabel: 'Chiffre d’affaires (€)', xLabel: 'Mois', fmt: v => fr(Math.round(v)), color: '#1D5FC2', yStep: 5000, h: 280, source: 'données de l’entreprise (commerce fictif)' })}</div>
+      ${q('a.', `${V('Indiquez')} le mois où le chiffre d’affaires est le plus élevé. ${V('Proposez')} une explication.`)}${rep('', 70, 'décembre : achats de Noël')}
+      ${q('b.', `${V('Complétez')} le tableau des taux d’évolution d’un mois sur l’autre (au dixième).`)}<table class="tbl tnum"><tr><th>Période</th>${CAm.slice(1).map((m, i) => `<td>${CAm[i]} → ${m}</td>`).join('')}</tr><tr><th>Taux d’évolution</th>${CAt.map(t => `<td class="fill">${ca((t > 0 ? '+ ' : '− ') + pct(Math.abs(t)))}</td>`).join('')}</tr></table>
+      ${q('c.', `Un vendeur affirme : « De septembre à janvier, le chiffre d’affaires a augmenté de 25 %, car 5 + 20 + 30 − 30 = 25. » ${V('Calculez')} le vrai taux d’évolution, puis ${V('expliquez')} l’erreur.`)}${lines(2, `${fr(CAv[4], 2)} ÷ ${fr(CAv[0])} ≈ 1,147 : + ${pct(CAg)}. Les taux ne s’additionnent pas, on multiplie les coefficients.`)}`,
+    corr: `a. Décembre (${eur(CAv[3])}) : période des achats de Noël. b. ${CAt.map(t => (t > 0 ? '+ ' : '− ') + pct(Math.abs(t))).join(' ; ')}. c. ${fr(CAv[4], 2)} ÷ ${fr(CAv[0])} ≈ 1,147, soit + ${pct(CAg)} ; on vérifie : 1,05 × 1,2 × 1,3 × 0,7 ≈ 1,147.`,
+    pouce: 'Taux d’évolution = (V₁ − V₀) ÷ V₀. Pour la question c, comparez directement janvier à septembre.' });
+
+  // E13 hausse fournisseur
+  const H13 = rnd(1.04 * 1.03, 4), H13p = rnd(50 * H13); chk(H13 === 1.0712 && H13p === 53.56, 'E13');
+  C.exo({ id: 'e13', pal: 2, comps: ['ana', 'rea', 'val'], titre: 'Deux hausses de tarifs',
+    body: `<p>Un fournisseur augmente ses tarifs de 4 % en janvier, puis de 3 % en juillet.</p>${q('a.', `${V('Calculez')} le coefficient multiplicateur global, puis le taux d’évolution global.`)}${rep('', 50, '1,04 × 1,03 = 1,0712 : + 7,12 %')}${q('b.', `Un article coûtait 50 € HT en décembre. ${V('Calculez')} son prix en juillet.`)}${rep('', 30, eur(H13p))}${q('c.', `Le commercial du fournisseur affirme : « + 4 % et + 3 %, cela fait + 7 % ». A-t-il raison ? ${V('Justifiez')}.`)}${lines(2, 'Presque : la hausse réelle est de 7,12 %, car la 2e hausse porte sur un prix déjà augmenté.')}`,
+    corr: `a. 1,04 × 1,03 = 1,0712, soit + 7,12 %. b. 50 × 1,0712 = ${eur(H13p)}. c. Non, la hausse est de 7,12 % : la seconde hausse s’applique à un prix déjà augmenté.` });
+
+  // E14 prix avant soldes
+  const J = rnd(35.94 / .6), M14 = rnd(50.4 / (.7 * .8)); chk(J === 59.9 && M14 === 90, 'E14');
+  C.exo({ id: 'e14', pal: 2, comps: ['rea', 'val'], titre: 'Le prix avant les soldes',
+    body: `<div class="calcs"><div class="calc"><span class="calc-n">a</span><div class="ct">Un jean soldé − 40 % coûte 35,94 €. ${V('Calculez')} son prix avant les soldes.</div><div class="ans"><span>Prix :</span>${bl(26, '35,94 ÷ 0,6 = 59,90 €')}</div></div><div class="calc"><span class="calc-n">b</span><div class="ct">Un manteau est soldé − 30 %, puis − 20 % lors de la deuxième démarque. Il coûte alors 50,40 €. ${V('Calculez')} son prix de départ.</div><div class="ans"><span>Prix :</span>${bl(30, '50,40 ÷ 0,56 = 90 €')}</div></div></div>${q('c.', `${V('Contrôlez')} le résultat de la question b en recalculant le prix soldé.`)}${rep('', 50, '90 × 0,7 × 0,8 = 50,40 € ✓')}`,
+    corr: `a. 35,94 ÷ 0,6 = 59,90 €. b. 0,7 × 0,8 = 0,56 ; 50,40 ÷ 0,56 = 90 €. c. 90 × 0,7 = 63 ; 63 × 0,8 = 50,40 € ✓.`,
+    pouce: 'Après une baisse de 40 %, il reste 60 % du prix : on divise par 0,6. Pour b, divisez par le coefficient global.' });
+
+  // E15 erreur du collègue
+  const E15h = rnd(299.99 / 1.2), E15e = rnd(299.99 * .8); chk(E15h === 249.99 && E15e === 239.99, 'E15');
+  C.exo({ id: 'e15', pal: 2, comps: ['val', 'com'], titre: 'Le message de Lucas',
+    body: `<div class="two w2"><div>${D.msg({ ini: 'L', de: 'Lucas · vendeur', quand: 'aujourd’hui, 10:42', txt: 'Un client pro me demande le prix HT de la console à 299,99 € TTC. J’ai fait 299,99 − 20 % = 239,99 €. C’est bon ?' })}</div><div>${q('a.', `${V('Expliquez')} l’erreur de Lucas.`)}${lines(2, 'Les 20 % de TVA se calculent sur le prix HT, pas sur le prix TTC.')}</div></div>${q('b.', `${V('Calculez')} le bon prix HT.`)}${rep('', 40, '299,99 ÷ 1,2 ≈ 249,99 €')}${q('c.', `${V('Rédigez')} une réponse courte et polie à Lucas (deux phrases).`)}${lines(3, 'Pas tout à fait : il faut diviser le prix TTC par 1,2. Le prix HT est de 249,99 €.')}`,
+    corr: `a. Les 20 % de TVA portent sur le prix HT, pas sur le prix TTC. b. 299,99 ÷ 1,2 ≈ 249,99 €. c. Exemple : « Pas tout à fait : pour retrouver le prix HT, il faut diviser le prix TTC par 1,2. Le prix HT de la console est de 249,99 €. »` });
+
+  // E16 tableur
+  const R16 = [['Tente 2 places', 64, 2.2], ['Duvet léger', 38.5, 2.2], ['Réchaud compact', 21, 2.5]].map(([a, p, k]) => { const t = rnd(p * k), h = rnd(t / 1.2), m = rnd(h - p); return [a, p, k, t, h, m]; });
+  chk(R16[0][3] === 140.8 && R16[0][4] === 117.33 && R16[0][5] === 53.33 && R16[1][3] === 84.7 && R16[1][4] === 70.58 && R16[1][5] === 32.08 && R16[2][3] === 52.5 && R16[2][4] === 43.75 && R16[2][5] === 22.75, 'E16 ' + JSON.stringify(R16));
+  C.exo({ id: 'e16', pal: 2, comps: ['rea', 'ana'], titre: 'Préparer les prix au tableur',
+    body: `${D.sheet({ cols: ['A', 'B', 'C', 'D', 'E', 'F'], sel: 'D2', fx: '', rows: [['Article', 'Achat HT', 'Coef.', 'Vente TTC', 'Vente HT', 'Marge'], ...R16.map((r, i) => [r[0], fr(r[1], 2), fr(r[2]), i ? '' : '', '', ''])] })}
+      ${q('a.', `${V('Écrivez')} la formule à saisir en D2 pour calculer le prix de vente TTC.`)}${rep('', 30, '=B2*C2')}
+      ${q('b.', `${V('Écrivez')} les formules à saisir en E2 (TVA à 20 %) et en F2.`)}${rep('E2 :', 26, '=D2/1,2')}${rep('F2 :', 26, '=E2-B2')}
+      ${q('c.', `On recopie ces formules vers le bas. ${V('Complétez')} le tableau des résultats (arrondis au centime).`)}<table class="tbl tnum"><tr><th>Article</th><th>Vente TTC</th><th>Vente HT</th><th>Marge</th></tr>${R16.map(r => `<tr><td class="tl">${r[0]}</td>${[r[3], r[4], r[5]].map(v => `<td class="fill">${ca(eur(v), 18)}</td>`).join('')}</tr>`).join('')}</table>`,
+    corr: `a. =B2*C2. b. E2 : =D2/1,2 ; F2 : =E2-B2. c. ${R16.map(r => `${r[0]} : ${eur(r[3])} ; ${eur(r[4])} ; ${eur(r[5])}`).join(' · ')}.`,
+    pouce: 'Une formule de tableur commence par « = » et utilise les noms des cellules (B2, C2…), pas les nombres.' });
+
+  // E17 Python
+  C.exo({ id: 'e17', pal: 2, comps: ['rea', 'ana'], titre: 'Algorithmique : des fonctions pour la TVA',
+    body: `<div class="two w2"><div>${D.py('def prix_ttc(prix_ht, taux):\n    return round(prix_ht * (1 + taux / 100), 2)\n\nprint(prix_ttc(45, 20))\nprint(prix_ttc(12, 5.5))')}<p class="small">En Python, le séparateur décimal est le point : 5.5 se lit « 5,5 ». <code>round(x, 2)</code> arrondit x au centième.</p></div><div>${q('a.', `${V('Indiquez')} ce qu’affiche ce programme.`)}${rep('', 30, '54.0 puis 12.66')}${q('b.', `${V('Complétez')} la fonction qui calcule un prix HT à partir d’un prix TTC.`)}${D.py('def prix_ht(prix_ttc, taux):\n    return round(................., 2)')}${rep('Pointillés :', 46, 'prix_ttc / (1 + taux / 100)')}${q('c.', `${V('Indiquez')} la valeur renvoyée par <code>prix_ht(90, 20)</code>.`)}${rep('', 22, '75.0')}</div></div>`,
+    corr: `a. 54.0 puis 12.66. b. return round(prix_ttc / (1 + taux / 100), 2). c. 75.0.` });
+
+  /* ---------- palier 3 ---------- */
+  C.palier(3, 'Analyser des documents, comparer, décider et argumenter.');
+  // E18 fournisseurs
+  const fa = n => { const m = rnd(7.8 * n); return m >= 500 ? m : rnd(m + 35); }, fb = n => rnd(8.4 * n);
+  let seuil = null; for (let n = 1; n <= 200; n++) { let ok = true; for (let k = n; k <= 200; k++) if (!(fa(k) < fb(k))) { ok = false; break; } if (ok) { seuil = n; break; } }
+  const A60 = fa(60), B60 = fb(60), A65 = fa(65), B65 = fb(65), A60u = rnd(A60 / 60), GD_ht = rnd(19.9 / 1.2), GD_m = rnd(GD_ht - A60u), GD_tq = rnd(GD_m / GD_ht * 100, 1);
+  chk(A60 === 503 && B60 === 504 && A65 === 507 && B65 === 546 && seuil === 59 && A60u === 8.38 && GD_ht === 16.58 && GD_m === 8.2 && GD_tq === 49.5, 'E18 ' + [A60, B60, A65, B65, seuil, A60u, GD_ht, GD_m, GD_tq]);
+  C.exo({ id: 'e18', pal: 3, comps: ['app', 'ana', 'val', 'com'], titre: 'Quel fournisseur choisir ?',
+    body: `<p>La boutique veut commander des gourdes isothermes identiques. Elle compare deux fournisseurs.</p><div class="two">${D.doc(1, 'TrekPro', `<p>Gourde isotherme 0,75 L : <b>7,80 € HT</b> l’unité.</p><p>Frais de port : 35 € HT par commande.<br><b>Franco de port</b> (port gratuit) dès 500 € HT de marchandises.</p>`)}${D.doc(2, 'Outdoor Distrib', `<p>Gourde isotherme 0,75 L : <b>8,40 € HT</b> l’unité.</p><p>Frais de port offerts.</p>`)}</div>
+      ${q('1.', `${V('Calculez')} le coût total HT d’une commande de 60 gourdes chez chaque fournisseur. Lequel est le moins cher ?`)}${rep('TrekPro :', 22, eur(A60, 0))}${rep('Outdoor Distrib :', 22, eur(B60, 0))}
+      ${q('2.', `Même question pour 65 gourdes.`)}${rep('TrekPro :', 22, eur(A65, 0))}${rep('Outdoor Distrib :', 22, eur(B65, 0))}
+      ${q('3.', `${V('Déterminez')} à partir de combien de gourdes TrekPro est toujours le moins cher. Vous pouvez faire un tableau ou utiliser un tableur.`)}${rep('', 36, `${seuil} gourdes`)}
+      ${q('4.', `La boutique commande 60 gourdes chez le fournisseur le moins cher et les vend 19,90 € TTC (TVA 20 %). ${V('Calculez')} le taux de marque obtenu (au dixième).`)}${lines(2, `coût unitaire ${eur(A60u)} ; prix HT ${eur(GD_ht)} ; marge ${eur(GD_m)} ; taux de marque ≈ ${pct(GD_tq)}`)}`,
+    corr: `1. TrekPro : 60 × 7,80 = 468 € &lt; 500 €, donc + 35 € de port : ${eur(A60)} ; Outdoor Distrib : ${eur(B60)}. TrekPro est moins cher de 1 €. 2. TrekPro : 507 € (franco) ; Outdoor Distrib : 546 €. 3. Sous 500 €, TrekPro est moins cher quand 7,80n + 35 &lt; 8,40n, soit n &gt; 58,3 ; au-delà de 500 €, il est toujours moins cher : à partir de ${seuil} gourdes. 4. Coût unitaire : 503 ÷ 60 ≈ ${eur(A60u)} ; prix HT : 19,90 ÷ 1,2 ≈ ${eur(GD_ht)} ; marge ≈ ${eur(GD_m)} ; taux de marque ≈ ${pct(GD_tq)}.`,
+    pouce: 'Question 3 : comparez les deux coûts pour 55, 58, 59 et 60 gourdes. Pensez au franco de port.' });
+
+  // E19 Black Friday et règle des 30 jours
+  // historique (jours depuis le 14 octobre 2025) : 89,99 du 14/10 au 01/11, 79,99 du 02/11 au 15/11, 99,99 du 16/11 au 27/11 ; 59,99 le 28/11
+  const day = (m, d) => (m === 10 ? d - 14 : m === 11 ? 17 + d : 0); // 14 oct. = 0 ; 1er nov. = 18 ; 28 nov. = 45
+  const hist = [[day(10, 14), 89.99], [day(11, 2), 79.99], [day(11, 16), 99.99], [day(11, 28), 59.99]];
+  const ref = 79.99, reel = rnd((59.99 / ref - 1) * 100, 1), ann = rnd((59.99 / 99.99 - 1) * 100, 1);
+  chk(reel === -25 && ann === -40 && day(11, 1) === 18 && day(11, 28) === 45, 'E19 ' + [reel, ann]);
+  const xt = [[day(10, 14), '14/10'], [day(10, 21), '21/10'], [day(10, 28), '28/10'], [day(11, 4), '04/11'], [day(11, 11), '11/11'], [day(11, 18), '18/11'], [day(11, 25), '25/11'], [day(11, 28), '']];
+  C.exo({ id: 'e19', pal: 3, comps: ['app', 'ana', 'val', 'com'], titre: 'Black Friday : une réduction conforme ?',
+    body: `<div class="wfig">${G.lines({ title: 'Prix de vente en ligne d’une paire de baskets (€ TTC)', series: [{ name: 'prix affiché', pts: hist, step: true, color: '#1D5FC2', until: day(11, 30), notes: [[day(10, 23), 89.99, '89,99'], [day(11, 9), 79.99, '79,99'], [day(11, 22), 99.99, '99,99'], [day(11, 28) - .4, 59.99 - 7, '59,99', 'end']] }], xTicks: xt, xMin: 0, xMax: day(11, 30), yMin: 50, yMax: 110, yStep: 10, yLabel: 'Prix (€)', xLabel: 'Date (2025)', h: 270, source: 'site marchand (commerce fictif)' })}</div>
+      <div class="two w2"><div>      ${q('a.', `${V('Lisez')} le prix des baskets le 20 novembre.`)}${rep('', 22, '99,99 €')}
+      ${q('b.', `D’après la loi (voir le cours, encadré « Ce que dit la loi »), ${V('déterminez')} le prix à partir duquel la réduction doit être calculée.`)}${rep('', 70, '79,99 € : prix le plus bas entre le 29 octobre et le 27 novembre')}
+</div><div>${D.promo({ k: 'BLACK FRIDAY · 28 novembre', t: 'Baskets Urban Run', p: '59,99 €', old: '99,99 €', s: '− 40 %' })}</div></div>
+      ${q('c.', `${V('Calculez')} le taux de réduction réel (à l’unité).`)}${rep('', 40, '59,99 ÷ 79,99 − 1 ≈ − 25 %')}
+      ${q('d.', `L’annonce « − 40 % » est-elle conforme ? ${V('Rédigez')} une réponse argumentée, puis ${V('proposez')} une annonce correcte.`)}${lines(3, 'Non : − 40 % est calculé sur 99,99 €, prix pratiqué seulement depuis le 16 novembre. Annonce correcte : « − 25 % » (prix le plus bas des 30 derniers jours : 79,99 €).')}`,
+    corr: `a. 99,99 €. b. Les 30 jours avant le 28 novembre vont du 29 octobre au 27 novembre : le prix le plus bas est 79,99 €. c. 59,99 ÷ 79,99 ≈ 0,75 : − 25 %. d. Non conforme : la réduction de 40 % est calculée sur 99,99 €, un prix plus élevé que le prix le plus bas des 30 derniers jours. Annonce correcte : « − 25 % » avec le prix de référence 79,99 €.`,
+    pouce: 'Comptez 30 jours en arrière à partir du 27 novembre, puis cherchez le prix le plus bas sur le graphique pendant cette période.' });
+
+  // E20 inflation INSEE
+  const ANS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025], INF = [0, .2, 1, 1.9, 1.1, .5, 1.6, 5.2, 4.9, 2, .9];
+  const K4 = rnd(1.052 * 1.049 * 1.020 * 1.009, 4), K4t = rnd((K4 - 1) * 100, 1), pan = rnd(80 * K4), I23 = 117.47, I25 = 120.95, iev = rnd((I25 / I23 - 1) * 100, 2), cev = rnd((1.02 * 1.009 - 1) * 100, 2);
+  chk(K4 === 1.1357 && K4t === 13.6 && pan === 90.86 && iev === 2.96 && cev === 2.92, 'E20 ' + [K4, K4t, pan, iev, cev]);
+  C.exo({ id: 'e20', pal: 3, comps: ['app', 'ana', 'val'], titre: 'L’inflation : des pourcentages qui se multiplient',
+    body: `<div class="wfig">${G.bars({ title: 'Inflation en France : évolution des prix à la consommation, en moyenne annuelle', cats: ANS.map(String), values: INF, yLabel: 'Évolution sur un an (%)', xLabel: 'Année', fmt: v => fr(v, 1), color: '#C2332A', yStep: 1, yMax: 6, h: 270, source: 'Insee, indice des prix à la consommation, ensemble des ménages (janvier 2026)' })}</div>
+      ${q('a.', `${V('Indiquez')} l’année où la hausse des prix a été la plus forte.`)}${rep('', 30, '2022 (+ 5,2 %)')}
+      ${q('b.', `${V('Calculez')} le coefficient multiplicateur global de 2021 à 2025 (quatre hausses successives), puis le taux d’évolution global au dixième.`)}${rep('', 70, '1,052 × 1,049 × 1,020 × 1,009 ≈ 1,1357 : + 13,6 %')}
+      ${q('c.', `Un site affirme : « Entre 2021 et 2025, les prix ont augmenté de 13 %, car 5,2 + 4,9 + 2,0 + 0,9 = 13. » ${V('Critiquez')} ce calcul.`)}${lines(2, 'Les taux successifs ne s’additionnent pas : on multiplie les coefficients, + 13,6 %.')}
+      ${q('d.', `En 2021, un panier de courses coûtait en moyenne 80 €. ${V('Estimez')} son prix moyen en 2025.`)}${rep('', 30, '80 × 1,1357 ≈ 90,86 €')}
+      ${q('e.', `L’Insee publie aussi un indice des prix (base 100 en 2015) : 117,47 en 2023 et 120,95 en 2025. ${V('Calculez')} l’évolution entre 2023 et 2025 avec cet indice, puis avec les taux du graphique (au centième). ${V('Proposez')} une explication du petit écart.`)}${lines(2, `indice : + 2,96 % ; taux : 1,02 × 1,009 → + 2,92 % ; les taux du graphique sont arrondis au dixième.`)}`,
+    corr: `a. 2022 (+ 5,2 %). b. 1,052 × 1,049 × 1,020 × 1,009 ≈ ${fr(K4)}, soit + ${pct(K4t)}. c. On ne peut pas additionner des taux successifs : chaque hausse s’applique à des prix déjà augmentés ; le bon résultat est + 13,6 %. d. 80 × ${fr(K4)} ≈ ${eur(pan)}. e. 120,95 ÷ 117,47 ≈ 1,0296 : + ${pct(iev)} ; 1,02 × 1,009 = 1,02918 : + ${pct(cev)}. L’écart vient des arrondis : les taux publiés sont arrondis au dixième.`,
+    pouce: 'Le coefficient d’une hausse de 5,2 % est 1,052. Multipliez les quatre coefficients de 2022 à 2025.' });
+
+  // E21 fixer un prix
+  const L21 = 19.25, PHT = rnd(L21 / (1 - .45)), PTTC = rnd(PHT * 1.2), x41 = (ttc => { const h = rnd(ttc / 1.2), m = rnd(h - L21); return [h, m, rnd(m / h * 100, 2)]; });
+  const P41 = x41(41.9), P42 = x41(42.9);
+  chk(PHT === 35 && PTTC === 42 && P41[0] === 34.92 && P41[1] === 15.67 && P41[2] === 44.87 && P42[0] === 35.75 && P42[1] === 16.5 && P42[2] === 46.15, 'E21 ' + [P41, P42]);
+  C.exo({ id: 'e21', pal: 3, comps: ['ana', 'rea', 'val', 'com'], titre: 'Fixer le prix d’une lampe de camping',
+    body: `<p>La gérante de Cap Rando veut un <b>taux de marque d’au moins 45 %</b> sur une lampe de camping dont le coût d’achat est de 19,25 € HT.</p>
+      ${q('a.', `${V('Expliquez')} pourquoi le coût d’achat représente alors au plus 55 % du prix de vente HT, puis ${V('calculez')} le prix de vente HT minimal.`)}${lines(2, 'marge ≥ 45 % du prix HT, donc coût ≤ 55 % ; prix HT minimal : 19,25 ÷ 0,55 = 35 €')}
+      ${q('b.', `${V('Calculez')} le prix de vente TTC correspondant (TVA 20 %).`)}${rep('', 22, '42 €')}
+      ${q('c.', `La gérante hésite entre deux prix « psychologiques » : 41,90 € et 42,90 € TTC. Pour chacun, ${V('calculez')} le taux de marque (au centième).`)}<table class="tbl tnum"><tr><th>Prix TTC</th><th>Prix HT</th><th>Marge</th><th>Taux de marque</th></tr>${[[41.9, P41], [42.9, P42]].map(([p, r]) => `<tr><td>${eur(p)}</td><td class="fill">${ca(eur(r[0]), 16)}</td><td class="fill">${ca(eur(r[1]), 16)}</td><td class="fill">${ca(pct(r[2]), 16)}</td></tr>`).join('')}</table>
+      ${q('d.', `${V('Conseillez')} la gérante en une ou deux phrases.`)}${lines(2, 'Afficher 42,90 € : à 41,90 €, le taux de marque (44,87 %) est sous les 45 % demandés.')}`,
+    corr: `a. Si la marge vaut au moins 45 % du prix HT, le coût d’achat en vaut au plus 100 % − 45 % = 55 % ; prix HT minimal : 19,25 ÷ 0,55 = 35 €. b. 35 × 1,2 = 42 €. c. 41,90 € : HT ${eur(P41[0])}, marge ${eur(P41[1])}, taux ${pct(P41[2])} ; 42,90 € : HT ${eur(P42[0])}, marge ${eur(P42[1])}, taux ${pct(P42[2])}. d. Choisir 42,90 € : à 41,90 €, le taux de marque passe sous 45 %.`,
+    pouce: 'Prix de vente HT = coût d’achat + marge. Si la marge fait 45 % du prix de vente, le coût d’achat en fait 55 %.' });
+
+  // E22 vers le bac
+  const D_pa = 46, D_fr = 1.5, D_c = D_pa + D_fr, D_ttc = 119.9, D_ht = rnd(D_ttc / 1.2), D_m = rnd(D_ht - D_c), D_p = rnd(D_ttc * .7), D_ph = rnd(D_p / 1.2), D_pm = rnd(D_ph - D_c), D_tq = rnd(D_pm / D_ph * 100, 1);
+  const D_minHT = D_c / .65, D_minTTC = rnd(D_minHT * 1.2); let D_max = 0; for (let r = 1; r < 60; r++) { const p = rnd(D_ttc * (1 - r / 100)), h = rnd(p / 1.2), m = rnd(h - D_c); if (m / h >= .35) D_max = r; }
+  chk(D_c === 47.5 && D_ht === 99.92 && D_m === 52.42 && D_p === 83.93 && D_ph === 69.94 && D_pm === 22.44 && D_tq === 32.1 && D_minTTC === 87.69 && D_max === 26, 'E22 ' + [D_ht, D_m, D_p, D_ph, D_pm, D_tq, D_minTTC, D_max]);
+  C.exo({ id: 'e22', pal: 3, comps: ['app', 'ana', 'rea', 'val', 'com'], titre: 'Vers le bac · L’opération « − 30 % sur les doudounes »', cls: 'bac', keep: true,
+    body: `<p class="bacline">🎓 Comme à l’examen : consignes à l’infinitif, sans aide.</p><p>Cap Rando prépare une opération promotionnelle de trois jours sur sa doudoune « Altitude 600 ». La responsable envisage une réduction de 30 %.</p>
+      <div class="two">${D.doc(1, 'Fiche article', D.table(['', ''], [['Prix d’achat HT', '46,00 €'], ['Frais d’approche HT (par article)', '1,50 €'], ['Prix de vente actuel TTC', '119,90 € (depuis 3 mois)'], ['Taux de TVA', '20 %']], 'dt-kv'))}${D.doc(2, 'Règle interne de l’enseigne', '<p>Pendant une opération promotionnelle, le <b>taux de marque</b> de chaque article doit rester <b>supérieur ou égal à 35 %</b>.</p><p class="small">Taux de marque = marge brute ÷ prix de vente HT.</p>')}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">1</span><span class="pq-q">Calculer le coût d’achat HT d’une doudoune.</span>${'<span class="cp cp-rea">Réaliser</span>'}</div>${rep('', 22, eur(D_c))}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">2</span><span class="pq-q">Calculer le prix de vente HT actuel, puis la marge brute unitaire actuelle.</span><span class="cp cp-rea">Réaliser</span></div>${rep('Prix HT :', 22, eur(D_ht))}${rep('Marge :', 22, eur(D_m))}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">3</span><span class="pq-q">Calculer le prix promotionnel TTC après une réduction de 30 %.</span><span class="cp cp-rea">Réaliser</span></div>${rep('', 22, eur(D_p))}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">4</span><span class="pq-q">Déterminer le taux de marque pendant la promotion (au dixième).</span><span class="cp cp-rea">Réaliser</span></div>${lines(1, `HT ${eur(D_ph)} ; marge ${eur(D_pm)} ; taux de marque ≈ ${pct(D_tq)}`)}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">5</span><span class="pq-q">Indiquer si la règle interne est respectée. Justifier.</span><span class="cp cp-val">Valider</span></div>${lines(1, `Non : ${pct(D_tq)} &lt; 35 %`)}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">6</span><span class="pq-q">Déterminer le taux de réduction maximal, en pourcentage entier, qui respecte la règle interne.</span><span class="cp cp-ana">Analyser-raisonner</span></div>${lines(2, `prix HT minimal 47,50 ÷ 0,65 ≈ 73,08 € → TTC ≈ ${eur(D_minTTC)} ; 1 − ${fr(D_minTTC, 2)} ÷ 119,90 ≈ 26,9 % → ${D_max} %`)}</div>
+      <div class="pq"><div class="pq-h"><span class="pq-n">7</span><span class="pq-q">Rédiger un message de trois lignes à la responsable pour lui proposer un taux de réduction.</span><span class="cp cp-com">Communiquer</span></div>${lines(3, `Avec − 30 %, le taux de marque tombe à ${pct(D_tq)}. Je propose − 25 % (ou au plus − ${D_max} %) pour rester au-dessus de 35 %.`)}</div>`,
+    corr: `1. 46 + 1,50 = ${eur(D_c)}. 2. 119,90 ÷ 1,2 ≈ ${eur(D_ht)} ; marge : ${eur(D_m)}. 3. 119,90 × 0,7 = ${eur(D_p)}. 4. HT : ${eur(D_ph)} ; marge : ${eur(D_pm)} ; taux de marque : ${pct(D_tq)}. 5. Non, ${pct(D_tq)} &lt; 35 %. 6. Prix HT minimal : 47,50 ÷ 0,65 ≈ 73,08 € (le coût d’achat vaut au plus 65 % du prix HT), soit ${eur(D_minTTC)} TTC ; réduction maximale : 1 − ${fr(D_minTTC, 2)} ÷ 119,90 ≈ 26,9 %, donc ${D_max} % (contrôle : à − 26 %, taux de marque ≈ 35,8 % ; à − 27 %, ≈ 34,9 %). 7. Réponse libre, par exemple : « Avec − 30 %, le taux de marque descend à 32,1 %, sous les 35 % imposés. Je propose une réduction de 25 %, affichage simple et règle respectée. »` });
+
+  // E23 retour sur la situation
+  C.exo({ id: 'e23', pal: 3, comps: ['rea', 'com'], titre: 'Retour sur la situation : la veste coupe-vent',
+    body: `<p>Revenez à la situation du début du chapitre : prix d’achat ${eur(S_PA)} HT, coefficient de vente ${fr(S_COEF)}, TVA 20 %.</p>${q('a.', `${V('Calculez')} le prix à écrire sur l’étiquette.`)}${rep('', 24, eur(S_TTC))}${q('b.', `${V('Calculez')} la marge brute réalisée sur une veste, puis le taux de marque.`)}${rep('Marge :', 22, eur(S_MARGE))}${rep('Taux de marque :', 18, '50 %')}${q('c.', `${V('Rédigez')} la réponse d’Inès à sa tutrice, en deux ou trois phrases.`)}<div class="frames"><span>J’ai calculé…</span><span>Le prix HT est…</span><span>La boutique gagne…</span></div>${lines(3, 'Le prix TTC est 32,50 × 2,4 = 78 €. Le prix HT est 65 €, donc la marge est de 32,50 € par veste, soit un taux de marque de 50 %.')}`,
+    corr: `a. 32,50 × 2,4 = ${eur(S_TTC)}. b. Prix HT : 78 ÷ 1,2 = ${eur(S_HT)} ; marge : 65 − 32,50 = ${eur(S_MARGE)} ; taux de marque : 32,50 ÷ 65 = 50 %. c. Réponse libre.` });
+
+  // bilan
+  C.raw(`<div class="blk ex sais keep" data-stage="9"><div class="exh"><span class="ext">✅ Je fais le point</span></div><div class="exb"><p class="small">Pour chaque savoir-faire, cochez où vous en êtes. Les exercices indiqués permettent de s’entraîner encore.</p><table class="tbl bilan"><tr><th>Je sais…</th><th>Exercices</th><th>Acquis</th><th>En cours</th><th>À revoir</th></tr>${[
+    ['calculer un pourcentage, une proportion', ['e1', 'e2']], ['utiliser un coefficient multiplicateur', ['e3', 'e4', 'e14']], ['calculer un taux d’évolution, enchaîner des évolutions', ['e12', 'e13', 'e20']],
+    ['passer du HT au TTC, et inversement', ['e5', 'e9', 'e15']], ['calculer une marge, un taux de marge, un taux de marque', ['e6', 'e11', 'e21']], ['analyser des documents pour décider et argumenter', ['e18', 'e19', 'e22']]
+  ].map(([t, es]) => `<tr><td class="tl">${t}</td><td>${es.map(e => `<b data-numof="c1-${e}">·</b>`).join(', ')}</td><td><span class="box"></span></td><td><span class="box"></span></td><td><span class="box"></span></td></tr>`).join('')}</table></div></div>`, { ex: true });
+
+  return { C, ERR };
+};
