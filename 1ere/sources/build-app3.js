@@ -46,6 +46,12 @@ const html = `<!doctype html>
 <meta name="theme-color" content="#1F7A3A">
 <meta name="author" content="Tom Rougeaud">
 <link rel="icon" href="${FAV}">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Maths et MCV 1re">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>${FONTS}</style>
 <style>${require('./lib/tex').css()}</style>
 <style>${CSS}</style>
@@ -67,6 +73,8 @@ ${[1, 2, 3, 4, 5, 6, 7, 8].map(n => `<script>${js(rd('shared/t' + n + '.js'))}</
 <script>${js(rd('app/app3.js'))}</script>
 <script>${js(rd('lib/svgfit.js'))}</script>
 <script>try { MCVfit.watch(document.getElementById('main')); } catch (e) { }</script>
+<script>window.MCVPWA={"name": "Maths et MCV · 1re", "short": "Maths et MCV 1re", "key": "mcv1re.v1", "color": "#58C76D", "ink": "#1D2240"};</script>
+<script>${js(rd('pwa/pwa.js'))}</script>
 </body>
 </html>
 `;
