@@ -43,7 +43,7 @@
     const lo = Math.min(...vals), hiv = Math.max(...vals), st = pick(R, [5, 10, 20].filter(k => (hiv - lo) / k <= 10 && (hiv - lo) / k >= 3)) || 10;
     const g = P.plot({ W: 600, H: 250, x: [0, x1, 1], y: [Math.floor(lo / st) * st, Math.ceil(hiv / st) * st, st], ml: 50, mt: 16, mb: 34, xl: 'x (centaines d’articles)', yl: 'B(x) (centaines d’euros)', zeroAxes: true, fine: true });
     const nz = nsol(F, 0, x1, 0);
-    return { titre: 'Le bénéfice mensuel d’un atelier', doc: `<div class="wfig">${g.wrap(g.base + g.curve(F.f, { stroke: P.ORG, w: 3 }) + g.pts([[F.a, F.f(F.a)], [F.b, F.f(F.b)]], { r: 5 }))}</div><p class="srcl">B(x) : bénéfice mensuel, en centaines d’euros, pour x centaines d’articles vendus. Atelier fictif.</p>`,
+    return { titre: 'Le bénéfice mensuel d’un atelier', doc: `<div class="wfig">${g.wrap(g.base + g.curve(F.f, { stroke: P.ORG, w: 3 }) + g.pts([[F.a, F.f(F.a)], [F.b, F.f(F.b)]], { r: 5 }))}</div><p class="srcl">B(x) : bénéfice mensuel, en centaines d’euros, pour x centaines d’articles vendus.</p>`,
       qs: [{ t: 'Lis B(0) : le résultat quand l’atelier ne vend rien.', kind: 'num', v: F.d, tol: .01, a: sg(F.d) },
         { t: 'Pour quelle quantité x le bénéfice est-il le plus grand ?', kind: 'num', v: F.b, tol: .01, a: `x = ${F.b}` },
         { t: 'Quel est ce bénéfice maximal (en centaines d’euros) ?', kind: 'num', v: F.f(F.b), tol: .01, a: sg(F.f(F.b)) },

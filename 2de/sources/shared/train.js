@@ -33,7 +33,7 @@
     const A = { n: 'Sac à dos', p: pick(R, [20, 40, 80, 120]), r: 25 }, B = { n: 'Veste polaire', p: pick(R, [30, 50, 70, 90]), r: 50 }, C = { n: 'Gourde', p: pick(R, [9.9, 19.9, 29.9]), r: 10 };
     const et = (o, i) => `<div class="et3" data-cell="${i}"><span class="et3-r">− ${o.r} %</span><b>${o.n}</b><span class="et3-p">${eur(o.p)}</span><small>prix avant remise</small></div>`;
     const sC = rnd(C.p * .9), seuil = { 9.9: 8, 19.9: 19, 29.9: 25 }[C.p];
-    return { titre: 'Les étiquettes du rayon soldes', doc: `<div class="et3s">${[A, B, C].map(et).join('')}</div><p class="srcl">Rayon randonnée, premier jour des soldes (magasin fictif).</p>`,
+    return { titre: 'Les étiquettes du rayon soldes', doc: `<div class="et3s">${[A, B, C].map(et).join('')}</div><p class="srcl">Rayon randonnée, premier jour des soldes.</p>`,
       qs: [{ t: `Quel est le prix du ${A.n.toLowerCase()} avant la remise ?`, kind: 'num', v: A.p, tol: .006, a: eur(A.p, 0) },
         { t: 'Quel article a la plus forte remise ?', kind: 'qcm', choices: [A.n, B.n, C.n], ok: 1, a: `${B.n} (− 50 %)` },
         { t: `Combien coûte la ${B.n.toLowerCase()} soldée ?`, kind: 'num', v: B.p / 2, tol: .006, a: eur(B.p / 2, 0) + ' (la moitié)', x: `− 50 % : ${fr(B.p)} ÷ 2 = ${eur(B.p / 2, 0)}` },
@@ -155,7 +155,7 @@
     pb.forEach((p, i) => { const y = 14 + i * 64, bw = 70; s += T(14, y + 26, L[i] + '.', { fs: 14, a: 'start', c: 'kt' });
       for (let j = 0; j < p.n; j++) s += `<rect x="${40 + j * bw}" y="${y + 6}" width="${bw}" height="30" class="k2 ks" stroke-width="2"/>` + T(40 + j * bw + bw / 2, y + 27, 'x', { fs: 16, c: 'kt' });
       s += `<rect x="${40 + p.n * bw}" y="${y + 6}" width="${40 + p.f * 3}" height="30" class="k" />` + T(40 + p.n * bw + 20 + p.f * 1.5, y + 27, p.f + ' €', { fs: 14, c: 'tw' });
-      s += `<path d="M40 ${y + 44}V${y + 50}H${80 + p.n * bw + p.f * 3}V${y + 44}" class="ks" stroke-width="1.6" fill="none"/>` + T(60 + p.n * bw / 2 + p.f * 1.5, y + 62, 'total : ' + p.t + ' €', { fs: 13 });
+      s += `<path d="M40 ${y + 44}V${y + 50}H${80 + p.n * bw + p.f * 3}V${y + 44}" class="ks" stroke-width="1.6" fill="none"/>` + T(60 + p.n * bw / 2 + p.f * 1.5, y + 66, 'total : ' + p.t + ' €', { fs: 13 });
       items.push(num(L[i], p.x, 2, fr(p.x) + ' €', [{ v: rnd(p.t / p.n, 2), m: `Retire d’abord les ${p.f} € qui ne sont pas des x, puis divise.` }])); });
     pb.forEach((p, i) => XS(items, { [L[i]]: `${p.n}x = ${p.t} − ${p.f} = ${p.n * p.x}, donc x = ${p.n * p.x} ÷ ${p.n} = ${fr(p.x)} €` }));
     return { titre: 'Le schéma en barres', consigne: 'Chaque case « x » a le même prix. Trouve x pour chaque schéma.', support: svg(600, 206, s, 'Schémas en barres') + `<p class="tr-l">${pb.map((p, i) => `${L[i]}. ${p.n}x + ${p.f} = ${p.t} → x = ${tb(L[i], fr(p.x) + ' €', 14)}`).join('<br>')}</p>`, items,
@@ -178,7 +178,7 @@
   /* ======================= 4 · Factures, réductions, intérêts ======================= */
   DEP.c4 = R => {
     const q1 = pick(R, [10, 20, 50]), p1 = pick(R, [2, 3, 4]), q2 = pick(R, [5, 10]), p2 = pick(R, [6, 8, 10]), b = q1 * p1 + q2 * p2;
-    return { titre: 'Le bon de commande', doc: table(['Article', 'Quantité', 'Prix unitaire HT', 'Montant HT'], [['Stylos', String(q1), eur(p1), '…'], ['Classeurs', String(q2), eur(p2), '…'], ['Remise', '', '', '10 %']]) + '<p class="srcl">Commande d’une agence immobilière à un grossiste (entreprises fictives).</p>',
+    return { titre: 'Le bon de commande', doc: table(['Article', 'Quantité', 'Prix unitaire HT', 'Montant HT'], [['Stylos', String(q1), eur(p1), '…'], ['Classeurs', String(q2), eur(p2), '…'], ['Remise', '', '', '10 %']]) + '<p class="srcl">Commande d’une agence immobilière à un grossiste.</p>',
       qs: [{ t: 'Combien de stylos sont commandés ?', kind: 'num', v: q1, tol: .5, a: String(q1) },
         { t: 'Calcule le montant HT des stylos.', kind: 'num', v: q1 * p1, tol: .006, a: eur(q1 * p1, 0), x: `${q1} × ${fr(p1)} = ${eur(q1 * p1, 0)}` },
         { t: 'Calcule le montant brut HT de la commande.', kind: 'num', v: b, tol: .006, a: eur(b, 0), x: `${q1} × ${fr(p1)} + ${q2} × ${fr(p2)} = ${fr(q1 * p1)} + ${fr(q2 * p2)} = ${eur(b, 0)}` },
@@ -220,7 +220,7 @@
   /* ======================= 5 · Fonctions ======================= */
   DEP.c5 = R => {
     const f = pick(R, [4, 5, 6, 8]), k = pick(R, [.4, .5, 1]), xs = [0, 5, 10, 15, 20], ys = xs.map(x => rnd(f + k * x));
-    return { titre: 'La grille de livraison', doc: table(['Distance (km)', ...xs.map(String)], [['Prix de la livraison', ...ys.map(y => eur(y))]]) + '<p class="srcl">Tarifs d’un fleuriste (commerce fictif).</p>',
+    return { titre: 'La grille de livraison', doc: table(['Distance (km)', ...xs.map(String)], [['Prix de la livraison', ...ys.map(y => eur(y))]]) + '<p class="srcl">Tarifs d’un fleuriste.</p>',
       qs: [{ t: 'Combien coûte une livraison à 10 km ?', kind: 'num', v: ys[2], tol: .006, a: eur(ys[2]), x: `on lit la colonne 10 km : ${eur(ys[2])}` },
         { t: 'Combien coûte une livraison à 0 km (le prix fixe) ?', kind: 'num', v: f, tol: .006, a: eur(f, 0) },
         { t: 'De combien le prix augmente-t-il tous les 5 km ?', kind: 'num', v: rnd(5 * k), tol: .006, a: eur(5 * k), x: `${eur(ys[1])} − ${eur(ys[0])} = ${eur(5 * k)}` },

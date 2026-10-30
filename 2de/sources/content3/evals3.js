@@ -27,10 +27,10 @@ function docs(chk) {
   g += Ln(60, 200, 530, 200, { w: 1.6 }) + Ln(60, 200, 60, 12, { w: 1.6 }) + T(530, 234, 'nombre de jours', { fs: 11, a: 'end', c: 'ts' }) + T(66, 14, 'coût (€)', { fs: 11, a: 'start', c: 'ts' });
   g += `<line x1="${gx(0)}" y1="${gy(0)}" x2="${gx(10)}" y2="${gy(250)}" class="ks" stroke-width="3"/><line x1="${gx(0)}" y1="${gy(60)}" x2="${gx(10)}" y2="${gy(210)}" stroke="#2B2D7C" stroke-width="3" stroke-dasharray="8 4"/>`;
   g += T(gx(10) - 4, gy(250) - 8, 'offre A', { fs: 13, a: 'end', c: 'kt' }) + T(gx(10) - 4, gy(210) + 20, 'offre B', { fs: 13, a: 'end' });
-  o.c3 = `<div class="evdoc">${S(560, 240, g, 'Coût des deux offres de location selon le nombre de jours')}<p class="srcl">Offre A : 25 € par jour. Offre B : 60 € + 15 € par jour (commerce fictif).</p></div>`;
+  o.c3 = `<div class="evdoc">${S(560, 240, g, 'Coût des deux offres de location selon le nombre de jours')}<p class="srcl">Offre A : 25 € par jour. Offre B : 60 € + 15 € par jour.</p></div>`;
   chk(25 * 10 === 250 && 60 + 150 === 210 && 25 * 6 === 60 + 15 * 6, 'ev3 doc');
   // c4 : le bon de commande
-  o.c4 = `<div class="evdoc">${D.table(['Désignation', 'Quantité', 'Prix unitaire HT', 'Montant HT'], [['Classeurs', '40', '3,20 €', '…'], ['Ramettes de papier', '25', '4,80 €', '…'], ['<b>Montant brut HT</b>', '', '', '…'], ['Remise 5 %', '', '', '…'], ['<b>Net commercial HT</b>', '', '', '…'], ['Frais de port', '', '', '15,00 €'], ['<b>Total HT</b>', '', '', '…'], ['TVA 20 %', '', '', '…'], ['<b>Net à payer TTC</b>', '', '', '…']], 'dt-sm evfac')}<p class="srcl">Bon de commande d’un grossiste en fournitures de bureau (entreprise fictive).</p></div>`;
+  o.c4 = `<div class="evdoc">${D.table(['Désignation', 'Quantité', 'Prix unitaire HT', 'Montant HT'], [['Classeurs', '40', '3,20 €', '…'], ['Ramettes de papier', '25', '4,80 €', '…'], ['<b>Montant brut HT</b>', '', '', '…'], ['Remise 5 %', '', '', '…'], ['<b>Net commercial HT</b>', '', '', '…'], ['Frais de port', '', '', '15,00 €'], ['<b>Total HT</b>', '', '', '…'], ['TVA 20 %', '', '', '…'], ['<b>Net à payer TTC</b>', '', '', '…']], 'dt-sm evfac')}<p class="srcl">Bon de commande d’un grossiste en fournitures de bureau.</p></div>`;
   // c6 : l’urne de 50 tickets
   let u = '';
   for (let i = 0; i < 50; i++) { const x = 40 + (i % 10) * 34, y = 30 + Math.floor(i / 10) * 30; u += Rc(x, y, 28, 22, { c: i < 2 ? 'k' : i < 10 ? 'k2' : 'wh', rx: 4, sw: 1.4 }) + (i < 2 ? T(x + 14, y + 16, '20 €', { fs: 9, c: 'tw' }) : i < 10 ? T(x + 14, y + 16, '−10 %', { fs: 8.5 }) : ''); }

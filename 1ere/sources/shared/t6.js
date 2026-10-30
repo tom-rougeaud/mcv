@@ -17,7 +17,7 @@
     const k = int(R, 0, 6), imax = v.indexOf(Math.max(...v));
     const tab = `<table class="dt tcx dt-sm dt-c"><tbody><tr><th>Température (°C)</th>${t.map(x => `<td>${x}</td>`).join('')}</tr><tr><th>Boissons vendues</th>${v.map((x, i) => `<td data-cell="${i}">${x}</td>`).join('')}</tr></tbody></table>`;
     const g = P.plot({ W: 600, H: 230, x: [0, 30, 5], y: [0, Math.ceil(Math.max(...v) / 50) * 50 + 50, 50], ml: 50, mt: 26, mb: 36, xl: '°C', yl: 'boissons', fine: true });
-    return { titre: 'Les ventes de boissons fraîches d’un kiosque', doc: tab + `<div class="wfig">${g.wrap(g.base + g.pts(t.map((x, i) => [x, v[i]]), { r: 5 }))}</div><p class="srcl">Ventes moyennes par jour selon la température. Kiosque fictif.</p>`,
+    return { titre: 'Les ventes de boissons fraîches d’un kiosque', doc: tab + `<div class="wfig">${g.wrap(g.base + g.pts(t.map((x, i) => [x, v[i]]), { r: 5 }))}</div><p class="srcl">Ventes moyennes par jour selon la température.</p>`,
       qs: [{ t: `Combien de boissons sont vendues quand il fait ${t[k]} °C ?`, kind: 'tap', cell: String(k), v: v[k], tol: .01, a: String(v[k]) },
         { t: 'Quand la température augmente, les ventes ont tendance à…', kind: 'qcm', choices: ['augmenter', 'diminuer', 'rester pareilles'], ok: 0, a: 'augmenter : le nuage monte vers la droite' },
         { t: 'Pour quelle température les ventes sont-elles les plus fortes ?', kind: 'num', v: t[imax], tol: .01, a: `${t[imax]} °C` },

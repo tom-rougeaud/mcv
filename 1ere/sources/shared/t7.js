@@ -27,7 +27,7 @@
     s += `<polygon points="${cx - 10},8 ${cx + 10},8 ${cx},28" fill="${INK}"/>` + `<circle cx="${cx}" cy="${cy}" r="9" fill="#fff" stroke="${INK}" stroke-width="2"/>`;
     const leg = [[C1, 'bon de 50 €'], [C2, 'bon de 5 €'], [C3, 'perdu']].map(([c, t], i) => `<rect x="450" y="${70 + i * 30}" width="18" height="18" rx="3" fill="${WC[c]}" stroke="#111111" stroke-width="1.6"/>` + T(476, 84 + i * 30, t, { fs: 14, a: 'start', w: 600 })).join('');
     const svg = `<svg viewBox="0 0 600 270" class="pic vis" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Roue partagée en ${n} secteurs égaux">${s}${leg}</svg>`;
-    return { titre: 'La roue du jeu-concours', doc: `<div class="wfig">${svg}</div><p class="srcl">Roue de ${n} secteurs égaux, lancée une fois par client. Jeu fictif.</p>`,
+    return { titre: 'La roue du jeu-concours', doc: `<div class="wfig">${svg}</div><p class="srcl">Roue de ${n} secteurs égaux, lancée une fois par client.</p>`,
       qs: [{ t: 'Combien la roue a-t-elle de secteurs ?', kind: 'num', v: n, tol: .01, a: String(n) },
         { t: 'Combien de secteurs donnent un bon de 5 € ?', kind: 'num', v: p, tol: .01, a: String(p) },
         { t: 'Quelle est la probabilité de gagner le bon de 50 € ? (en décimal)', kind: 'num', v: pr(g, n), tol: .0006, a: `1 ÷ ${n} = ${fr(pr(g, n))}` },

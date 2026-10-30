@@ -31,7 +31,7 @@ module.exports = function (chk) {
   const band = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" class="k" opacity=".18"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="none" class="ks" stroke-width="3"/>`;
   const W = cw.reduce((a, b) => a + b, 0);
   // 1. croiser du doigt
-  const croiser = S(600, 250, st(1, grid() + T(tx0, 20, '400 clients d’un magasin de sport (commerce fictif)', { fs: 12, a: 'start', c: 'ts' }))
+  const croiser = S(600, 250, st(1, grid() + T(tx0, 20, '400 clients d’un magasin de sport', { fs: 12, a: 'start', c: 'ts' }))
     + st(2, band(tx0 - 3, cy(1) - 3, W + 6, ch + 6) + T(tx0 + W + 8, cy(1) + 22, '← la ligne', { fs: 12, a: 'start', c: 'kt' }))
     + st(3, band(cx(1) - 3, ty0 - 3, cw[1] + 6, 4 * ch + 6) + T(cx(1) + cw[1] / 2, cy(4) + 20, '↑ la colonne', { fs: 12, c: 'kt' }))
     + st(4, `<circle cx="${cx(1) + cw[1] / 2}" cy="${cy(1) + ch / 2}" r="24" fill="none" class="ks" stroke-width="4"/>` + T(300, 232, '120 clients paient sans contact ET ont moins de 30 ans', { fs: 14, c: 'kt' })), 'Un tableau croisé : on croise une ligne et une colonne');

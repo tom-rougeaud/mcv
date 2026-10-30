@@ -43,7 +43,7 @@
     const d = pick(R, [6, 8, 10]), h = pick(R, [8, 10, 12]), c = pick(R, [4, 5, 10]), hb = pick(R, [6, 9]);
     const svg = SV(600, 230, cyl(110, 190, 9, d / 2, h, { fill: '#FFF0B8' }) + T(110, 222, 'bougie A', { fs: 14 }) + cone(300, 190, 9, 4, 12, { fill: '#FDE3E0' }) + T(300, 222, 'bougie B', { fs: 14 }) + pave(430, 190, 9, c, hb, c, { fill: '#E0EBFD' }).svg + T(470, 222, 'bougie C', { fs: 14 }), 'Trois bougies : un cylindre, un cône et un pavé');
     const tab = `<table class="dt tcx dt-sm"><thead><tr><th>Bougie</th><th>Forme</th><th>Dimensions (cm)</th></tr></thead><tbody><tr><th>A</th><td>cylindre</td><td>diamètre <span data-cell="0">${d}</span> · hauteur <span data-cell="1">${h}</span></td></tr><tr><th>B</th><td>cône</td><td>diamètre 8 · hauteur 12</td></tr><tr><th>C</th><td>pavé à base carrée</td><td>côté <span data-cell="2">${c}</span> · hauteur ${hb}</td></tr></tbody></table>`;
-    return { titre: 'La fiche technique des bougies', doc: `<div class="wfig">${svg}</div>${tab}<p class="srcl">Gamme fictive de l’Atelier Mia.</p>`,
+    return { titre: 'La fiche technique des bougies', doc: `<div class="wfig">${svg}</div>${tab}<p class="srcl">Gamme de l’Atelier Mia.</p>`,
       qs: [{ t: 'Quelle est la hauteur de la bougie A ?', kind: 'tap', cell: '1', v: h, tol: .01, a: `${h} cm` },
         { t: 'Quel est le rayon de la bougie A ?', kind: 'num', v: d / 2, tol: .01, a: `${d} ÷ 2 = ${d / 2} cm` },
         { t: 'Quel est le volume de la bougie C, en cm³ ?', kind: 'num', v: c * c * hb, tol: .01, a: `${c} × ${c} × ${hb} = ${c * c * hb} cm³` },

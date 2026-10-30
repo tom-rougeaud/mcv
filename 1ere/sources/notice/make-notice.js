@@ -73,7 +73,7 @@ table{width:100%;border-collapse:collapse;font-size:9.6pt}th,td{border:1px solid
 <p class="small">Chaque chapitre a 6 onglets : Départ (avec « De la 2de à la 1re » et les automatismes), Leçon (4 à 6 notions en parties A, B, C, avec un encadré « 🐍 Je programme » ou « 🧠 Je raisonne »), Méthodes, S’entraîner (3 exercices à support visuel, nouveaux nombres à chaque essai), Problèmes (3, dont un défi et un sujet « vers le bac ») et S’évaluer (contrôle blanc sur 20).</p></div>
 
 <h2><b>6</b>Données et confidentialité (RGPD)</h2>
-<div class="box g"><ul><li><b>Aucune donnée personnelle n’est collectée</b> : pas de compte, pas de cookie, pas de statistiques de visite, rien n’est envoyé sur Internet.</li>
+<div class="box g"><ul><li><b>Installation sur l’écran d’accueil</b> : sur Android (Chrome, Edge), une bannière « Installer l’appli » apparaît ; sur iPhone et iPad (Safari), Partager → « Sur l’écran d’accueil ». Une fois installée, l’appli s’ouvre sans réseau.</li><li><b>Aucune donnée personnelle n’est collectée</b> : pas de compte, pas de cookie, pas de statistiques de visite, rien n’est envoyé sur Internet.</li>
 <li>La progression reste dans le navigateur de l’élève (stockage local), sous les clés <code>mcv1re.v1.progression</code> et <code>mcv1re.v1.preferences</code>. Elles sont distinctes de celles de la 2de (<code>mcv2de.v1.…</code>) : les deux applis ne se gênent pas.</li>
 <li>Si le stockage est bloqué (navigation privée), l’appli fonctionne quand même ; la progression est alors oubliée à la fermeture.</li>
 <li>Page <b>Mes données</b> : <b>Exporter</b> (fichier <code>maths-et-mcv-1re-progression.json</code>), <b>Importer</b>, <b>Effacer</b>.</li>
@@ -82,7 +82,7 @@ table{width:100%;border-collapse:collapse;font-size:9.6pt}th,td{border:1px solid
 <h2><b>7</b>Le manuel PDF</h2>
 <div class="box"><ul><li><b>Version élève</b> (158 pages) : couverture, « Comment ça marche », les 5 compétences, sommaire, la page « De la 2de à la 1re », puis 8 chapitres de 14 à 16 pages : Au travail et encart 2de → 1re, Point de départ, leçon en 4 notions, mots à connaître, Méthodes, Je m’entraîne (3), Je résous (3), Je sais faire, S’évaluer sur une feuille recto verso. Réponses de « Je m’entraîne » et glossaire visuel (72 mots, chacun avec un schéma exact) à la fin.</li>
 <li><b>Version professeur</b> (168 pages) : les réponses en rouge sur les pages, les pages « Continuité 2de → 1re », et un corrigé complet à la fin. Elle est seulement jointe à cette conversation. <b>Ne la déposez pas sur GitHub</b> : un dépôt public est lisible par tous.</li>
-<li>Toutes les courbes, nuages, droites d’ajustement et solides sont calculés par programme (aucun tracé à main levée) ; les entreprises et les données des exercices sont fictives et signalées comme telles.</li></ul></div>
+<li>Toutes les courbes, nuages, droites d’ajustement et solides sont calculés par programme (aucun tracé à main levée) ; les entreprises et les données des exercices sont inventées, sauf les données sourcées.</li></ul></div>
 
 <h2><b>8</b>Ce qui a été vérifié, et ce qui ne l’a pas été</h2>
 <div class="box"><table><tr><th style="width:62%">Vérification</th><th>Résultat</th></tr>

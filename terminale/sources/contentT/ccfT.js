@@ -2,7 +2,7 @@
    Format de l’arrêté du 17 juin 2020 : 45 minutes, noté sur 10, un ou deux exercices aux questions de plus en plus approfondies,
    au moins une question « appel » résolue devant l’examinateur avec un outil numérique.
    La deuxième situation d’évaluation porte sur les programmes de 1re et de terminale : chaque sujet mêle les deux.
-   Les entreprises sont fictives ; les données réelles sont sourcées. */
+   Les entreprises sont inventées ; les données réelles sont sourcées. */
 'use strict';
 const K = require('./kitT');
 const { rnd, H, tab, MCVP } = K;
@@ -17,7 +17,7 @@ module.exports = function (chk) {
     chk(Math.round(u(2)) === 2333 && Math.round(u(3)) === 2519 && Math.round(u(4)) === 2721 && Math.round(u(11)) === 4663 && Math.round(sum) === 37954, 'CCF A suites');
     chk(316 / 400 === .79 && 204 / 240 === .85 && 112 / 160 === .7 && rnd(.6 * .79, 3) === .474 && 204 / 400 === .51, 'CCF A probabilités');
     S.push({ id: 'A', titre: 'La box « Éclat »', lieu: 'Service client d’une box beauté par abonnement', sit: 'Situation d’évaluation n° 1 ou n° 2', prog: ['Suites géométriques, terme de rang n, somme des premiers termes (terminale)', 'Tableau croisé, probabilité conditionnelle (1re) ; arbre pondéré, indépendance (terminale)'],
-      contexte: `<p>Inès est en stage chez « Éclat », une box beauté envoyée chaque mois à ses abonnées (entreprise fictive). La responsable lui confie deux missions : prévoir les envois de l’année, puis analyser une enquête de satisfaction.</p>`,
+      contexte: `<p>Inès est en stage chez « Éclat », une box beauté envoyée chaque mois à ses abonnées. La responsable lui confie deux missions : prévoir les envois de l’année, puis analyser une enquête de satisfaction.</p>`,
       exos: [
         { t: 'Prévoir les envois de l’année', intro: `${tab(['Mois', 'janvier', 'février', 'mars', 'avril', 'mai'], [['Rang n', '0', '1', '2', '3', '4'], ['Abonnées uₙ', '2 000', '2 160', '2 333', '2 519', '2 721']], 'dt-c')}<p class="srcl">Nombre d’abonnées au premier jour de chaque mois.</p>`, qs: [
           { t: 'Calculer le quotient 2 160 ÷ 2 000.', comp: 'app', pts: .5, a: '1,08', v: 1.08, tol: .0006, w: 20 },
@@ -40,7 +40,7 @@ module.exports = function (chk) {
     chk(a === 4365.28 && rnd(12000 * .045, 2) === 540 && rnd(a - 540, 2) === 3825.28 && rnd(12000 - 3825.28, 2) === 8174.72 && rnd(8174.72 * .045, 2) === 367.86 && rnd(3 * a - 12000, 2) === 1095.84 && rnd((Math.pow(1.045, 1 / 12) - 1) * 100, 3) === .367, 'CCF B emprunt');
     const g = MCVP.plot({ W: 600, H: 250, x: [0, 12, 1], y: [-100, 200, 50], ml: 50, mt: 14, mb: 30, zeroAxes: true, xl: 'x (dizaines de paddles)', yl: 'B(x) (centaines d’€)', lab: 'Courbe du bénéfice B' });
     S.push({ id: 'B', titre: 'Le magasin « Cap Glisse »', lieu: 'Magasin de sports nautiques', sit: 'Situation d’évaluation n° 2', prog: ['Fonction polynôme de degré 3 : dérivée, tableau de variations, résolution de f(x) = c (terminale)', 'Emprunt à annuités constantes, tableau d’amortissement, coût, taux mensuel équivalent (terminale)', 'Dérivée et signe d’un polynôme de degré 2 (1re)'],
-      contexte: `<p>Léo est vendeur au magasin « Cap Glisse » (entreprise fictive), qui vend des planches de stand up paddle. Le gérant lui demande d’étudier le bénéfice de la saison, puis le financement du stock.</p>`,
+      contexte: `<p>Léo est vendeur au magasin « Cap Glisse », qui vend des planches de stand up paddle. Le gérant lui demande d’étudier le bénéfice de la saison, puis le financement du stock.</p>`,
       exos: [
         { t: 'Le bénéfice de la saison', intro: `<div class="wfig">${g.wrap(g.base + g.curve(B, { stroke: MCVP.ORG, w: 3 }))}</div><p>Le bénéfice de la saison, en centaines d’euros, pour x dizaines de paddles vendus (x dans [0 ; 12]), est ${H('B(x) = − x³ + 18x² − 60x − 40')}.</p>`, qs: [
           { t: 'Calculer B(0). Interpréter ce résultat.', comp: 'app', pts: .5, a: 'B(0) = − 40 : sans vente, le magasin perd 4 000 € (charges fixes).', v: -40, tol: .01, w: 20 },
@@ -63,7 +63,7 @@ module.exports = function (chk) {
     chk(rnd(.7 * .75 + .3 * .9, 3) === .795 && rnd(.27 / .795, 3) === .34 && rnd(.3 * .795, 4) === .2385, 'CCF C probabilités');
     const g = MCVP.plot({ W: 600, H: 230, x: [0, 7, 1], y: [0, 3500, 500], ml: 56, mt: 14, mb: 30, xl: 'mois x', yl: 'messages', fine: true, lab: 'Nuage des messages reçus sur le chat' });
     S.push({ id: 'C', titre: 'Le centre de contacts « Allô Conseil »', lieu: 'Centre de relation client', sit: 'Situation d’évaluation n° 2', prog: ['Statistique à deux variables : choix d’un modèle, R², changement de variable z = log y, extrapolation (terminale)', 'Logarithme décimal : résolution de qˣ = a (terminale)', 'Arbre pondéré, probabilités totales, probabilité conditionnelle, indépendance (terminale) ; probabilité d’un évènement (1re)'],
-      contexte: `<p>Sami travaille au centre de contacts « Allô Conseil » (entreprise fictive), qui répond aux clients par chat et par téléphone. Le responsable veut anticiper l’activité du chat et mesurer la qualité des réponses.</p>`,
+      contexte: `<p>Sami travaille au centre de contacts « Allô Conseil », qui répond aux clients par chat et par téléphone. Le responsable veut anticiper l’activité du chat et mesurer la qualité des réponses.</p>`,
       exos: [
         { t: 'L’activité du chat', intro: `${tab(['Mois x', '1', '2', '3', '4', '5', '6'], [['Messages y', '1 200', '1 450', '1 760', '2 120', '2 580', '3 100']], 'dt-c')}<div class="wfig">${g.wrap(g.base + g.pts(D, { r: 5 }))}</div>`, qs: [
           { t: 'Décrire l’allure du nuage de points.', comp: 'app', pts: .5, a: 'Les points montent de plus en plus vite : allure exponentielle.', v: null, lines: 1 },

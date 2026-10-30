@@ -26,7 +26,7 @@
     const g = repere(f, 0, xm, 'Bénéfice du stand selon le prix', { W: 600, H: 250 });
     const sv = g.wrap(g.base + g.curve(f, { n: 120 }) + g.pts(xsT.map(x => [x, f(x)]), { r: 4 }));
     const x3 = pick(R, [r1 + 1, r2 - 1]);
-    return { titre: 'Le bénéfice d’un stand de bougies', doc: `<div class="wfig">${sv}</div>${tab}<p class="srcl">Stand fictif : B(x) est le bénéfice du jour, en dizaines d’euros, pour un prix de vente x en euros.</p>`,
+    return { titre: 'Le bénéfice d’un stand de bougies', doc: `<div class="wfig">${sv}</div>${tab}<p class="srcl">B(x) est le bénéfice du jour, en dizaines d’euros, pour un prix de vente x en euros.</p>`,
       qs: [{ t: `Quel est le bénéfice pour un prix de ${x3} € ?`, kind: 'tap', cell: String(x3), v: f(x3), tol: .006, a: String(f(x3)) },
         { t: 'Pour quel prix le bénéfice est-il le plus grand ?', kind: 'num', v: xs, tol: .006, a: `${xs} €`, x: `le sommet est au milieu des racines ${r1} et ${r2} : (${r1} + ${r2}) ÷ 2 = ${xs} €` },
         { t: 'Quel est ce bénéfice maximal ?', kind: 'num', v: f(xs), tol: .006, a: String(f(xs)), x: `B(${xs}) = − (${xs} − ${r1})(${xs} − ${r2}) = ${fr(f(xs))}` },

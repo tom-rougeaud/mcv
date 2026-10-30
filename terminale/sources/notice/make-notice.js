@@ -72,7 +72,7 @@ table{width:100%;border-collapse:collapse;font-size:9.6pt}th,td{border:1px solid
 <p class="small">Chaque chapitre a 6 onglets : Départ (scène, plan, « De la 1re à la terminale », automatismes, document à toucher), Leçon (notions en 6 temps, méthode visuelle animée), Méthodes (résolu, résolu à trous, simulateur), S’entraîner (3 supports visuels qui changent à chaque essai, indices, erreurs fréquentes expliquées), Problèmes (3, dont un défi et un « vers le bac »), S’évaluer (format CCF).</p></div>
 
 <h2><b>6</b>Données personnelles et utilisation</h2>
-<div class="box g"><ul><li>Aucun compte, aucun cookie, aucun traceur, aucune police ni script externe. La progression reste dans le navigateur, sous les clés <code>mcvtle.v1.progression</code> et <code>mcvtle.v1.preferences</code>, distinctes de la 1re (<code>mcv1re.v1.*</code>).</li><li>Export, import et effacement depuis « Mes données ». Une fois ouverte, l’appli fonctionne sans réseau ; on peut aussi enregistrer <code>index.html</code> sur un poste.</li></ul></div>
+<div class="box g"><ul><li><b>Installation sur l’écran d’accueil</b> : sur Android (Chrome, Edge), une bannière « Installer l’appli » apparaît ; sur iPhone et iPad (Safari), Partager → « Sur l’écran d’accueil ». Une fois installée, l’appli s’ouvre sans réseau.</li><li>Aucun compte, aucun cookie, aucun traceur, aucune police ni script externe. La progression reste dans le navigateur, sous les clés <code>mcvtle.v1.progression</code> et <code>mcvtle.v1.preferences</code>, distinctes de la 1re (<code>mcv1re.v1.*</code>).</li><li>Export, import et effacement depuis « Mes données ». Une fois ouverte, l’appli fonctionne sans réseau ; on peut aussi enregistrer <code>index.html</code> sur un poste.</li></ul></div>
 
 <h2><b>7</b>Les manuels PDF, et deux corrections en 1re</h2>
 <div class="box"><ul><li><b>Version élève</b> (${RES('eleve')} pages) : couverture or, « Comment ça marche », les 5 compétences, sommaire, « De la 1re à la terminale », 7 chapitres, les 3 sujets de CCF, les réponses de « Je m’entraîne », le glossaire visuel.</li>
@@ -87,7 +87,7 @@ table{width:100%;border-collapse:collapse;font-size:9.6pt}th,td{border:1px solid
 <tr><td>Contrôle visuel des pages du manuel, chapitre par chapitre</td><td><span class="tag">OK</span></td></tr>
 <tr><td>Navigateurs testés : Chromium seulement ; Safari, Firefox, iPad et tablettes Android non testés ; lecture à voix haute non testée</td><td><span class="tag mid">à vérifier</span></td></tr></table></div>
 
-<div class="box"><p>Données réelles : Fevad (chiffres clés 2024 et 2026), Insee (indice des prix à la consommation, janvier 2026), info.gouv.fr (taux du Livret A et du LEP, 31 juillet 2026), Banque de France (seuils de l’usure au 1er octobre 2026). Les entreprises des exercices sont fictives et signalées comme telles.</p>
+<div class="box"><p>Données réelles : Fevad (chiffres clés 2024 et 2026), Insee (indice des prix à la consommation, janvier 2026), info.gouv.fr (taux du Livret A et du LEP, 31 juillet 2026), Banque de France (seuils de l’usure au 1er octobre 2026). Les entreprises des exercices sont inventées.</p>
 <p>Tom Rougeaud · licence <b>CC BY-NC 4.0</b>.</p></div>
 </body></html>`;
 fs.writeFileSync(path.join(__dirname, 'notice.html'), html);

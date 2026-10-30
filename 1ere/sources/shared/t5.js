@@ -14,7 +14,7 @@
     const tab = `<table class="dt tcx dt-sm dt-c"><thead><tr><th>Mois n</th>${N.map(n => `<th>${n}</th>`).join('')}</tr></thead><tbody><tr><th>Abonnés</th>${N.map(n => `<td data-cell="${n}">${u(n)}</td>`).join('')}</tr></tbody></table>`;
     const g = P.plot({ W: 600, H: 230, x: [0, 8, 1], y: [0, Math.ceil(u(8) / 50) * 50, 50], ml: 50, mt: 26, mb: 34, xl: 'mois n', yl: 'abonnés', fine: true });
     const k = int(R, 1, 5);
-    return { titre: 'Les abonnés de la box « Bougies du mois »', doc: tab + `<div class="wfig">${g.wrap(g.base + g.pts(N.map(n => [n, u(n)]), { r: 5 }))}</div><p class="srcl">Nombre d’abonnés au début de chaque mois (mois 0 : lancement). Entreprise fictive.</p>`,
+    return { titre: 'Les abonnés de la box « Bougies du mois »', doc: tab + `<div class="wfig">${g.wrap(g.base + g.pts(N.map(n => [n, u(n)]), { r: 5 }))}</div><p class="srcl">Nombre d’abonnés au début de chaque mois (mois 0 : lancement).</p>`,
       qs: [{ t: `Combien y a-t-il d’abonnés au mois ${k} ?`, kind: 'tap', cell: String(k), v: u(k), tol: .01, a: String(u(k)) },
         { t: 'De combien le nombre d’abonnés augmente-t-il chaque mois ?', kind: 'num', v: r, tol: .01, a: `+ ${r}`, x: `${u(1)} − ${u0} = ${r} : + ${r} abonnés chaque mois` },
         { t: 'Combien d’abonnés prévoir au mois 6, si la hausse continue ?', kind: 'num', v: u(6), tol: .01, a: String(u(6)), x: `${u(5)} + ${r} = ${u(6)}` },

@@ -29,7 +29,7 @@ module.exports = function (chk) {
   const g2 = MCVP.plot({ W: 600, H: 290, x: [0, 8, 1], y: [100, 260, 20], ml: 52, mt: 18, mb: 34, xl: 'mois n', yl: 'abonnés uₙ', fine: true, lab: 'Suite arithmétique : uₙ = 120 + 15n' });
   let stairs = ''; for (let n = 0; n < 8; n++) stairs += g2.seg(n, u(n), n + 1, u(n), { stroke: '#545B7A', dash: '4 3', w: 1.6 }) + g2.seg(n + 1, u(n), n + 1, u(n + 1), { stroke: GRN, w: 2.6 });
   const ari = S(600, 290, st(1, g2.base + g2.pts([0, 1, 2, 3, 4, 5, 6, 7, 8].map(n => [n, u(n)]), { r: 5.5, fill: BLUE }))
-    + st(2, stairs + g2.txt(1, 142, '+ 15', { dx: 8, a: 'start', fill: GRN, cls: '', fs: 13 }) + g2.txt(.5, 112, '+ 1', { fs: 12, dy: 0 }))
+    + st(2, stairs + g2.txt(1, 124, '+ 15', { dx: 8, a: 'start', fill: GRN, cls: '', fs: 13 }) + g2.txt(.5, 112, '+ 1', { fs: 12, dy: 0 }))
     + st(3, g2.line(15, 120, { stroke: RED, w: 1.8, dash: '8 5' }) + g2.txt(0.2, 250, 'points alignés : même hausse chaque mois', { fs: 13, a: 'start' }))
     + st(4, g2.dot(8, 240, { r: 6.5, fill: '#FFC233' }) + g2.txt(8, 240, 'u₈ = 120 + 8 × 15 = 240', { dx: -14, dy: -12, a: 'end' })),
   'Les points de la suite arithmétique sont alignés ; chaque marche monte de 15');

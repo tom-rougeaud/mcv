@@ -31,7 +31,7 @@ module.exports = function (chk) {
   const F = [12, 15, 18, 18, 22, 25, 27, 30, 34, 41, 58], bw = 44, gx = 6, x0 = (600 - 11 * (bw + gx)) / 2, cx = i => x0 + i * (bw + gx) + bw / 2;
   const file = (cut) => F.map((v, i) => Rc(x0 + i * (bw + gx), 50, bw, 38, { c: (cut && [2, 5, 8].includes(i)) ? 'k' : 'k2', rx: 5 }) + T(cx(i), 75, v, { fs: 16, c: (cut && [2, 5, 8].includes(i)) ? 'tw' : 'tx' }) + T(cx(i), 104, 'rang ' + (i + 1), { fs: 10, c: 'ts', w: 400 })).join('');
   const fileVis = S(600, 210, st(1, file(false) + T(300, 26, '11 tickets (€), rangés du plus petit au plus grand', { fs: 14, c: 'ts' }))
-    + st(2, Ln(cx(5), 34, cx(5), 92, { w: 3 }) + Ln(cx(5), 112, cx(5), 124, { w: 3 }) + Rc(x0 + 5 * (bw + gx), 50, bw, 38, { c: 'k', rx: 5 }) + T(cx(5), 75, '25', { fs: 16, c: 'tw' }) + T(cx(5), 140, 'médiane : 5 valeurs de chaque côté', { fs: 15, c: 'kt' }))
+    + st(2, Ln(cx(5), 34, cx(5), 50, { w: 3 }) + Ln(cx(5), 112, cx(5), 124, { w: 3 }) + Rc(x0 + 5 * (bw + gx), 50, bw, 38, { c: 'k', rx: 5 }) + T(cx(5), 75, '25', { fs: 16, c: 'tw' }) + T(cx(5), 140, 'médiane : 5 valeurs de chaque côté', { fs: 15, c: 'kt' }))
     + st(3, Rc(x0 + 2 * (bw + gx), 50, bw, 38, { c: 'k', rx: 5 }) + T(cx(2), 75, '18', { fs: 16, c: 'tw' }) + Rc(x0 + 8 * (bw + gx), 50, bw, 38, { c: 'k', rx: 5 }) + T(cx(8), 75, '34', { fs: 16, c: 'tw' }) + T(cx(2), 168, 'Q₁ : rang 11 ÷ 4 = 2,75 → 3', { fs: 13 }) + T(cx(8), 168, 'Q₃ : rang 33 ÷ 4 = 8,25 → 9', { fs: 13 }) + T(300, 196, 'on arrondit toujours le rang à l’entier supérieur', { fs: 13, c: 'ts' })), 'La file des valeurs rangées, coupée en deux puis en quatre');
   // 4. la boîte dessinée sous la file
   const ax = v => 30 + v * 9;   // 0 € → 30, 60 € → 570

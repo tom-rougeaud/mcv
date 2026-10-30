@@ -119,30 +119,24 @@ const pGuide = `<div class="page c-nombre" data-recto="0"><div class="inner" dat
   <div class="qrhow"><div class="qrbox big">${QR.home.svg}<span>Maths et MCV · 2de</span></div><div><p class="pg-p">Sur téléphone ou ordinateur, sans compte : la leçon animée, les méthodes pas à pas, l’entraînement corrigé tout de suite avec de nouveaux nombres à chaque essai, les problèmes et le contrôle blanc.</p><p class="pg-p small">tom-rougeaud.github.io/mcv/2de · Rien n’est envoyé sur Internet : la progression reste sur l’appareil.</p></div></div>
   <div class="owner"><span>Ce manuel appartient à</span><i></i><span>Classe</span><i></i></div>
 </div><div class="foot"></div></div>`;
-/* les compétences, expliquées par le métier (double page) */
+/* les compétences, expliquées par le métier (une seule page) */
 const COMPS = [
   ['app', 'Lire un document et trouver l’information utile.', 'Repérer sur un bon de commande la quantité et le prix unitaire HT.', 'Je lis les titres d’un tableau avant de lire un nombre.'],
   ['ana', 'Choisir la bonne méthode, comparer des options.', 'Choisir entre deux transporteurs selon le poids du colis.', 'Je me demande : « Quel calcul répond à la question ? »'],
   ['rea', 'Faire le calcul juste, utiliser le bon outil.', 'Calculer le prix soldé avant d’étiqueter le rayon.', 'Je pose le calcul, j’écris l’unité, j’arrondis comme demandé.'],
   ['val', 'Vérifier que le résultat est possible.', 'Contrôler un ticket avant de l’encaisser : une remise ne peut pas augmenter le prix.', 'J’estime l’ordre de grandeur ou je fais le calcul inverse.'],
   ['com', 'Expliquer à un client ou rendre compte à son tuteur.', 'Dire au client combien il économise, écrire trois lignes au manager.', 'Je réponds par une phrase complète, avec le résultat et l’unité.']];
-const compCard = ([k, geste, metier, manuel]) => `<div class="cpc cpc-${k}"><div class="cpc-i">${CP[k]()}</div><div><span class="cp cp-${k}">${CPS[k]}</span><p class="cpc-g">${geste}</p><p class="cpc-m">💼 <b>Au travail</b> · ${metier}</p><p class="cpc-x">✏️ <b>Dans le manuel</b> · ${manuel}</p></div></div>`;
-const pComp1 = `<div class="page c-algo"><div class="inner" data-sec="competences">
+const compCard = ([k, geste, metier, manuel]) => `<div class="cpc cpc7 cpc-${k}"><div class="cpc-i">${CP[k]()}</div><div><div class="cpc-h"><span class="cp cp-${k}">${CPS[k]}</span><p class="cpc-g">${geste}</p></div><p class="cpc-m">💼 <b>Au travail</b> · ${metier}</p><p class="cpc-x">✏️ <b>Dans le manuel</b> · ${manuel}</p></div></div>`;
+const pComp = `<div class="page c-algo"><div class="inner" data-sec="competences">
   <h1 class="pg-t">Les 5 compétences, au travail</h1>
   <p class="pg-p">Au bac, on évalue cinq compétences. Ce sont aussi des gestes que tu feras chaque jour en magasin, à l’accueil ou au service client.</p>
   ${COMPS.map(compCard).join('')}
-</div><div class="foot"></div></div>`;
-const pComp2 = `<div class="page c-algo"><div class="inner">
-  <h2 class="pg-s">Les consignes</h2>
-  <table class="tbl cons2"><tr><th>Dans le manuel</th><th>Au bac</th><th>Ce qu’on attend</th></tr>
-  <tr><td>Calcule</td><td>Calculer</td><td>un résultat chiffré, avec son unité</td></tr>
-  <tr><td>Détermine</td><td>Déterminer</td><td>un résultat, par le calcul ou par lecture</td></tr>
-  <tr><td>Justifie</td><td>Justifier</td><td>une raison : un calcul, une propriété, un document</td></tr>
-  <tr><td>Vérifie</td><td>Vérifier</td><td>un contrôle qui confirme le résultat</td></tr>
-  <tr><td>Rédige</td><td>Rédiger</td><td>des phrases complètes qui répondent à la question</td></tr></table>
-  <h2 class="pg-s">Mes outils</h2>
-  <div class="guide-g"><div class="gd"><span class="gi">🧮</span><div><b>Calculatrice collège</b><span>Pour les calculs, les puissances (x²), la racine (√) et π.</span></div></div><div class="gd"><span class="gi">📊</span><div><b>Excel</b><span>=SOMME, =MOYENNE, =MEDIANE, =ECARTYPE.PEARSON, et les fréquences.</span></div></div><div class="gd"><span class="gi">📈</span><div><b>GeoGebra</b><span>Pour tracer une fonction et lire un point d’intersection.</span></div></div></div>
-  <p class="pg-p small">Les prix s’arrondissent au centime. Les taux s’arrondissent comme le demande l’énoncé, souvent au dixième. Les entreprises citées sont fictives ; les données publiques (Insee, TVA, réglementation) sont réelles et sourcées.</p>
+  <div class="cpbot"><div><h2 class="pg-s">Les consignes</h2><table class="tbl cons2"><tr><th>Consigne · Au bac</th><th>Ce qu’on attend</th></tr>
+  <tr><td><b>Calcule</b> · Calculer</td><td>un résultat chiffré, avec son unité</td></tr>
+  <tr><td><b>Détermine</b> · Déterminer</td><td>un résultat, par le calcul ou par lecture</td></tr>
+  <tr><td><b>Justifie</b> · Justifier</td><td>une raison : un calcul, une propriété, un document</td></tr>
+  <tr><td><b>Vérifie</b> · Vérifier</td><td>un contrôle qui confirme le résultat</td></tr>
+  <tr><td><b>Rédige</b> · Rédiger</td><td>des phrases complètes qui répondent à la question</td></tr></table><p class="rappel">📌 <b>Rappel</b> · Les entreprises, les prix et les enquêtes des exercices sont inventés. Les données publiques (Insee, TVA, réglementation) sont réelles et sourcées. Les prix s’arrondissent au centime ; les taux, comme le demande l’énoncé, souvent au dixième.</p></div><div><h2 class="pg-s">Mes outils</h2><div class="guide-g"><div class="gd"><span class="gi">🧮</span><div><b>Calculatrice collège</b><span>Pour les calculs, les puissances (x²), la racine (√) et π.</span></div></div><div class="gd"><span class="gi">📊</span><div><b>Excel</b><span>=SOMME, =MOYENNE, =MEDIANE, =ECARTYPE.PEARSON, et les fréquences.</span></div></div><div class="gd"><span class="gi">📈</span><div><b>GeoGebra</b><span>Pour tracer une fonction et lire un point d’intersection.</span></div></div></div></div></div>
 </div><div class="foot"></div></div>`;
 const pToc = `<div class="page" data-recto="0"><div class="inner" data-sec="sommaire">
   <h1 class="pg-t">Sommaire</h1>
@@ -198,7 +192,7 @@ const detsHtml = () => `<div id="dets" hidden>${DETS.map(d => `<div class="dz-sr
 const doc = (title, body, cls) => `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>${esc(title)}</title><style>${FONTS}\n${TEX.css()}\n${ROOT}\n${CSS}</style></head>
 <body class="${cls}" data-foot="${esc(FOOT)}"><div id="flow">${anchors(typo(body))}</div><div id="out"></div>${cls === 'prof' ? typo(detsHtml()) : ''}${TPL}<script>${PAG}</script></body></html>`;
 const pBlank = `<div class="page blank" data-recto="0"></div>`;
-const front = pCover + pBlank + pGuide + pComp1 + pComp2 + pToc;
+const front = pCover + pBlank + pGuide + pComp + pToc;
 fs.writeFileSync(path.join(B, 'eleve.html'), doc('Maths et MCV · 2de Bac Pro — manuel', front + chapSecs + repSec + glo, 'eleve'));
 fs.writeFileSync(path.join(B, 'prof.html'), doc('Maths et MCV · 2de Bac Pro — version professeur', front + chapSecs + repSec + glo, 'prof'));
 const nEx = CH.reduce((a, x) => a + x.rep.length + x.c.probs.length, 0);

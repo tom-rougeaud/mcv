@@ -12,7 +12,7 @@ module.exports = function (chk) {
   c.objectifs = ['Je saurai lire une image et un antécédent sur un graphique.', 'Je saurai résoudre f(x) = g(x) avec deux courbes.', 'Je saurai comparer deux offres avec f(x) ≥ g(x).', 'Je saurai trouver un seuil de rentabilité.'];
   c.depart = 'c2';
 
-  /* offres du salon (fictives) */
+  /* offres du salon */
   const A = j => 25 * j, B = j => 60 + 15 * j;
   chk(A(6) === 150 && B(6) === 150 && A(4) === 100 && B(4) === 120 && B(9) === 195 && A(8) > B(8) && A(3) < B(3), 'c2 offres');
   const gO = (lab) => MCVP.plot({ W: 600, H: 290, x: [0, 10, 1], y: [0, 300, 50], ml: 56, mt: 20, xl: 'jours', yl: 'coût (€)', fine: true, lab });

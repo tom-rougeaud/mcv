@@ -14,7 +14,7 @@ const E = {};
 /* ---------- chapitre 1 ---------- */
 {
   const cf = 900, cv = 15, p = 35, C = q => cf + cv * q;
-  doc.c1 = `<div class="evdoc">${tab(['Fiche de gestion · Les Délices de Léa (entreprise fictive)', 'Montant'], [['Charges fixes par mois', '900 €'], ['Coût de fabrication d’un coffret', '15 €'], ['Prix de vente d’un coffret (HT)', '35 €']])}</div>`;
+  doc.c1 = `<div class="evdoc">${tab(['Fiche de gestion · Les Délices de Léa', 'Montant'], [['Charges fixes par mois', '900 €'], ['Coût de fabrication d’un coffret', '15 €'], ['Prix de vente d’un coffret (HT)', '35 €']])}</div>`;
   E.c1 = { lieu: 'Boutique de coffrets gourmands', duree: '40 min', grille: GR.c1, exos: [
     { t: 'Le mois de décembre', intro: `<p>Léa a vendu ${H('80 coffrets')} en décembre.</p>`, qs: [
       { t: 'Relever dans la fiche le coût de fabrication d’un coffret.', comp: 'app', pts: 1, a: '15 €', v: 15, tol: .006, w: 28 },
@@ -35,7 +35,7 @@ const E = {};
 /* ---------- chapitre 2 ---------- */
 {
   const g = MCVP.plot({ W: 600, H: 280, x: [0, 1000, 200], y: [0, 300, 50], ml: 56, mt: 18, xl: 'flyers', yl: 'prix (€)', fine: true, lab: 'Prix de deux imprimeurs selon le nombre de flyers' });
-  doc.c2 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.line(.2, 0, { stroke: '#C2332A', w: 3 }) + g.line(.05, 30, { stroke: '#1D5FC2', w: 3 }) + g.txt(940, 188, 'imprimeur A', { dy: -8, a: 'end', fill: '#C2332A', cls: '' }) + g.txt(940, 77, 'imprimeur B', { dy: 22, a: 'end', fill: '#1D5FC2', cls: '' }))}</div><p class="srcl">Imprimeur A : 0,20 € par flyer. Imprimeur B : 30 € de forfait + 0,05 € par flyer. Entreprises fictives.</p></div>`;
+  doc.c2 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.line(.2, 0, { stroke: '#C2332A', w: 3 }) + g.line(.05, 30, { stroke: '#1D5FC2', w: 3 }) + g.txt(940, 188, 'imprimeur A', { dy: -8, a: 'end', fill: '#C2332A', cls: '' }) + g.txt(940, 77, 'imprimeur B', { dy: 22, a: 'end', fill: '#1D5FC2', cls: '' }))}</div><p class="srcl">Imprimeur A : 0,20 € par flyer. Imprimeur B : 30 € de forfait + 0,05 € par flyer.</p></div>`;
   const A = x => .2 * x, B = x => 30 + .05 * x;
   E.c2 = { lieu: 'Boutique de créations', duree: '40 min', grille: GR.c2, exos: [
     { t: 'Lire le graphique', intro: `<p>Léa compare deux imprimeurs pour ses flyers. Utilise le graphique.</p>`, qs: [
@@ -56,7 +56,7 @@ const E = {};
 /* ---------- chapitre 3 ---------- */
 {
   const Bf = x => -(x - 1) * (x - 7), g = MCVP.plot({ W: 600, H: 290, x: [0, 8, 1], y: [-8, 10, 2], ml: 48, mt: 16, mb: 30, zeroAxes: true, fine: true, lab: 'Bénéfice du stand de Léa selon le prix' });
-  doc.c3 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(Bf, { stroke: '#1D5FC2', w: 3.2 }))}</div><p class="srcl">B(x) = − (x − 1)(x − 7) : bénéfice du jour (en dizaines d’euros) pour un prix de vente de x euros. Stand fictif.</p></div>`;
+  doc.c3 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(Bf, { stroke: '#1D5FC2', w: 3.2 }))}</div><p class="srcl">B(x) = − (x − 1)(x − 7) : bénéfice du jour (en dizaines d’euros) pour un prix de vente de x euros.</p></div>`;
   E.c3 = { lieu: 'Stand de créations', duree: '40 min', grille: GR.c3, exos: [
     { t: 'Lire la courbe', intro: `<p>Léa étudie le bénéfice de son stand. Utilise le graphique.</p>`, qs: [
       { t: 'Lire la plus petite racine de B.', comp: 'app', pts: 1, a: '1', v: 1, tol: .06, w: 24 },
@@ -76,7 +76,7 @@ const E = {};
 /* ---------- chapitre 4 ---------- */
 {
   const Bf = x => -x * x + 8 * x - 7, g = MCVP.plot({ W: 600, H: 300, x: [0, 8, 1], y: [-8, 10, 2], ml: 48, mt: 16, mb: 30, zeroAxes: true, fine: true, lab: 'Bénéfice du stand de Léa et tangente en A' });
-  doc.c4 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(Bf, { stroke: '#1D5FC2', w: 3.2 }) + g.line(4, -3, { stroke: '#C2332A', w: 2.6 }) + g.dot(2, 5, { r: 6, fill: '#FFC233' }) + g.dot(3, 9, { r: 5, fill: '#fff', stroke: '#C2332A' }) + g.txt(2, 5, 'A', { dx: -14, dy: -8, fs: 15 }) + g.txt(3, 9, 'C', { dx: 12, dy: -8, fs: 15 }))}</div><p class="srcl">B(x) = − x² + 8x − 7 : bénéfice du jour (en dizaines d’euros) pour un prix de x euros. La droite rouge est la tangente en A. Stand fictif.</p></div>`;
+  doc.c4 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(Bf, { stroke: '#1D5FC2', w: 3.2 }) + g.line(4, -3, { stroke: '#C2332A', w: 2.6 }) + g.dot(2, 5, { r: 6, fill: '#FFC233' }) + g.dot(3, 9, { r: 5, fill: '#fff', stroke: '#C2332A' }) + g.txt(2, 5, 'A', { dx: -14, dy: -8, fs: 15 }) + g.txt(3, 9, 'C', { dx: 12, dy: -8, fs: 15 }))}</div><p class="srcl">B(x) = − x² + 8x − 7 : bénéfice du jour (en dizaines d’euros) pour un prix de x euros. La droite rouge est la tangente en A.</p></div>`;
   const Cf = q => .5 * q * q + 4 * q + 30;
   E.c4 = { lieu: 'Stand de créations', duree: '40 min', grille: GR.c4, exos: [
     { t: 'Lire le graphique', intro: `<p>Léa étudie son bénéfice. Le point A a pour abscisse 2 ; le point C est sur la tangente en A, d’abscisse 3.</p>`, qs: [
@@ -96,7 +96,7 @@ const E = {};
 
 /* ---------- chapitre 5 ---------- */
 {
-  doc.c5 = `<div class="evdoc">${tab(['Mois n', '0', '1', '2', '3'], [['Coffrets fabriqués', '150', '162', '174', '186']], 'dt-c')}<p class="srcl">Production mensuelle de coffrets de Léa (entreprise fictive).</p></div>`;
+  doc.c5 = `<div class="evdoc">${tab(['Mois n', '0', '1', '2', '3'], [['Coffrets fabriqués', '150', '162', '174', '186']], 'dt-c')}<p class="srcl">Production mensuelle de coffrets de Léa.</p></div>`;
   E.c5 = { lieu: 'Atelier de coffrets', duree: '40 min', grille: GR.c5, exos: [
     { t: 'Une production qui augmente', intro: `<p>La production suit une suite arithmétique (uₙ).</p>`, qs: [
       { t: 'Relever u₀.', comp: 'app', pts: 1, a: '150', v: 150, tol: .006, w: 24 },
@@ -117,7 +117,7 @@ const E = {};
 {
   const P = [[2, 14], [3, 19], [4, 23], [5, 30], [6, 33], [7, 39]], F = MCVP.fit(P);
   const g = MCVP.plot({ W: 600, H: 250, x: [0, 8, 1], y: [0, 45, 5], ml: 48, mt: 26, mb: 36, xl: 'vendeurs', yl: 'ventes (centaines d’€)', fine: true, lab: 'Ventes du samedi selon le nombre de vendeurs' });
-  doc.c6 = `<div class="evdoc">${tab(['vendeurs x', '2', '3', '4', '5', '6', '7'], [['ventes y', '14', '19', '23', '30', '33', '39']], 'dt-c')}<div class="wfig">${g.wrap(g.base + g.pts(P, { r: 5.5, fill: '#1D5FC2' }))}</div><p class="srcl">Tableur : =PENTE → ${String(rnd(F.a, 6)).replace('.', ',')} ; =ORDONNEE.ORIGINE → ${String(rnd(F.b, 6)).replace('.', ',')} ; =COEFFICIENT.DETERMINATION → ${String(rnd(F.r2, 4)).replace('.', ',')}. Magasin fictif.</p></div>`;
+  doc.c6 = `<div class="evdoc">${tab(['vendeurs x', '2', '3', '4', '5', '6', '7'], [['ventes y', '14', '19', '23', '30', '33', '39']], 'dt-c')}<div class="wfig">${g.wrap(g.base + g.pts(P, { r: 5.5, fill: '#1D5FC2' }))}</div><p class="srcl">Tableur : =PENTE → ${String(rnd(F.a, 6)).replace('.', ',')} ; =ORDONNEE.ORIGINE → ${String(rnd(F.b, 6)).replace('.', ',')} ; =COEFFICIENT.DETERMINATION → ${String(rnd(F.r2, 4)).replace('.', ',')}.</p></div>`;
   E.c6 = { lieu: 'Magasin de décoration', duree: '40 min', grille: GR.c6, exos: [
     { t: 'Le nuage de points', intro: `<p>Le samedi, le magasin note le nombre de vendeurs x et les ventes y (en centaines d’euros).</p>`, qs: [
       { t: 'Calculer x̄.', comp: 'rea', pts: 2, a: '27 ÷ 6 = 4,5', v: 4.5, tol: .006, w: 24 },
@@ -136,7 +136,7 @@ const E = {};
 
 /* ---------- chapitre 7 ---------- */
 {
-  doc.c7 = `<div class="evdoc">${tab(['Visiteurs du salon', 'achat', 'pas d’achat', 'total'], [['moins de 30 ans', '48', '72', '120'], ['30 ans et plus', '90', '90', '180'], ['total', '138', '162', '300']], 'dt-c')}<p class="srcl">Enquête auprès de 300 visiteurs d’un salon (données fictives).</p></div>`;
+  doc.c7 = `<div class="evdoc">${tab(['Visiteurs du salon', 'achat', 'pas d’achat', 'total'], [['moins de 30 ans', '48', '72', '120'], ['30 ans et plus', '90', '90', '180'], ['total', '138', '162', '300']], 'dt-c')}<p class="srcl">Enquête auprès de 300 visiteurs d’un salon.</p></div>`;
   E.c7 = { lieu: 'Stand d’un salon', duree: '40 min', grille: GR.c7, exos: [
     { t: 'Lire le tableau', intro: `<p>On choisit un visiteur au hasard parmi les 300.</p>`, qs: [
       { t: 'Relever le nombre de visiteurs qui ont acheté.', comp: 'app', pts: 1, a: '138', v: 138, tol: .006, w: 24 },
@@ -157,7 +157,7 @@ const E = {};
 {
   const G = require('../shared/t8.js'), PI = Math.PI, s = 13, by = 250;
   const body = G.cyl(220, by, s, 5, 10, { fill: '#E0EBFD' }) + G.cone(220, by - 130, s, 5, 6, { fill: '#FDE3E0' }).replace(/stroke-dasharray="6 5"/g, '') + G.L([220, by], [285, by], { stroke: '#C2332A', w: 1.6 }) + T(252, by + 20, '5 cm', { fs: 13, c: 'kt' }) + G.L([320, by], [320, by - 130], { stroke: '#C2332A', w: 1.6 }) + T(328, by - 65, '10 cm', { fs: 13, a: 'start', c: 'kt' }) + G.L([320, by - 130], [320, by - 208], { stroke: '#C2332A', w: 1.6 }) + T(328, by - 169, '6 cm', { fs: 13, a: 'start', c: 'kt' });
-  doc.c8 = `<div class="evdoc"><div class="wfig">${G.SV(600, 280, body, 'Bougie tour : un cylindre surmonté d’un cône')}</div><p class="srcl">Bougie « tour » : cylindre de rayon 5 cm et de hauteur 10 cm, surmonté d’un cône de même rayon et de hauteur 6 cm. Produit fictif.</p></div>`;
+  doc.c8 = `<div class="evdoc"><div class="wfig">${G.SV(600, 280, body, 'Bougie tour : un cylindre surmonté d’un cône')}</div><p class="srcl">Bougie « tour » : cylindre de rayon 5 cm et de hauteur 10 cm, surmonté d’un cône de même rayon et de hauteur 6 cm.</p></div>`;
   E.c8 = { lieu: 'Atelier de bougies', duree: '40 min', grille: GR.c8, exos: [
     { t: 'Lire le dessin', intro: `<p>Mia prépare la fiche technique de la bougie « tour ».</p>`, qs: [
       { t: 'Relever le rayon de la bougie.', comp: 'app', pts: 1, a: '5 cm', v: 5, tol: .006, w: 24 },

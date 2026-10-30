@@ -15,7 +15,7 @@
     const g = P.plot({ W: 600, H: 250, x: [0, 6, 1], y: [y0, y1, st], ml: 48, mt: 16, mb: 34, xl: 'semaine', yl: 'k€', fine: true });
     let s = g.base; for (let i = 0; i < 6; i++) s += g.seg(i, v[i], i + 1, v[i + 1], { stroke: BLUE, w: 3 }); s += g.pts(v.map((y, i) => [i, y]), { r: 4.5 });
     const k = int(R, 0, 4), jmax = steps.indexOf(8), jneg = steps.indexOf(-4);
-    return { titre: 'Le chiffre d’affaires de la boutique', doc: `<div class="wfig">${g.wrap(s)}</div><p class="srcl">Chiffre d’affaires hebdomadaire, en milliers d’euros. Boutique fictive.</p>`,
+    return { titre: 'Le chiffre d’affaires de la boutique', doc: `<div class="wfig">${g.wrap(s)}</div><p class="srcl">Chiffre d’affaires hebdomadaire, en milliers d’euros.</p>`,
       qs: [{ t: `Quel est le chiffre d’affaires de la semaine ${k + 1} (en k€) ?`, kind: 'num', v: v[k + 1], tol: .01, a: String(v[k + 1]) },
         { t: `De combien varie-t-il entre la semaine ${k} et la semaine ${k + 1} (en k€) ?`, kind: 'num', v: steps[k], tol: .01, a: sg(steps[k]), x: `${v[k + 1]} − ${v[k]} = ${sg(steps[k])}` },
         { t: 'Entre quelle semaine et la suivante la hausse est-elle la plus forte ? Donne la première semaine.', kind: 'num', v: jmax, tol: .01, a: String(jmax) },

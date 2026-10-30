@@ -24,7 +24,7 @@
   DEP.c6 = R => {
     const n = pick(R, [200, 400, 500]), pf = pick(R, [.4, .5, .6]), ps1 = pick(R, [.8, .9, .7]), ps2 = pick(R, [.6, .5, .7]);
     const F = n * pf, NF = n - F, FS = Math.round(F * ps1), NFS = Math.round(NF * ps2), S = FS + NFS;
-    const doc = `<table class="dt tcx dt-sm dt-c"><thead><tr><th></th><th>Satisfait</th><th>Pas satisfait</th><th>Total</th></tr></thead><tbody><tr><th>Avec carte de fidélité</th><td data-cell="fs">${FS}</td><td>${F - FS}</td><td data-cell="f">${F}</td></tr><tr><th>Sans carte</th><td>${NFS}</td><td>${NF - NFS}</td><td>${NF}</td></tr><tr><th>Total</th><td data-cell="s">${S}</td><td>${n - S}</td><td data-cell="n">${n}</td></tr></tbody></table><p class="srcl">Enquête auprès des clients d’un magasin (entreprise fictive).</p>`;
+    const doc = `<table class="dt tcx dt-sm dt-c"><thead><tr><th></th><th>Satisfait</th><th>Pas satisfait</th><th>Total</th></tr></thead><tbody><tr><th>Avec carte de fidélité</th><td data-cell="fs">${FS}</td><td>${F - FS}</td><td data-cell="f">${F}</td></tr><tr><th>Sans carte</th><td>${NFS}</td><td>${NF - NFS}</td><td>${NF}</td></tr><tr><th>Total</th><td data-cell="s">${S}</td><td>${n - S}</td><td data-cell="n">${n}</td></tr></tbody></table><p class="srcl">Enquête auprès des clients d’un magasin.</p>`;
     return { titre: 'Une enquête de satisfaction', doc,
       qs: [{ t: 'Combien de clients ont répondu ?', kind: 'tap', cell: 'n', v: n, tol: .01, a: String(n) },
         { t: 'Combien de clients ont la carte de fidélité ?', kind: 'tap', cell: 'f', v: F, tol: .01, a: String(F) },
@@ -54,7 +54,7 @@
     const items = [num('a', pa, 4, p2(pa), [{ v: A, m: 'Une probabilité est un nombre entre 0 et 1 : divise l’effectif par le total ' + n + '.' }]), num('b', rnd(AB / A, 4), 4, p2(AB / A), [{ v: rnd(AB / n, 4), m: 'Sachant C, on ne regarde que la ligne des clients avec carte : divise par ' + A + ', pas par ' + n + '.' }]),
       num('c', rnd(AB / n, 4), 4, p2(AB / n), [{ v: rnd(AB / A, 4), m: 'P(C ∩ P) se calcule sur tous les clients : divise par ' + n + '.' }]), num('d', rnd(AB / B, 4), 4, p2(AB / B), [{ v: rnd(AB / A, 4), m: 'Sachant P, on se place dans la colonne « promotion » : divise par ' + B + '.' }])];
     xs(items, { a: `P(C) = ${A} ÷ ${n} = ${p2(pa)}`, b: `P<sub>C</sub>(P) = ${AB} ÷ ${A} ≈ ${p2(AB / A)}`, c: `P(C ∩ P) = ${AB} ÷ ${n} = ${p2(AB / n)}`, d: `P<sub>P</sub>(C) = ${AB} ÷ ${B} ≈ ${p2(AB / B)}` });
-    return { titre: 'Du tableau croisé aux probabilités conditionnelles', consigne: `${n} tickets de caisse d’un magasin (fictif). On choisit un ticket au hasard. Calcule à 0,0001 près.`,
+    return { titre: 'Du tableau croisé aux probabilités conditionnelles', consigne: `${n} tickets de caisse d’un magasin. On choisit un ticket au hasard. Calcule à 0,0001 près.`,
       support: tabl + `<p class="tr-l">a. P(C) = ${tb('a', p2(pa), 16)} · b. P<sub>C</sub>(P) = ${tb('b', p2(AB / A), 16)}</p><p class="tr-l">c. P(C ∩ P) = ${tb('c', p2(AB / n), 16)} · d. P<sub>P</sub>(C) = ${tb('d', p2(AB / B), 16)}</p>`, items,
       hints: ['P(C) : effectif des clients avec carte ÷ effectif total.', 'P<sub>C</sub>(P) : parmi les clients avec carte seulement.', 'P<sub>P</sub>(C) : parmi les achats en promotion seulement.'] };
   };
@@ -68,7 +68,7 @@
       num('c', rnd(pa2 * pb2, 4), 4, p2(pa2 * pb2)), qcm('d', ['indépendants', 'pas indépendants'], ind ? 1 : 0, !ind ? 'indépendants : P(A ∩ B) = P(A) × P(B)' : 'pas indépendants : P(A ∩ B) ≠ P(A) × P(B)')];
     xs(items, { a: `${fr(pa)} × ${fr(pb)} = ${p2(pa * pb)}`, b: `${p2(pa * pb)} ${ind ? '=' : '≠'} ${fr(pab)} = P(A ∩ B) : ${ind ? 'indépendants' : 'pas indépendants'}`, c: `${fr(pa2)} × ${fr(pb2)} = ${p2(pa2 * pb2)}`, d: `${p2(pa2 * pb2)} ${!ind ? '=' : '≠'} ${fr(pab2)} = P(A ∩ B) : ${!ind ? 'indépendants' : 'pas indépendants'}` });
     return { titre: 'Indépendants ou pas ?', consigne: 'Pour chaque cas, calcule P(A) × P(B), puis compare à P(A ∩ B).',
-      support: table(['Situation (enquête fictive)', 'P(A)', 'P(B)', 'P(A ∩ B)', 'P(A) × P(B)'], rows) + `<p class="tr-l">b. Dans le cas 1, A et B sont :</p><p class="tr-l">d. Dans le cas 2, A et B sont :</p>`, items,
+      support: table(['Situation', 'P(A)', 'P(B)', 'P(A ∩ B)', 'P(A) × P(B)'], rows) + `<p class="tr-l">b. Dans le cas 1, A et B sont :</p><p class="tr-l">d. Dans le cas 2, A et B sont :</p>`, items,
       hints: ['Calcule le produit P(A) × P(B).', 'Si ce produit est égal à P(A ∩ B), les évènements sont indépendants.', 'Sinon, savoir que A est réalisé change la probabilité de B.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};

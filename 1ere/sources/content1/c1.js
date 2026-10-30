@@ -14,7 +14,7 @@ module.exports = function (chk) {
   c.objectifs = ['Je saurai calculer un coût total, une recette et un résultat.', 'Je saurai calculer un coût moyen et un coût marginal.', 'Je saurai calculer des intérêts simples.', 'Je saurai passer d’un taux annuel à un taux mensuel, par quinzaine ou par jour.'];
   c.depart = 'c1';
 
-  /* ---------- données du fil rouge : Atelier Mia (entreprise fictive) ---------- */
+  /* ---------- données du fil rouge : Atelier Mia ---------- */
   const cf = 600, cv = 4, p = 12;
   const C = q => cf + cv * q, Rec = q => p * q, B = q => Rec(q) - C(q);
   chk(C(100) === 1000 && Rec(100) === 1200 && B(100) === 200 && C(101) - C(100) === 4 && C(100) / 100 === 10, 'c1 données de Mia');
@@ -40,7 +40,7 @@ module.exports = function (chk) {
   // 3. la valeur d’un capital placé à intérêts simples : droite
   const g3 = MCVP.plot({ W: 600, H: 290, x: [0, 4, 1], y: [1900, 2300, 100], ml: 62, mb: 40, xl: 'années', yl: 'valeur acquise (€)', lab: 'Valeur d’un capital de 2 000 € placé à 3 % en intérêts simples' });
   const V = n => 2000 + 60 * n;
-  const interets = S(600, 290, st(1, g3.base + g3.pts([[0, 2000]]) + g3.txt(0, 2000, '2 000 €', { dx: 16, dy: -16, a: 'start' }) + T(300, 283, 'l’axe vertical commence à 1 900 €', { fs: 11, c: 'ts' }))
+  const interets = S(600, 290, st(1, g3.base + g3.pts([[0, 2000]]) + g3.txt(0, 2000, '2 000 €', { dx: 8, dy: 22, a: 'start', fs: 12 }) + T(300, 283, 'l’axe vertical commence à 1 900 €', { fs: 11, c: 'ts' }))
     + st(2, g3.line(60, 2000, { stroke: '#1D5FC2' }) + g3.pts([[1, V(1)], [2, V(2)], [3, V(3)], [4, V(4)]]) + g3.txt(2, V(2), '+ 60 € chaque année', { dx: -8, dy: 26, a: 'middle' }))
     + st(3, g3.guide(.5, V(.5)) + g3.dot(.5, V(.5), { lab: '6 mois : 2 030 €', dx: 12, dy: 26 }))
     + st(4, g3.txt(3.9, 1960, 'I = C × t × n', { a: 'end', fs: 15 })),

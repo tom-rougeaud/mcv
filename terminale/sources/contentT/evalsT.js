@@ -57,7 +57,7 @@ const chk0 = [];
 {
   const B = x => -(x ** 3) + 12 * x * x - 21 * x + 5;
   const g = MCVP.plot({ W: 600, H: 250, x: [0, 10, 1], y: [-20, 120, 20], ml: 50, mt: 16, mb: 30, zeroAxes: true, xl: 'x (centaines)', yl: 'B(x) (centaines d’€)', lab: 'Courbe du bénéfice B' });
-  const docB = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(B, { stroke: MCVP.ORG, w: 3 }))}</div><p class="srcl">Bénéfice mensuel B(x), en centaines d’euros, pour x centaines de bougies vendues, x dans [0 ; 10]. Entreprise fictive.</p></div>`;
+  const docB = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(B, { stroke: MCVP.ORG, w: 3 }))}</div><p class="srcl">Bénéfice mensuel B(x), en centaines d’euros, pour x centaines de bougies vendues, x dans [0 ; 10].</p></div>`;
   E.c3 = { lieu: 'Atelier de bougies', duree: '45 min', grille: GR.c3, exos: [
     { t: 'Des boîtes cubiques', intro: `<p>Une boîte cubique d’arête x décimètres contient ${H('x³ litres')}.</p>`, qs: [
       { t: 'Calculer la contenance d’une boîte d’arête 1,5 dm.', comp: 'app', pts: 1, a: '1,5³ = 3,375 L', v: 3.375, tol: .0006, w: 24 },
@@ -91,7 +91,7 @@ const chk0 = [];
   const D = [[0, 12.0], [1, 13.9], [2, 16.1], [3, 18.4], [4, 21.5], [5, 24.6], [6, 28.6]], fl = MCVP.fit(D), fz = MCVP.fit(D.map(([x, y]) => [x, Math.log10(y)]));
   chk0.push(rnd(fl.r2, 3) === .984 && rnd(fz.r2, 4) === .9998 && rnd(fz.a, 4) === .0626 && rnd(fz.b, 4) === 1.0798 && rnd(Math.pow(10, .0626), 3) === 1.155 && rnd(Math.pow(10, 1.0798), 2) === 12.02 && rnd(12.02 * Math.pow(1.155, 9), 1) === 44.0);
   const g = MCVP.plot({ W: 600, H: 230, x: [0, 7, 1], y: [0, 30, 5], ml: 46, mt: 14, mb: 30, xl: 'mois x', yl: 'CA (k€)', fine: true, lab: 'Nuage du chiffre d’affaires mensuel' });
-  doc.c5 = `<div class="evdoc">${tab(['Mois x', ...D.map(p => String(p[0]))], [['Chiffre d’affaires y (k€)', ...D.map(p => K.MCVG.fr(p[1], 1))]], 'dt-c')}<div class="wfig">${g.wrap(g.base + g.pts(D, { r: 5 }))}</div><p class="srcl">Chiffre d’affaires mensuel d’une boutique en ligne qui démarre. Entreprise fictive.</p></div>`;
+  doc.c5 = `<div class="evdoc">${tab(['Mois x', ...D.map(p => String(p[0]))], [['Chiffre d’affaires y (k€)', ...D.map(p => K.MCVG.fr(p[1], 1))]], 'dt-c')}<div class="wfig">${g.wrap(g.base + g.pts(D, { r: 5 }))}</div><p class="srcl">Chiffre d’affaires mensuel d’une boutique en ligne qui démarre.</p></div>`;
   E.c5 = { lieu: 'Boutique en ligne', duree: '45 min', grille: GR.c5, exos: [
     { t: 'Prévoir le chiffre d’affaires', intro: '<p>La gérante veut prévoir le chiffre d’affaires des prochains mois.</p>', qs: [
       { t: 'Décrire la forme du nuage de points.', comp: 'app', pts: 1, a: 'Les points montent de plus en plus vite : forme exponentielle.', v: null, lines: 2 },
@@ -105,9 +105,9 @@ const chk0 = [];
 /* ---------- chapitre 6 · probabilités ---------- */
 {
   chk0.push(rnd(.35 * .4, 4) === .14 && rnd(.65 * .1, 4) === .065 && rnd(.14 + .065, 4) === .205 && rnd(.14 / .205, 3) === .683 && rnd(.35 * .205, 5) === .07175);
-  doc.c6 = `<div class="evdoc">${tab(['Commandes en ligne (enseigne fictive)', 'Part des commandes', 'Achat d’un article en plus'], [['Retrait en magasin (M)', '35 %', '40 % des clients M'], ['Livraison à domicile (L)', '65 %', '10 % des clients L, après relance']])}</div>`;
+  doc.c6 = `<div class="evdoc">${tab(['Commandes en ligne', 'Part des commandes', 'Achat d’un article en plus'], [['Retrait en magasin (M)', '35 %', '40 % des clients M'], ['Livraison à domicile (L)', '65 %', '10 % des clients L, après relance']])}</div>`;
   E.c6 = { lieu: 'Magasin avec retrait de commandes', duree: '45 min', grille: GR.c6, exos: [
-    { t: 'Le retrait en magasin', intro: `<p>Dans une enseigne (entreprise fictive), ${H('35 %')} des commandes en ligne sont retirées en magasin (M) ; les autres sont livrées à domicile (L). Parmi les clients qui retirent en magasin, ${H('40 %')} achètent un article en plus (A). Parmi les clients livrés, ${H('10 %')} achètent un article en plus après une relance par courriel.</p>`, qs: [
+    { t: 'Le retrait en magasin', intro: `<p>Dans une enseigne, ${H('35 %')} des commandes en ligne sont retirées en magasin (M) ; les autres sont livrées à domicile (L). Parmi les clients qui retirent en magasin, ${H('40 %')} achètent un article en plus (A). Parmi les clients livrés, ${H('10 %')} achètent un article en plus après une relance par courriel.</p>`, qs: [
       { t: 'Construire l’arbre pondéré de la situation.', comp: 'app', pts: 1.5, a: 'M (0,35) : A 0,4, Ā 0,6 ; L (0,65) : A 0,1, Ā 0,9', v: null, lines: 3 },
       { t: 'Calculer P(M ∩ A).', comp: 'rea', pts: 1, a: '0,35 × 0,4 = 0,14', v: .14, tol: .0006, w: 22 },
       { t: 'Calculer P(A), la probabilité qu’un client achète un article en plus.', comp: 'ana', pts: 1.5, a: '0,14 + 0,65 × 0,1 = 0,205', v: .205, tol: .0006, w: 22 },
@@ -120,7 +120,7 @@ const chk0 = [];
 {
   chk0.push(rnd(5000 * Math.exp(.02 * 10)) === 6107.01 && rnd(100 * Math.exp(.02 * 10)) === 122.14 && rnd(Math.log(2) / .02, 2) === 34.66 && rnd(5000 * Math.exp(.02 * 35)) === 10068.76);
   const g = MCVP.plot({ W: 600, H: 220, x: [0, 40, 5], y: [4000, 12000, 2000], ml: 60, mt: 14, mb: 30, xl: 't (années)', yl: 'capital (€)', lab: 'Capital placé en continu' });
-  doc.c7 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(x => 5000 * Math.exp(.02 * x), { stroke: MCVP.GRN, w: 3 }))}</div><p class="srcl">Capital C(t) = 5 000 e^(0,02t) d’un placement fictif à intérêts versés en continu. L’axe vertical commence à 4 000 €.</p></div>`;
+  doc.c7 = `<div class="evdoc"><div class="wfig">${g.wrap(g.base + g.curve(x => 5000 * Math.exp(.02 * x), { stroke: MCVP.GRN, w: 3 }))}</div><p class="srcl">Capital C(t) = 5 000 e^(0,02t) d’un placement à intérêts versés en continu. L’axe vertical commence à 4 000 €.</p></div>`;
   E.c7 = { lieu: 'Banque (préparation au BTS)', duree: '45 min', grille: GR.c7, exos: [
     { t: 'Un placement en continu', intro: '<p>On place 5 000 € à intérêts versés en continu, au taux de 2 % : C(t) = 5 000 e^(0,02t).</p>', qs: [
       { t: 'Calculer C(10), au centime.', comp: 'app', pts: 1.5, a: '5 000 e^0,2 ≈ 6 107,01 €', v: 6107.01, tol: .006, w: 26 },

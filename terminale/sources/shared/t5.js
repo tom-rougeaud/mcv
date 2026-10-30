@@ -71,7 +71,7 @@
     const items = [num('a', z[1], 4, fr(z[1]), [{ v: 15, m: 'z = 1 ÷ x : divise 1 par le prix.' }]), num('b', z[3], 4, fr(z[3])), num('c', z[5], 4, fr(z[5])),
       num('d', y0, 1, fr(y0), [{ v: rnd(A * x0 + B, 1), m: 'Dans le modèle, on remplace z par 1 ÷ ' + x0 + ', pas par ' + x0 + '.' }]), qcm('e', ['le modèle en z = 1 ÷ x', 'la droite en x'], r2z >= r2l ? 0 : 1, r2z >= r2l ? `le modèle en z : R² = ${fr(r2z)} contre ${fr(r2l)}` : `la droite : R² = ${fr(r2l)}`)];
     xs(items, { a: `z = 1 ÷ 15 ≈ ${fr(z[1])}`, b: `z = 1 ÷ 25 = ${fr(z[3])}`, c: `z = 1 ÷ 40 = ${fr(z[5])}`, d: `z = 1 ÷ ${x0} ; y = ${fr(A)} ÷ ${x0} + ${fr(B)} ≈ ${fr(y0)}` });
-    return { titre: 'Le changement de variable z = 1/x', consigne: `Ventes par semaine d’un article (boutique fictive) selon son prix x en euros. Complète z = 1/x au dix-millième, puis utilise le modèle.`,
+    return { titre: 'Le changement de variable z = 1/x', consigne: `Ventes par semaine d’un article selon son prix x en euros. Complète z = 1/x au dix-millième, puis utilise le modèle.`,
       support: table(['prix x (€)', ...X.map(String)], [['ventes y', ...pts.map(p => String(p[1]))], ['z = 1/x', ...cells]], 'dt-c') + `<p class="tr-l">Le tableur donne : y = ${fr(A)}z + ${fr(B)}, avec R² = ${fr(r2z)}. La droite y = ax + b donne R² = ${fr(r2l)}.</p><p class="tr-l">d. Ventes prévues pour un prix de ${x0} € : ${tb('d', fr(y0), 18)}</p><p class="tr-l">e. Le modèle le plus adapté est :</p>`, items,
       hints: ['z = 1 ÷ x : pour x = 15, z = 1 ÷ 15.', `Pour un prix de ${x0} €, z = 1 ÷ ${x0}, puis y = ${fr(A)} × z + ${fr(B)}.`, 'Le meilleur modèle a le R² le plus proche de 1.'] };
   };

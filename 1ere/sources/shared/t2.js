@@ -11,7 +11,7 @@
 
   DEP.c2 = R => {
     const o = offres(R), { svg: s } = gOff(o), j1 = o.j0 - 1 - int(R, 0, 1), j2 = o.j0 + 2 + int(R, 0, 2), A = j => o.a * j, B = j => o.f + o.b * j;
-    return { titre: 'Deux offres de location de stand', doc: `<div class="wfig">${s}</div><p class="srcl">Salon des créateurs : offre A (sans forfait) et offre B (avec forfait de départ). Entreprise fictive.</p>`,
+    return { titre: 'Deux offres de location de stand', doc: `<div class="wfig">${s}</div><p class="srcl">Salon des créateurs : offre A (sans forfait) et offre B (avec forfait de départ).</p>`,
       qs: [{ t: 'Quel est le forfait de départ de l’offre B (coût pour 0 jour) ?', kind: 'num', v: o.f, tol: .006, a: eur(o.f, 0) },
         { t: 'Combien coûte l’offre A pour 2 jours ?', kind: 'num', v: A(2), tol: .006, a: eur(A(2), 0), x: `${fr(o.a)} × 2 = ${eur(A(2), 0)}` },
         { t: `Pour ${j1} jours, quelle offre est la moins chère ?`, kind: 'qcm', choices: ['offre A', 'offre B'], ok: A(j1) < B(j1) ? 0 : 1, a: `${A(j1) < B(j1) ? 'offre A' : 'offre B'} : ${A(j1)} € contre ${B(j1)} €` },

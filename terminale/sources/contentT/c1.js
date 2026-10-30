@@ -9,7 +9,7 @@ const f2 = x => fr(rnd(x, 2));
 module.exports = function (chk) {
   const c = { id: 'c1', n: 1, col: 'algo', icone: '📈', dom: 'Algèbre-analyse · suites numériques', titre: 'Suites numériques', sous: 'Évoluer à taux fixe' };
   c.parties = [{ t: 'Suites géométriques', n: [1, 2] }, { t: 'Sens de variation et représentation', n: [3] }, { t: 'Sommes et évolution à taux fixe', n: [4, 5] }];
-  c.travail = { question: `La box « Éclat » (entreprise fictive) compte ${H('800 abonnés')} et en gagne ${H('5 %')} chaque mois. Combien en aura-t-elle dans un an ? Combien de box aura-t-elle envoyées en tout ? Tu sauras répondre aux notions 2 et 4.` };
+  c.travail = { question: `La box « Éclat » compte ${H('800 abonnés')} et en gagne ${H('5 %')} chaque mois. Combien en aura-t-elle dans un an ? Combien de box aura-t-elle envoyées en tout ? Tu sauras répondre aux notions 2 et 4.` };
   c.objectifs = ['Je saurai reconnaître une suite géométrique et donner sa raison.', 'Je saurai calculer le terme de rang n : uₙ = u₀ × qⁿ.', 'Je saurai justifier le sens de variation et représenter le nuage de points (n ; uₙ).', 'Je saurai additionner les premiers termes avec un tableur ou Python.', 'Je saurai relier une évolution à taux fixe à une fonction exponentielle.'];
   c.depart = 'c1';
 
@@ -107,7 +107,7 @@ module.exports = function (chk) {
   /* ---------- exercices résolus ---------- */
   chk(rnd(v(2), 2) === 433.5 && rnd(rnd(v(3), 2) - rnd(v(2), 2), 2) === -65.02, 'c1 résolu 2');
   c.resolus = [
-    { titre: 'Prévoir des abonnés', outil: '🧮 calculatrice', enonce: `La box « Éclat » (entreprise fictive) compte ${H('800 abonnés')} au mois 0 et gagne ${H('5 %')} d’abonnés par mois. Donne la raison, le sens de variation et le nombre d’abonnés au mois 12.`,
+    { titre: 'Prévoir des abonnés', outil: '🧮 calculatrice', enonce: `La box « Éclat » compte ${H('800 abonnés')} au mois 0 et gagne ${H('5 %')} d’abonnés par mois. Donne la raison, le sens de variation et le nombre d’abonnés au mois 12.`,
       rows: [['q = 1 + 5 ÷ 100 = <b>1,05</b>', 'Une hausse de 5 % multiplie par 1,05.'], ['q = 1,05 &gt; 1 et u₀ &gt; 0 : suite <b>croissante</b>', 'Le sens de variation se lit sur la raison.'], ['uₙ = 800 × 1,05ⁿ', 'Terme de rang n : u₀ × qⁿ.'], ['u₁₂ = 800 × 1,05¹² ≈ <b class="nw">1 436,69</b>', 'Touche puissance de la calculatrice.']], verif: 'u₁ = 840 et 840 ÷ 800 = 1,05 ✓. Le résultat est un peu moins du double de 800 : cohérent avec + 5 % par mois pendant un an.', rep: 'La suite est croissante ; il y aura environ 1 437 abonnés au mois 12.', go: ['e1'] },
     { titre: 'À toi : la décote d’un téléphone', outil: '🧮 calculatrice', enonce: `Un téléphone reconditionné vaut ${H('600 €')}. Sa valeur baisse de ${H('15 %')} par an. Trouve la raison, le sens de variation et la valeur au bout de 3 ans.`, trous: [0, 1, 2, 3],
       rows: [['q = 1 − 15 ÷ 100 = ⟦0,85⟧', 'Une baisse de 15 % multiplie par 0,85.'], ['0 &lt; q &lt; 1 : suite ⟦décroissante⟧', 'Le sens de variation se lit sur la raison.'], ['v₃ = 600 × 0,85³ ≈ ⟦368,48⟧ €', 'Terme de rang 3 : v₀ × q³.'], ['v₃ − v₂ ≈ 368,48 − 433,50 = ⟦− 65,02⟧ €', 'La baisse en euros de la 3e année.']], verif: '368,48 ÷ 433,50 ≈ 0,85 ✓ : on retrouve la raison.', rep: 'Le téléphone vaut environ 368,48 € au bout de 3 ans ; la suite est décroissante.', go: ['e2', 'e3'] }];
@@ -122,7 +122,7 @@ module.exports = function (chk) {
   chk(rnd(91.3 / 80.5, 3) === 1.134 && rnd(m(6)) === 158.89 && rnd(m(8)) === 199.32 && rnd(SM, 1) === 812.2 && rnd(SR, 1) === 815.8, 'c1 p3');
   c.probs = [
     PB({ id: 'p1', etape: 2, lc: 2, comps: ['app', 'rea'], titre: 'Les abonnés d’une lettre d’information',
-      intro: `<p>Un site de vente de plantes (entreprise fictive) compte ${H('1 200 abonnés')} à sa lettre d’information en janvier. Chaque mois, il en gagne ${H('4 %')}. On note uₙ le nombre d’abonnés n mois après janvier.</p>`,
+      intro: `<p>Un site de vente de plantes compte ${H('1 200 abonnés')} à sa lettre d’information en janvier. Chaque mois, il en gagne ${H('4 %')}. On note uₙ le nombre d’abonnés n mois après janvier.</p>`,
       qs: [Q('a.', 'Donne la raison q de la suite (uₙ).', '1 + 4 ÷ 100 = 1,04', 1.04, { w: 24, tol: .0006 }), Q('b.', 'Calcule u₁.', '1 200 × 1,04 = 1 248', 1248, { w: 24 }), Q('c.', 'Calcule u₆, arrondi à l’unité.', '1 200 × 1,04⁶ ≈ 1 518', 1518, { w: 24, tol: .4 }), Q('d.', 'Combien d’abonnés le site gagne-t-il entre janvier et juillet ?', '1 518 − 1 200 = 318', 318, { w: 24, tol: .4 })],
       err: { 0: [{ v: 4, m: 'La raison n’est pas le pourcentage : une hausse de 4 % revient à multiplier par 1,04.' }, { v: .04, m: 'Il faut ajouter 1 : q = 1 + 0,04.' }], 2: [{ v: 1488, m: 'Tu as ajouté 48 abonnés chaque mois, comme une suite arithmétique. Ici, on multiplie par 1,04.' }] },
       hints: ['Une hausse de 4 % : on multiplie par 1 + 4 ÷ 100.', 'u₆ = u₀ × q⁶ : utilise la touche puissance.', 'Juillet, c’est 6 mois après janvier.'], pouce: 'Hausse de 4 % : × 1,04. Puis uₙ = 1 200 × 1,04ⁿ avec n = 6.', corr: 'a. q = 1,04. b. u₁ = 1 248. c. u₆ = 1 200 × 1,04⁶ ≈ 1 518. d. 318 abonnés de plus.' }),

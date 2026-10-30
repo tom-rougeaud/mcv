@@ -18,7 +18,7 @@
     const [ym, ys] = axis(Math.max(u(0), u(4)) * 1.08), g = P.plot({ W: 600, H: 220, x: [0, 5, 1], y: [0, ym, ys], ml: 58, mt: 22, mb: 34, xl: 'mois n', yl: up ? 'abonnés' : 'visites', fine: true });
     const d = rnd(u(4) - u(3), 4);
     const ch = [`${fr(u(4))} × ${fr(q)}`, `${fr(u(4))} ${d >= 0 ? '+' : '−'} ${fr(Math.abs(d))}`, `${fr(u0)} × 5`], o = int(R, 0, 2), rot = [...ch.slice(o), ...ch.slice(0, o)];
-    return { titre: `${what} · Boutique Lina`, doc: tabl + `<div class="wfig">${g.wrap(g.base + g.pts(N.map(n => [n, u(n)]), { r: 5 }))}</div><p class="srcl">Relevé du premier jour de chaque mois (mois 0 : début du suivi). Entreprise fictive.</p>`,
+    return { titre: `${what} · Boutique Lina`, doc: tabl + `<div class="wfig">${g.wrap(g.base + g.pts(N.map(n => [n, u(n)]), { r: 5 }))}</div><p class="srcl">Relevé du premier jour de chaque mois (mois 0 : début du suivi).</p>`,
       qs: [{ t: `Quelle est la valeur au mois ${k} ?`, kind: 'tap', cell: String(k), v: u(k), tol: .01, a: fr(u(k)) },
         { t: 'Par quel nombre multiplie-t-on pour passer d’un mois au suivant ?', kind: 'num', v: q, tol: .001, a: fr(q), x: `${fr(u(1))} ÷ ${fr(u0)} = ${fr(q)}` },
         { t: 'Les écarts d’un mois à l’autre sont-ils toujours les mêmes ?', kind: 'qcm', choices: ['oui', 'non'], ok: 1, a: `non : ${fr(u(1) - u(0))} puis ${fr(u(2) - u(1))}… la suite n’est pas arithmétique` },
@@ -73,7 +73,7 @@
       num('d', S(5), 2, f2(S(5)), [{ v: rnd(S(4), 4), m: 'N’oublie pas d’ajouter le terme de rang 5.' }, { v: u(5), m: 'La somme des 6 premiers termes, ce n’est pas le dernier terme.' }]),
       qcm('e', ['=C3+B4', '=B3+B4', '=C3*B4'], 0, '=C3+B4 : cumul précédent + nouveau terme')];
     xs(items, { a: `B4 = B3 × ${fr(q)} = ${f2(u(1))} × ${fr(q)} = ${f2(u(2))}`, b: `C4 = C3 + B4 = ${f2(S(1))} + ${f2(u(2))} = ${f2(S(2))}`, c: `B7 = ${f2(u(4))} × ${fr(q)} = ${f2(u(5))}`, d: `C7 = C6 + B7 = ${f2(S(4))} + ${f2(u(5))} = ${f2(S(5))}` });
-    return { titre: 'Cumuler au tableur', consigne: `Une boutique en ligne (fictive) expédie ${fr(u0)} colis le mois 0, puis multiplie ce nombre par ${fr(q)} chaque mois. Complète la feuille.`,
+    return { titre: 'Cumuler au tableur', consigne: `Une boutique en ligne expédie ${fr(u0)} colis le mois 0, puis multiplie ce nombre par ${fr(q)} chaque mois. Complète la feuille.`,
       support: table(['', 'A · mois n', 'B · colis uₙ', 'C · cumul'], [['1', 'n', 'uₙ', 'cumul'], ...rows].slice(1)) + `<p class="tr-l">En B3 : <code>=B2*${fr(q)}</code> recopiée vers le bas. En C2 : <code>=B2</code>.</p><p class="tr-l">e. Quelle formule écrire en C4, puis recopier vers le bas ?</p>`, items,
       hints: ['Colonne B : chaque terme est le précédent multiplié par la raison.', 'Colonne C : cumul précédent + nouveau terme de la ligne.', 'Le total des 6 premiers mois est dans la dernière case de la colonne C.'] };
   };

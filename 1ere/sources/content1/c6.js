@@ -13,7 +13,7 @@ module.exports = function (chk) {
   c.objectifs = ['Je saurai représenter un nuage de points et calculer le point moyen.', 'Je saurai obtenir une droite d’ajustement avec un outil numérique.', 'Je saurai interpréter le coefficient de détermination R².', 'Je saurai faire une prévision et en discuter la fiabilité.'];
   c.depart = 'c6';
 
-  /* données du fil rouge (boutique fictive) : budget en centaines d’euros, CA en milliers d’euros */
+  /* données du fil rouge : budget en centaines d’euros, CA en milliers d’euros */
   const X = [1, 2, 3, 4, 5, 6, 7, 8], Y = [21, 24, 28, 31, 34, 38, 41, 43], PTS = X.map((x, i) => [x, Y[i]]), F = MCVP.fit(PTS);
   const a = 3.24, b = 17.93, f = x => rnd(a * x + b, 2);
   chk(F.mx === 4.5 && F.my === 32.5 && rnd(F.a, 2) === a && rnd(F.b, 2) === b && rnd(F.r2, 3) === .996 && f(10) === 50.33 && f(4.5) === 32.51 && rnd((45 - b) / a, 2) === 8.35, 'c6 fil rouge');
@@ -44,7 +44,7 @@ module.exports = function (chk) {
   const prev = S(600, 290, st(1, g4.base + g4.band(1, 8, { fill: '#1E7F45', op: .12 }) + g4.band(8, 12, { fill: '#FFC233', op: .22 }) + g4.pts(PTS, { r: 5, fill: BLUE }) + g4.txt(4.5, 56, 'interpolation', { fs: 13, fill: GRN, cls: '' }) + g4.txt(10, 56, 'extrapolation', { fs: 13, fill: ORG, cls: '' }))
     + st(2, g4.line(a, b, { stroke: RED, w: 2.6 }))
     + st(3, g4.guide(10, f(10)) + g4.dot(10, f(10), { r: 6.5, fill: '#FFC233' }) + g4.txt(10, f(10), '≈ 50,33', { dx: 12, dy: 20, a: 'start' }))
-    + st(4, g4.txt(0.3, 51, 'x = 10 : y ≈ 3,24 × 10 + 17,93', { a: 'start', fs: 13 })),
+    + st(4, g4.txt(0.3, 45, 'x = 10 : y ≈ 3,24 × 10 + 17,93', { a: 'start', fs: 13 })),
   'Entre 1 et 8, on interpole ; au-delà de 8, on extrapole : pour x = 10, on estime 50,33 k€');
 
   c.notions = [

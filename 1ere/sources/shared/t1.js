@@ -4,13 +4,13 @@
   const { DEP, TR, H } = typeof module !== 'undefined' ? require('./train.js').MCVT : root.MCVT;
   const { fr, rnd, eur, pct, tb, sb, T, svg, table, num, qcm, pick, int, L, P, xs } = H;
 
-  /* « Atelier Mia » (entreprise fictive) : coût fixe cf, coût variable cv par bougie, prix p. Seuil q* = cf ÷ (p − cv), toujours entier. */
+  /* « Atelier Mia » : coût fixe cf, coût variable cv par bougie, prix p. Seuil q* = cf ÷ (p − cv), toujours entier. */
   const mia = R => { const m = pick(R, [5, 6, 8]), cv = pick(R, [3, 4, 5, 6]), qs = pick(R, [50, 60, 75, 80, 100]); return { cv, p: cv + m, cf: m * qs, qs, m }; };
   const C = (a, q) => a.cf + a.cv * q;
 
   DEP.c1 = R => {
     const a = mia(R), qt = pick(R, [a.qs - 10, a.qs + 10]);
-    const fiche = `<div class="aff3"><div class="aff3-h">🕯️ Atelier Mia (entreprise fictive)</div>
+    const fiche = `<div class="aff3"><div class="aff3-h">🕯️ Atelier Mia</div>
       <table class="dt tcx dt-sm"><tbody><tr><th>Loyer et charges fixes, par mois</th><td data-cell="0">${eur(a.cf, 0)}</td></tr><tr><th>Coût de fabrication d’une bougie</th><td data-cell="1">${eur(a.cv, 0)}</td></tr><tr><th>Prix de vente d’une bougie (HT)</th><td data-cell="2">${eur(a.p, 0)}</td></tr></tbody></table></div>`;
     const g = rnd(a.p * qt - C(a, qt), 2);
     return { titre: 'La fiche de gestion de l’Atelier Mia', doc: fiche,
