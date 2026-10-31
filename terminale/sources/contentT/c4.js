@@ -131,5 +131,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais reconnaître une fonction exponentielle et son sens de variation.', ['e1', 'p1']], ['Je sais utiliser les propriétés des puissances.', ['e2']], ['Je sais utiliser le logarithme décimal.', ['e2', 'e3']], ['Je sais résoudre qˣ = a et log(x) = a.', ['e3', 'p2']], ['Je sais résoudre une inéquation.', ['p2', 'p3']]];
   c.words = require('./glT')('c4');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c4e4', lc: 3 });
+  c.bilan[2][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c4e5', lc: 5 });
+  c.bilan[4][1].push('e5');
   return c;
 };

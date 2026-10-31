@@ -171,5 +171,12 @@ PB({ id: 'x1', etape: 3, lc: 3, defi: 4, bulle: 'Ce cas se fait en 4 étapes. Tr
       err: { 1: [{ v: 1250, m: 'Tu as ajouté 50 € par an : c’est un calcul arithmétique. Pour B, multiplie par 1,05 chaque année.' }], 2: [{ v: 5, m: 'Une hausse de 5 % multiplie par 1,05.' }], 3: [{ v: 1500, m: 'Tu as ajouté 50 € par an. Pour B, utilise 1 000 × 1,05¹⁰.' }] },
       hints: ['A : 1 000 + n × 60.', 'B : 1 000 × 1,05 puissance n.', 'Compare les deux valeurs pour chaque durée.'], pouce: 'Le placement B part moins vite, mais ses intérêts grandissent chaque année.', corr: '1. 1 300 €. 2. 1 276,28 €. 3. 1,05. 4. 1 628,89 €. 5. A pour 5 ans, B pour 10 ans.' })
   ] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c5e4', lc: 1 });
+  c.bilan[0][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c5e5', lc: 5 });
+  c.bilan.push(['Je sais reconnaître et utiliser une suite géométrique.', ['e5']]);
+  c.entraine.push({ id: 'e6', gen: 'c5e6', lc: 6 });
+  c.bilan.push(['Je sais choisir le bon modèle : arithmétique ou géométrique.', ['e6']]);
   return c;
 };

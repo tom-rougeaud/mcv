@@ -132,5 +132,10 @@ module.exports = function (chk) {
   c.words = require('./gl1')('c7');
   c.plusTr = [{ id: 't1', gen: 'c7t1', lc: 1 }];
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c7e4', lc: 1 });
+  c.bilan[0][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c7e5', lc: 5 });
+  c.bilan[4][1].push('e5');
   return c;
 };

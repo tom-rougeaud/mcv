@@ -64,4 +64,59 @@
       hints: ['Intérêts = capital × taux × durée en années. 6 mois = 6 ÷ 12 d’année.', 'Taux mensuel = taux annuel ÷ 12. Taux par quinzaine = taux annuel ÷ 24.', 'En jours : capital × taux × jours ÷ 360.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercice ajouté : notion 4 (les taux : an, mois, quinzaine, jour) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, eur } = H;
+    TR.c1e4 = R => {
+      const t = pick(R, [2.4, 3, 3.6, 4.2, 6]), C = pick(R, [1500, 2000, 2400, 3000, 4800]), j = pick(R, [30, 45, 60, 72, 90, 120]);
+      const I = rnd(C * t / 100 * j / 360, 2), tm = t / 12, tq = t / 24;
+      return Q('Les taux : an, mois, quinzaine, jour', `Un capital est placé à intérêts simples au taux annuel de ${fr(t, 1)} %. On compte une année de 360 jours et un mois de 30 jours.`, [
+        { lab: 'Taux mensuel, en % (t ÷ 12)', v: tm, d: 3, w: 14, x: `${fr(t, 1)} ÷ 12 = ${fr(tm, 3)} %`, err: [{ v: t * 12, m: 'Pour passer à un mois, on divise le taux annuel par 12.' }] },
+        { lab: 'Taux par quinzaine, en % (t ÷ 24)', v: tq, d: 3, w: 14, x: `${fr(t, 1)} ÷ 24 = ${fr(tq, 3)} %`, err: [{ v: tm, m: 'Une année compte 24 quinzaines : divise par 24.' }] },
+        { lab: `Intérêts sur ${j} jours (C × t × j ÷ 360), en €`, v: I, d: 2, w: 16, x: `${fr(C, 0)} × ${fr(t / 100, 3)} × ${j} ÷ 360 = ${fr(I)} €`, err: [{ v: rnd(C * t / 100, 2), m: 'Ces intérêts sont ceux d’une année entière : multiplie par j ÷ 360.' }] },
+        { lab: 'Valeur acquise au bout de ces jours (C + I), en €', v: rnd(C + I, 2), d: 2, w: 16, x: `${fr(C, 0)} + ${fr(I)} = ${fr(C + I)} €` },
+        { lab: 'Pour un placement de 360 jours, les intérêts sont…', qcm: ['ceux d’une année entière', 'la moitié d’une année', 'ceux d’un mois'], ok: 0, x: `Sur 360 jours : I = C × t × 360 ÷ 360 = C × t, c’est-à-dire les intérêts d’une année entière.` }],
+        ['Un an = 12 mois = 24 quinzaines = 360 jours (année commerciale).', 'Taux d’une période = taux annuel ÷ nombre de périodes dans l’année.', 'Intérêts sur j jours : I = C × t × j ÷ 360.'],
+        table(['Capital', 'Taux annuel', 'Durée'], [[eur(C), `${fr(t, 1)} %`, `${j} jours`]]));
+    };
+  }
+  /* ===== rappels de seconde (pour le « Point de départ » du chapitre 1) : pourcentages, proportionnalité, évolutions ===== */
+  {
+    const { Q, fr, rnd, pick, table, eur } = H;
+    /* rp1 : une remise, puis une hausse */
+    TR.rp1 = R => {
+      const P = pick(R, [80, 120, 160, 200, 240, 400]), t = pick(R, [10, 15, 20, 25, 30]), h = pick(R, [5, 10, 20]);
+      const rem = rnd(P * t / 100, 2), np = rnd(P - rem, 2), fin = rnd(np * (1 + h / 100), 2), cm1 = rnd(1 - t / 100, 2), cm2 = rnd(1 + h / 100, 2);
+      return Q('Pourcentages : une remise, puis une hausse', `Un article coûte ${eur(P, 0)}. Il est soldé à −${t} %, puis son prix augmente de ${h} %.`, [
+        { lab: `Montant de la remise (${t} % de ${fr(P, 0)}), en €`, v: rem, d: 2, w: 14, x: `${fr(P, 0)} × ${fr(t / 100)} = ${fr(rem)} €`, err: [{ v: np, m: 'Tu as calculé le prix soldé. La remise est la part retirée : prix × taux.' }] },
+        { lab: 'Prix soldé, en €', v: np, d: 2, w: 14, x: `${fr(P, 0)} − ${fr(rem)} = ${fr(np)} €`, err: [{ v: rem, m: 'C’est le montant de la remise. Prix soldé = prix de départ − remise.' }] },
+        { lab: `Prix après la hausse de ${h} %, en €`, v: fin, d: 2, w: 14, x: `${fr(np)} × ${fr(cm2)} = ${fr(fin)} €`, err: [{ v: rnd(np * h / 100, 2), m: 'Tu as calculé seulement la hausse. Ajoute-la au prix soldé.' }, { v: rnd(P * cm2, 2), m: 'La hausse s’applique au prix soldé, pas au prix de départ.' }] },
+        { lab: 'Le prix final est…', qcm: ['plus petit que le prix de départ', 'égal au prix de départ', 'plus grand que le prix de départ'], ok: fin < P ? 0 : fin === P ? 1 : 2, x: `${fr(fin)} € ${fin < P ? '<' : fin > P ? '>' : '='} ${fr(P, 0)} € : coefficients ${fr(cm1)} × ${fr(cm2)} = ${fr(rnd(cm1 * cm2, 4))}` }],
+      ['Remise = prix × taux ÷ 100. Prix soldé = prix de départ − remise.', 'Une hausse de h % : on multiplie par 1 + h ÷ 100.', 'Une baisse puis une hausse du même ordre ne se compensent pas exactement.'],
+      table(['Prix de départ', 'Remise', 'Hausse ensuite'], [[eur(P, 0), `−${t} %`, `+${h} %`]]));
+    };
+    /* rp2 : proportionnalité */
+    TR.rp2 = R => {
+      const u = pick(R, [1.5, 2.5, 3, 4, 4.5, 6, 7.5]), n0 = pick(R, [8, 10, 12, 15, 20, 24]), n1 = pick(R, [30, 40, 50, 60, 75]), m = pick(R, [14, 18, 25, 32, 40]);
+      const P0 = rnd(u * n0, 2), P1 = rnd(u * n1, 2), B = rnd(u * m, 2);
+      return Q('Proportionnalité : prix et quantités', `Dans un atelier, ${n0} bougies coûtent ${eur(P0)}. Le prix est proportionnel au nombre de bougies.`, [
+        { lab: 'Prix d’une bougie, en €', v: u, d: 2, w: 14, x: `${fr(P0)} ÷ ${n0} = ${fr(u)} €`, err: [{ v: rnd(n0 / P0, 2), m: 'Tu as divisé dans le mauvais sens. Prix d’une bougie = prix total ÷ nombre de bougies.' }] },
+        { lab: `Prix de ${n1} bougies, en €`, v: P1, d: 2, w: 14, x: `${n1} × ${fr(u)} = ${fr(P1)} €`, err: [{ v: rnd(P0 + n1 - n0, 2), m: 'Ce n’est pas une addition : le prix est proportionnel, on multiplie par le prix d’une bougie.' }] },
+        { lab: `Nombre de bougies pour ${eur(B)}`, v: m, d: 0, w: 12, x: `${fr(B)} ÷ ${fr(u)} = ${m} bougies`, err: [{ v: rnd(B * u, 2), m: 'Tu as multiplié. Pour trouver un nombre de bougies, on divise le budget par le prix d’une bougie.' }] },
+        { lab: 'Avec deux fois plus de bougies, le prix est…', qcm: ['deux fois plus grand', 'le même', 'deux fois plus petit'], ok: 0, x: 'Prix et nombre sont proportionnels : le prix est multiplié par 2 comme le nombre de bougies.' }],
+      ['Prix d’une bougie = prix total ÷ nombre de bougies.', 'Prix de n bougies = n × prix d’une bougie.', 'Nombre de bougies = budget ÷ prix d’une bougie.'],
+      table(['Nombre de bougies', 'Prix à payer'], [[String(n0), eur(P0)], [String(n1), '?'], [String(m), eur(B)]]));
+    };
+    /* rp3 : évolution, taux et coefficient multiplicateur */
+    TR.rp3 = R => {
+      const A = pick(R, [40, 60, 80, 120, 200, 250]), r = pick(R, [5, 10, 15, 20, 25, -5, -10, -20, -25]), cm = rnd(1 + r / 100, 2), B = rnd(A * cm, 2), A2 = pick(R, [100, 300, 400, 600]), B2 = rnd(A2 * cm, 2);
+      return Q('Évolution : variation, taux et coefficient', `Le prix d’un article passe de ${eur(A, 0)} à ${eur(B)}.`, [
+        { lab: 'Variation (valeur finale − valeur de départ), en €', v: rnd(B - A, 2), d: 2, w: 14, x: `${fr(B)} − ${fr(A, 0)} = ${fr(rnd(B - A, 2))} €`, err: [{ v: rnd(A - B, 2), m: 'Variation = valeur finale − valeur de départ (dans cet ordre).' }] },
+        { lab: 'Taux d’évolution, en % (négatif si le prix baisse)', v: r, d: 1, w: 14, x: `(${fr(rnd(B - A, 2))} ÷ ${fr(A, 0)}) × 100 = ${fr(r, 0)} %`, err: [{ v: rnd((B - A) / B * 100, 1), m: 'On divise par la valeur de départ, pas par la valeur finale.' }, { v: rnd(B - A, 2), m: 'C’est la variation en euros. Le taux se calcule en divisant par la valeur de départ.' }] },
+        { lab: 'Coefficient multiplicateur (valeur finale ÷ valeur de départ)', v: cm, d: 2, w: 14, x: `${fr(B)} ÷ ${fr(A, 0)} = ${fr(cm)}  (= 1 ${r < 0 ? '−' : '+'} ${fr(Math.abs(r) / 100)})`, err: [{ v: rnd(r / 100, 2), m: 'C’est le taux écrit en nombre. Coefficient multiplicateur = 1 + taux.' }] },
+        { lab: `Avec la même évolution, un article à ${eur(A2, 0)} passe à, en €`, v: B2, d: 2, w: 14, x: `${fr(A2, 0)} × ${fr(cm)} = ${fr(B2)} €`, err: [{ v: rnd(A2 * r / 100, 2), m: 'Tu as calculé seulement la variation. Multiplie par le coefficient pour obtenir le nouveau prix.' }] }],
+      ['Variation = valeur finale − valeur de départ.', 'Taux d’évolution = variation ÷ valeur de départ, puis × 100 pour l’avoir en %.', 'Coefficient multiplicateur = valeur finale ÷ valeur de départ = 1 + taux.'],
+      table(['Valeur de départ', 'Valeur finale'], [[eur(A, 0), eur(B)]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

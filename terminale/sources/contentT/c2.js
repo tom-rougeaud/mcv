@@ -140,5 +140,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer un capital acquis à intérêts composés.', ['e1', 'p1']], ['Je sais trouver la durée d’un placement.', ['e1', 'p1']], ['Je sais calculer un taux mensuel équivalent et un taux moyen.', ['e2', 'p2']], ['Je sais compléter un tableau d’amortissement.', ['e3', 'p3']], ['Je sais calculer et comparer le coût de deux emprunts.', ['p2', 'p3']]];
   c.words = require('./glT')('c2');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c2e4', lc: 2 });
+  c.bilan[1][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c2e5', lc: 5 });
+  c.bilan[3][1].push('e5');
   return c;
 };

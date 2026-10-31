@@ -91,5 +91,6 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer une fréquence.', ['e1']], ['Je sais calculer une moyenne avec des effectifs.', ['e3', 'p1']], ['Je sais trouver la médiane et les quartiles.', ['e2']], ['Je sais comparer deux séries avec des boîtes.', ['c1']], ['Je sais vérifier un objectif avec des données.', ['b1']]];
   c.words = old.words;
   c.plusloin = { meca: old.meca.filter(m => m.gen !== 'sigma'), probs: old.probs.filter(p => !['p1', 'c1', 'b1'].includes(p.id)) };
+  c.entraine.push({ id: 'e4', gen: 'c2e4', lc: 4 }); if (c.bilan[3]) c.bilan[3][1].push('e4');
   return c;
 };

@@ -104,4 +104,19 @@
       hints: ['Dans le tableau, repère les intervalles où f monte et où f descend.', 'Sur chaque intervalle, la valeur c est atteinte une fois si elle est entre les deux valeurs extrêmes.', 'Dans le tableau de valeurs, cherche où f(x) passe au-dessus ou au-dessous de c.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercice ajouté : notion 1 (la fonction cube) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c3e4 = R => {
+      const xs = [-3, -2, -1, 0, 1, 2, 3], a = pick(R, [1.5, 2.5, 3.5, 4]), b = pick(R, [2, 3, 4, 5, 1.5]), c = pick(R, [-4, -3, -2, -1.5]);
+      return Q('La fonction cube', 'On étudie f(x) = x³, de dérivée f′(x) = 3x². Utilise la touche puissance ou le produit x × x × x.', [
+        { lab: `${fr(a)}³ = ${fr(a)} × ${fr(a)} × ${fr(a)}`, v: a ** 3, d: 3, w: 16, x: `${fr(a)} × ${fr(a)} × ${fr(a)} = ${fr(a ** 3, 3)}` },
+        { lab: `f(${fr(c)})`, v: c ** 3, d: 3, w: 16, x: `(${fr(c)})³ = ${fr(c)} × ${fr(c)} × ${fr(c)} = ${fr(c ** 3, 3)} : le cube d’un nombre négatif est négatif.`, err: [{ v: -(c ** 3), m: 'Le cube d’un nombre négatif est négatif.' }] },
+        { lab: `f′(${fr(b)}) = 3 × ${fr(b)}²`, v: 3 * b * b, d: 2, w: 16, x: `3 × ${fr(b)}² = 3 × ${fr(b * b, 2)} = ${fr(3 * b * b)}`, err: [{ v: 3 * b ** 3, m: 'f′(x) = 3x² : le nombre est mis au carré, pas au cube.' }] },
+        { lab: 'La fonction cube est…', qcm: ['croissante sur ℝ', 'décroissante sur ℝ', 'croissante puis décroissante'], ok: 0, x: 'f′(x) = 3x² est positif ou nul pour tout x : la fonction cube est croissante sur ℝ.' },
+        { lab: 'La courbe est symétrique par rapport…', qcm: ['à l’axe des ordonnées', 'à l’origine'], ok: 1, x: `f(−x) = −f(x) (par exemple f(−2) = ${fr(-8, 0)} = −f(2)) : la courbe est symétrique par rapport à l’origine.` }],
+        ['x³ = x × x × x. Le cube d’un nombre négatif est négatif.', 'La dérivée de x³ est 3x².', 'Compare f(−x) et f(x) pour la symétrie.'],
+        table(['x', ...xs.map(x => fr(x, 0))], [['x³', ...xs.map(x => fr(x ** 3, 0))]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

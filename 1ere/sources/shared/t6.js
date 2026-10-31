@@ -61,4 +61,22 @@
   };
   if (typeof module !== 'undefined') module.exports = { nuage };
   else root.MCVT6 = { nuage };
+  /* ===== exercice ajouté : notion 2 (la droite d’ajustement) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c6e4 = R => {
+      const [lx, ly, ux, uy] = pick(R, [['Mois', 'Ventes', 'mois', 'ventes (centaines)'], ['Publicité (k€)', 'Chiffre d’affaires (k€)', 'k€ de publicité', 'k€ de chiffre d’affaires'], ['Heures de travail', 'Pièces produites', 'heures', 'pièces']]);
+      const a0 = pick(R, [2, 2.5, 3, 4]), b0 = pick(R, [10, 15, 20, 30]), pts = nuage(R, 6, a0, b0, 3), F = P.fit(pts), a = rnd(F.a, 2), b = rnd(F.b, 2), mx = F.mx, my = F.my;
+      const f = x => a * x + b, x0 = pick(R, [3.5, 4.5, 7, 8]), Y = rnd(f(9), 1), xe = (Y - b) / a;
+      const g = repN(pts, { xmax: 10, ex: [f(10)], lab: 'Nuage de points et droite d’ajustement', xl: 'x', yl: 'y' }), sv = g.wrap(g.base + g.line(a, b, { stroke: P.RED, w: 2.6 }) + g.pts(pts, { r: 5.5 }));
+      return Q('La droite d’ajustement', `La droite d’ajustement du nuage a pour équation y = ${fr(a)} x + ${fr(b)} (obtenue avec la calculatrice). Le nuage est formé de 6 points.`, [
+        { lab: 'Abscisse du point moyen G : x̄ = (x₁ + … + x₆) ÷ 6', v: rnd(mx, 2), d: 2, w: 14, x: `(${pts.map(p => p[0]).join(' + ')}) ÷ 6 = ${fr(mx)}` },
+        { lab: 'Ordonnée du point moyen G : ȳ', v: rnd(my, 2), d: 2, w: 14, x: `(${pts.map(p => p[1]).join(' + ')}) ÷ 6 ≈ ${fr(my)}`, err: [{ v: rnd(mx, 2), m: 'ȳ est la moyenne des ordonnées y, pas des abscisses.' }] },
+        { lab: `Estimation de y pour x = ${fr(x0)}, au dixième`, v: rnd(f(x0), 1), d: 1, w: 14, x: `y = ${fr(a)} × ${fr(x0)} + ${fr(b)} = ${fr(f(x0), 2)} ≈ ${fr(rnd(f(x0), 1), 1)}` },
+        { lab: `Valeur de x pour laquelle on estime y = ${fr(Y, 1)}, au dixième`, v: rnd(xe, 1), d: 1, w: 14, x: `${fr(a)} x + ${fr(b)} = ${fr(Y, 1)} donne x = (${fr(Y, 1)} − ${fr(b)}) ÷ ${fr(a)} ≈ ${fr(xe, 2)} ≈ ${fr(rnd(xe, 1), 1)}`, err: [{ v: rnd(f(Y), 1), m: 'Ici on connaît y : résous a x + b = y pour trouver x.' }] },
+        { lab: 'Estimer y pour x = 9 (hors des données, de 1 à 6) est…', qcm: ['une interpolation', 'une extrapolation'], ok: 1, x: 'x = 9 est en dehors de la plage des données (de 1 à 6) : c’est une extrapolation, moins fiable.' }],
+        ['Le point moyen G a pour coordonnées les deux moyennes.', 'Pour estimer y, remplace x dans y = a x + b.', 'Pour estimer x, résous a x + b = y.'],
+        sv);
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

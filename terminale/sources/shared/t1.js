@@ -78,4 +78,71 @@
       hints: ['Colonne B : chaque terme est le précédent multiplié par la raison.', 'Colonne C : cumul précédent + nouveau terme de la ligne.', 'Le total des 6 premiers mois est dans la dernière case de la colonne C.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 3 (sens de variation et nuage) et 5 (évolution à taux fixe et fonction exponentielle) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, eur } = H;
+    TR.c1e4 = R => {
+      const u0 = pick(R, [200, 400, 800, 1000]), q = pick(R, [1.05, 1.1, 1.2, 0.9, 0.85, 0.8]), u = n => u0 * Math.pow(q, n), up = q > 1, ctx = up ? 'abonnés d’une plateforme' : 'valeur d’un téléphone (en €)';
+      const N = [0, 1, 2, 3, 4];
+      return Q('Sens de variation et nuage de points', `Les termes d’une suite géométrique (uₙ) décrivent la ${up ? 'progression des ' : ''}${ctx}. Voici les premiers termes (arrondis au centième).`, [
+        { lab: 'La raison q = u₁ ÷ u₀', v: q, d: 2, w: 14, x: `${fr(u(1))} ÷ ${fr(u0, 0)} = ${fr(q)}`, err: [{ v: rnd(u(1) - u0, 2), m: 'La raison est un quotient : u₁ ÷ u₀.' }] },
+        { lab: 'La suite est…', qcm: ['croissante', 'décroissante', 'constante'], ok: up ? 0 : 1, x: up ? `q = ${fr(q)} > 1 et u₀ > 0 : la suite est croissante.` : `0 < q = ${fr(q)} < 1 et u₀ > 0 : la suite est décroissante.` },
+        { lab: 'Le terme u₅ = u₄ × q, au centième', v: rnd(u(5), 2), d: 2, w: 16, x: `u₅ = ${fr(u(4))} × ${fr(q)} ≈ ${fr(u(5))}`, err: [{ v: rnd(u(4) + (u(1) - u0), 2), m: 'Pour passer au terme suivant, on multiplie par q, on n’ajoute pas.' }] },
+        { lab: 'Le nuage des points (n ; uₙ) est-il aligné ?', qcm: ['oui', 'non'], ok: 1, x: 'Pour une suite géométrique de raison différente de 1, les points (n ; uₙ) ne sont pas alignés : le nuage forme une courbe.' },
+        { lab: 'Si q = 1, la suite est…', qcm: ['croissante', 'décroissante', 'constante'], ok: 2, x: 'Si q = 1, chaque terme est égal au précédent multiplié par 1 : la suite est constante.' }],
+        ['Raison : q = terme suivant ÷ terme précédent.', 'Pour u₀ > 0 : q > 1 croissante, 0 < q < 1 décroissante, q = 1 constante.', 'Pour passer d’un terme au suivant, on multiplie par q.'],
+        table(['n', ...N], [['uₙ', ...N.map(n => fr(u(n)))]]));
+    };
+    TR.c1e5 = R => {
+      const C0 = pick(R, [100, 500, 1000, 2000]), t = pick(R, [2, 3, 4, -2, -5]), q = 1 + t / 100, f = x => C0 * Math.pow(q, x), x1 = pick(R, [5, 8, 10]), x2 = pick(R, [1.5, 2.5, 3.5]), up = t > 0;
+      return Q('Évolution à taux fixe', `Une grandeur de ${fr(C0, 0)} ${up ? 'augmente' : 'diminue'} de ${Math.abs(t)} % par an. On modélise par f(x) = ${fr(C0, 0)} × q^x, où x est la durée en années.`, [
+        { lab: 'La valeur de q', v: q, d: 2, w: 14, x: `${up ? 'Hausse' : 'Baisse'} de ${Math.abs(t)} % : q = 1 ${up ? '+' : '−'} ${Math.abs(t)} ÷ 100 = ${fr(q)}`, err: [{ v: rnd(t / 100, 2), m: 'q est un coefficient multiplicateur : 1 ' + (up ? '+' : '−') + ' ' + fr(Math.abs(t) / 100) + '.' }] },
+        { lab: `f(${x1}), au centième`, v: rnd(f(x1), 2), d: 2, w: 16, x: `${fr(C0, 0)} × ${fr(q)}^${x1} ≈ ${fr(f(x1))}`, err: [{ v: rnd(C0 * q * x1, 2), m: 'x est l’exposant : on calcule q^x avec la touche puissance, on ne multiplie pas par x.' }] },
+        { lab: `f(${fr(x2)}), au centième (x n’est pas entier)`, v: rnd(f(x2), 2), d: 2, w: 16, x: `${fr(C0, 0)} × ${fr(q)}^${fr(x2)} ≈ ${fr(f(x2))} : la fonction exponentielle permet un exposant non entier.` },
+        { lab: 'La fonction f est…', qcm: ['croissante', 'décroissante'], ok: up ? 0 : 1, x: up ? `q = ${fr(q)} > 1 : f est croissante.` : `0 < q = ${fr(q)} < 1 : f est décroissante.` },
+        { lab: 'f(0), valeur de départ', v: C0, d: 2, w: 14, x: `q^0 = 1, donc f(0) = ${fr(C0, 0)} × 1 = ${fr(C0, 0)}` }],
+        ['Hausse de t % : q = 1 + t ÷ 100. Baisse : q = 1 − t ÷ 100.', 'f(x) = C₀ × q^x : utilise la touche puissance, y compris pour un exposant non entier.', 'q > 1 : f croissante ; 0 < q < 1 : f décroissante.'],
+        table(['Fonction', 'Valeur de départ', 'Évolution'], [['f(x) = C₀ × q^x', fr(C0, 0), `${t > 0 ? '+' : '−'} ${Math.abs(t)} % par an`]]));
+    };
+  }
+  /* ===== rappels de première (pour le « Point de départ » du chapitre 1) : suites arithmétiques et géométriques ===== */
+  {
+    const { Q, fr, rnd, pick, table } = H;
+    /* rt1 : suite arithmétique */
+    TR.rt1 = R => {
+      const u0 = pick(R, [3, 5, 8, 12, 20, 50]), r = pick(R, [2, 3, 4, 5, 6, 8]), n = pick(R, [12, 15, 18, 20, 25]), V = u0 + n * r;
+      return Q('Suite arithmétique : termes et rang', `Une association compte ${u0} adhérents (u₀ = ${u0}) et en gagne ${r} de plus chaque année. uₙ est le nombre d’adhérents après n années.`, [
+        { lab: 'u₁ (après 1 an)', v: u0 + r, d: 0, w: 12, x: `u₁ = u₀ + ${r} = ${u0} + ${r} = ${u0 + r}`, err: [{ v: u0 * r, m: 'Une suite arithmétique ajoute la raison à chaque rang ; elle ne la multiplie pas.' }] },
+        { lab: 'u₂ (après 2 ans)', v: u0 + 2 * r, d: 0, w: 12, x: `u₂ = u₁ + ${r} = ${u0 + r} + ${r} = ${u0 + 2 * r}` },
+        { lab: 'u₁₀ (après 10 ans), avec uₙ = u₀ + n × r', v: u0 + 10 * r, d: 0, w: 12, x: `u₁₀ = ${u0} + 10 × ${r} = ${u0} + ${10 * r} = ${u0 + 10 * r}`, err: [{ v: u0 + r + 10, m: 'La formule est uₙ = u₀ + n × r : on ajoute n fois la raison.' }] },
+        { lab: `Au bout de combien d’années y a-t-il ${V} adhérents ?`, v: n, d: 0, w: 12, x: `${V} = ${u0} + n × ${r}, donc n × ${r} = ${V - u0} et n = ${V - u0} ÷ ${r} = ${n}`, err: [{ v: V - u0, m: 'Tu as calculé le total gagné. Divise-le par ' + r + ' pour obtenir le nombre d’années.' }] }],
+      ['Suite arithmétique : on passe d’un terme au suivant en ajoutant toujours la même raison r.', 'Terme de rang n : uₙ = u₀ + n × r.', 'Pour trouver n : (valeur − u₀) ÷ r.'],
+      table(['Rang n', '0', '1', '2', '…', '10'], [['Adhérents uₙ', String(u0), '?', '?', '…', '?']]));
+    };
+    /* rt2 : suite géométrique */
+    TR.rt2 = R => {
+      const u0 = pick(R, [32, 64, 96, 160, 320]), q = pick(R, [2, 3, 1.5]), u = k => rnd(u0 * Math.pow(q, k), 2);
+      return Q('Suite géométrique : multiplier à chaque rang', `Un site compte ${u0} visiteurs (u₀ = ${u0}). Chaque semaine, ce nombre est multiplié par ${fr(q)}. uₙ : visiteurs à la semaine n.`, [
+        { lab: 'u₁', v: u(1), d: 0, w: 12, x: `u₁ = u₀ × ${fr(q)} = ${u0} × ${fr(q)} = ${fr(u(1))}`, err: [{ v: rnd(u0 + q, 2), m: 'Une suite géométrique multiplie par la raison ; elle ne l’ajoute pas.' }] },
+        { lab: 'u₂', v: u(2), d: 0, w: 12, x: `u₂ = u₁ × ${fr(q)} = ${fr(u(1))} × ${fr(q)} = ${fr(u(2))}` },
+        { lab: 'u₃', v: u(3), d: 0, w: 12, x: `u₃ = u₂ × ${fr(q)} = ${fr(u(2))} × ${fr(q)} = ${fr(u(3))}` },
+        { lab: 'u₄, avec uₙ = u₀ × qⁿ', v: u(4), d: 0, w: 12, x: `u₄ = ${u0} × ${fr(q)}⁴ = ${u0} × ${fr(rnd(Math.pow(q, 4), 4))} = ${fr(u(4))}`, err: [{ v: rnd(u0 * q * 4, 2), m: 'qⁿ veut dire q × q × … (n fois), pas n × q.' }] },
+        { lab: 'Cette suite est…', qcm: ['arithmétique', 'géométrique'], ok: 1, x: 'On multiplie chaque terme par le même nombre : la suite est géométrique, de raison ' + fr(q) + '.' }],
+      ['Suite géométrique : on passe d’un terme au suivant en multipliant toujours par la même raison q.', 'Terme de rang n : uₙ = u₀ × qⁿ.', 'qⁿ : on multiplie q par lui-même n fois.'],
+      table(['Semaine n', '0', '1', '2', '3', '4'], [['Visiteurs uₙ', String(u0), '?', '?', '?', '?']]));
+    };
+    /* rt3 : reconnaître le type d’une suite */
+    TR.rt3 = R => {
+      const a0 = pick(R, [3, 5, 10, 20]), r = pick(R, [2, 3, 4, 5, 6]), b0 = pick(R, [2, 3, 4, 5]), q = pick(R, [2, 3]), c0 = pick(R, [1, 2, 3, 4]);
+      const seqs = [{ t: 0, v: [a0, a0 + r, a0 + 2 * r, a0 + 3 * r] }, { t: 1, v: [b0, b0 * q, b0 * q * q, b0 * q * q * q] }, { t: 2, v: [c0, c0 + 1, c0 + 3, c0 + 6] }];
+      const perm = pick(R, [[0, 1, 2], [1, 2, 0], [2, 0, 1], [0, 2, 1], [2, 1, 0], [1, 0, 2]]), L3 = ['A', 'B', 'C'], S = perm.map(i => seqs[i]);
+      const nom = ['arithmétique', 'géométrique', 'ni l’une ni l’autre'], ex = ['on ajoute toujours ' + r, 'on multiplie toujours par ' + q, 'les écarts changent (+1, +2, +3) et les rapports aussi'];
+      const rows = S.map((s, i) => ({ lab: `Suite ${L3[i]} : ${s.v.join(' ; ')} ; …`, qcm: ['arithmétique', 'géométrique', 'ni l’une, ni l’autre'], ok: s.t, x: `${nom[s.t]} : ${ex[s.t]}` }));
+      const ia = S.findIndex(s => s.t === 0), ig = S.findIndex(s => s.t === 1);
+      rows.push({ lab: `Raison de la suite arithmétique (suite ${L3[ia]})`, v: r, d: 0, w: 12, x: `${a0 + r} − ${a0} = ${r}`, err: [{ v: q, m: 'Cette valeur est la raison de l’autre suite.' }] });
+      rows.push({ lab: `Raison de la suite géométrique (suite ${L3[ig]})`, v: q, d: 0, w: 12, x: `${b0 * q} ÷ ${b0} = ${q}`, err: [{ v: r, m: 'Cette valeur est la raison de l’autre suite.' }] });
+      return Q('Reconnaître une suite arithmétique ou géométrique', 'Pour chaque suite, regarde comment on passe d’un terme au suivant : en ajoutant, en multipliant, ou ni l’un ni l’autre.', rows,
+        ['Arithmétique : l’écart entre deux termes qui se suivent est toujours le même (raison = écart).', 'Géométrique : le rapport entre deux termes qui se suivent est toujours le même (raison = rapport).', 'Si ni l’écart ni le rapport ne reste constant, la suite n’est ni l’une ni l’autre.']);
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

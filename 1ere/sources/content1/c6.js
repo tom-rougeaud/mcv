@@ -112,5 +112,8 @@ module.exports = function (chk) {
   c.bilan = [['Je sais représenter un nuage et calculer le point moyen.', ['e1', 'p1']], ['Je sais obtenir une droite d’ajustement avec un outil numérique.', ['e3', 'p2']], ['Je sais interpréter le coefficient de détermination R².', ['e3', 'p2']], ['Je sais faire une prévision et en discuter la fiabilité.', ['e2', 'p3']]];
   c.words = require('./gl1')('c6');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c6e4', lc: 2 });
+  c.bilan[1][1].push('e4');
   return c;
 };

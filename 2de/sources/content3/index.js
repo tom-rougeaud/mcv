@@ -18,7 +18,7 @@ module.exports = chk => {
     c.eval = EVALS[c.id];
     chk(!!c.metier && !!c.eval, `métier ou contrôle manquant : ${c.id}`);
     chk(c.notions.length >= 3 && c.notions.length <= 4, `${c.id} : 3 ou 4 notions`);
-    chk(c.entraine.length === 3 && c.probs.length === 3, `${c.id} : 3 exercices et 3 problèmes`);
+    chk(c.entraine.length >= 3 && c.probs.length === 3, `${c.id} : 3 exercices et 3 problèmes`);
     chk(c.resolus.length === 2 && !!c.resolus[1].trous, `${c.id} : un résolu complet et un à trous`);
     return TEX.deep(c);
   });

@@ -103,5 +103,6 @@ module.exports = function (chk) {
   c.bilan = [['Je sais lire une case d’un tableau croisé.', ['e1', 'p1']], ['Je sais compléter un tableau croisé.', ['e2', 'c1']], ['Je sais choisir le bon total (« parmi »).', ['e3']], ['Je sais comparer deux groupes avec des fréquences.', ['c1', 'b1']]];
   c.words = old.words;
   c.plusloin = { meca: old.meca, probs: old.probs.filter(p => !['p1', 'c1', 'b1'].includes(p.id)) };
+  c.entraine.push({ id: 'e4', gen: 'c8e4', lc: 4 }); if (c.bilan[3]) c.bilan[3][1].push('e4');
   return c;
 };

@@ -76,4 +76,34 @@
       hints: ['z = 1 ÷ x : pour x = 15, z = 1 ÷ 15.', `Pour un prix de ${x0} €, z = 1 ÷ ${x0}, puis y = ${fr(A)} × z + ${fr(B)}.`, 'Le meilleur modèle a le R² le plus proche de 1.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 1 (nuage et choix d’un modèle) et 5 (interpoler et extrapoler) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c5e4 = R => {
+      const expo = R() < .5, xs0 = [1, 2, 3, 4, 5, 6];
+      let ys, par;
+      if (expo) { const y0 = pick(R, [20, 40, 50, 80]), q = pick(R, [1.1, 1.2, 1.25, 1.5]); ys = xs0.map(x => rnd(y0 * Math.pow(q, x - 1), 2)); par = { y0, q }; }
+      else { const y0 = pick(R, [20, 40, 50, 80]), r = pick(R, [6, 8, 10, 12]); ys = xs0.map(x => y0 + r * (x - 1)); par = { y0, r }; }
+      const d1 = rnd(ys[1] - ys[0], 2), d2 = rnd(ys[2] - ys[1], 2), r1 = ys[1] / ys[0], r2 = ys[2] / ys[1];
+      return Q('Choisir un modèle d’ajustement', 'Voici les données d’une série. On cherche si une évolution à différences constantes (modèle affine) ou à rapports constants (modèle exponentiel) convient.', [
+        { lab: 'Différence y₂ − y₁', v: d1, d: 2, w: 14, x: `${fr(ys[1])} − ${fr(ys[0])} = ${fr(d1)}` },
+        { lab: 'Différence y₃ − y₂', v: d2, d: 2, w: 14, x: `${fr(ys[2])} − ${fr(ys[1])} = ${fr(d2)}` },
+        { lab: 'Rapport y₂ ÷ y₁, au centième', v: rnd(r1, 2), d: 2, w: 14, x: `${fr(ys[1])} ÷ ${fr(ys[0])} ≈ ${fr(r1, 3)} ≈ ${fr(rnd(r1, 2))}` },
+        { lab: 'Rapport y₃ ÷ y₂, au centième', v: rnd(r2, 2), d: 2, w: 14, x: `${fr(ys[2])} ÷ ${fr(ys[1])} ≈ ${fr(r2, 3)} ≈ ${fr(rnd(r2, 2))}` },
+        { lab: 'Le modèle le mieux adapté est…', qcm: ['affine (différences constantes)', 'exponentiel (rapports constants)'], ok: expo ? 1 : 0, x: expo ? `Les rapports sont constants (${fr(rnd(r1, 2))} et ${fr(rnd(r2, 2))}) alors que les différences varient : modèle exponentiel y = k × qˣ.` : `Les différences sont constantes (${fr(d1)} et ${fr(d2)}) : modèle affine y = a x + b.` }],
+        ['Modèle affine : les différences entre valeurs successives sont constantes.', 'Modèle exponentiel : les rapports entre valeurs successives sont constants.', 'Compare les deux premiers écarts, puis les deux premiers rapports.'],
+        table(['x', ...xs0], [['y', ...ys.map(y => fr(y))]]));
+    };
+    TR.c5e5 = R => {
+      const k = pick(R, [60, 80, 100], 0), q = pick(R, [1.05, 1.08, 1.1, 1.12]), f = x => k * Math.pow(q, x), xi = pick(R, [2.5, 3.5, 4.5]), xe = pick(R, [8, 9, 10, 12]);
+      return Q('Interpoler et extrapoler', `Un modèle exponentiel y = ${fr(k, 0)} × ${fr(q)}ˣ a été ajusté sur des données observées pour x de 1 à 6.`, [
+        { lab: `Estimation pour x = ${fr(xi)}, au dixième`, v: rnd(f(xi), 1), d: 1, w: 16, x: `y = ${fr(k, 0)} × ${fr(q)}^${fr(xi)} ≈ ${fr(f(xi), 2)} ≈ ${fr(rnd(f(xi), 1), 1)}` },
+        { lab: `x = ${fr(xi)} est dans l’intervalle des données : c’est…`, qcm: ['une interpolation', 'une extrapolation'], ok: 0, x: `${fr(xi)} est compris entre 1 et 6 : c’est une interpolation.` },
+        { lab: `Estimation pour x = ${xe}, au dixième`, v: rnd(f(xe), 1), d: 1, w: 16, x: `y = ${fr(k, 0)} × ${fr(q)}^${xe} ≈ ${fr(f(xe), 2)} ≈ ${fr(rnd(f(xe), 1), 1)}` },
+        { lab: `x = ${xe} est en dehors de l’intervalle des données : c’est…`, qcm: ['une interpolation', 'une extrapolation'], ok: 1, x: `${xe} est plus grand que 6 : c’est une extrapolation, à présenter avec prudence.` },
+        { lab: 'Quelle prévision est la plus fiable ?', qcm: [`celle pour x = ${fr(xi)}`, `celle pour x = ${xe}`], ok: 0, x: 'L’interpolation, à l’intérieur des données, est plus fiable que l’extrapolation, qui suppose que le modèle reste valable au-delà.' }],
+        ['Remplace x dans y = k × qˣ avec la touche puissance.', 'Interpolation : x dans l’intervalle des données. Extrapolation : x en dehors.', 'Une extrapolation s’accompagne toujours d’une réserve.'],
+        table(['Modèle', 'Données observées'], [[`y = ${fr(k, 0)} × ${fr(q)}ˣ`, 'x de 1 à 6']]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

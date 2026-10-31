@@ -82,4 +82,42 @@
       hints: ['Lis les ordonnées des deux premiers points.', 'Si les points sont alignés, on ajoute toujours la même valeur.', 'Différence u₁ − u₀ pour une suite arithmétique, quotient u₁ ÷ u₀ pour une suite géométrique.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 1 (indices et termes), 5 (suites géométriques) et 6 (choisir le modèle) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, eur } = H;
+    const sub = n => String(n).replace(/\d/g, d => '₀₁₂₃₄₅₆₇₈₉'[d]);
+    TR.c5e4 = R => {
+      const u0 = pick(R, [80, 100, 120, 150, 200]), b = pick(R, [15, 20, 25, 30]), u = n => u0 + b * n, n1 = int(R, 3, 6), n2 = pick(R, [10, 12, 15]), k = int(R, 7, 14), tgt = u(k);
+      return Q('Notation indicielle et termes', `Chaque mois, une association gagne ${b} adhérents de plus. Le nombre d’adhérents au mois n est uₙ = ${u0} + ${b} × n (n = 0 au départ).`, [
+        { lab: 'u₀, le premier terme (nombre au départ)', v: u0, d: 0, w: 12, x: `u₀ = ${u0} + ${b} × 0 = ${u0}` },
+        { lab: `u${sub(1)} par la récurrence uₙ₊₁ = uₙ + ${b}`, v: u(1), d: 0, w: 12, x: `u${sub(1)} = u₀ + ${b} = ${u0} + ${b} = ${u(1)}`, err: [{ v: b, m: 'Ajoute ' + b + ' au terme précédent u₀.' }] },
+        { lab: `u${sub(n1)}, le terme de rang ${n1}`, v: u(n1), d: 0, w: 12, x: `u${sub(n1)} = ${u0} + ${b} × ${n1} = ${u0} + ${b * n1} = ${u(n1)}`, err: [{ v: u0 + b + n1, m: 'On multiplie ' + b + ' par le rang ' + n1 + ' avant d’ajouter u₀.' }] },
+        { lab: `u${sub(n2)}`, v: u(n2), d: 0, w: 12, x: `u${sub(n2)} = ${u0} + ${b} × ${n2} = ${u(n2)}` },
+        { lab: `Le rang n pour lequel uₙ = ${tgt}`, v: k, d: 0, w: 12, x: `${u0} + ${b} × n = ${tgt} donne ${b} × n = ${tgt - u0}, soit n = ${tgt - u0} ÷ ${b} = ${k}`, err: [{ v: tgt - u0, m: 'Divise par ' + b + ' pour trouver le rang.' }] }],
+        ['uₙ est le terme de rang n : remplace n par le rang dans la formule.', 'Récurrence : on passe d’un terme au suivant en ajoutant ' + b + '.', 'Pour trouver le rang, résous l’équation uₙ = valeur.'],
+        table(['Suite', 'Formule', 'Récurrence'], [['(uₙ)', `uₙ = ${u0} + ${b} n`, `uₙ₊₁ = uₙ + ${b}`]]));
+    };
+    TR.c5e5 = R => {
+      const v0 = pick(R, [500, 800, 1000, 2000]), t = pick(R, [2, 3, 5, 10, 20]), q = 1 + t / 100, n = pick(R, [2, 3, 4]), t2 = pick(R, [10, 20, 25, 40]), q2 = 1 - t2 / 100, vn = v0 * q ** n;
+      return Q('Les suites géométriques', `Un capital de ${eur(v0)} augmente de ${t} % chaque année. On note vₙ le capital au bout de n années : v₀ = ${fr(v0, 0)}.`, [
+        { lab: 'La raison q de la suite', v: q, d: 2, w: 14, x: `Une hausse de ${t} % multiplie par 1 + ${t} ÷ 100 = ${fr(q)}`, err: [{ v: t / 100, m: 'Une hausse de t % multiplie par 1 + t ÷ 100.' }, { v: t, m: 'q est un coefficient multiplicateur : 1 + t ÷ 100.' }] },
+        { lab: 'v₁ (capital après 1 an), en €', v: v0 * q, d: 2, w: 16, x: `v₁ = ${fr(v0, 0)} × ${fr(q)} = ${fr(v0 * q)}`, err: [{ v: v0 + t, m: 'Une hausse en % se calcule par une multiplication par q.' }] },
+        { lab: `v${sub(n)} = v₀ × q^${n}, en € (au centime)`, v: rnd(vn, 2), d: 2, w: 16, x: `v${sub(n)} = ${fr(v0, 0)} × ${fr(q)}^${n} ≈ ${fr(vn)} €`, err: [{ v: rnd(v0 * q * n, 2), m: 'On élève q à la puissance ' + n + ' : q × q × … (' + n + ' fois), on ne le multiplie pas par ' + n + '.' }] },
+        { lab: `Pour une baisse de ${t2} % par an, la raison est`, v: q2, d: 2, w: 14, x: `Une baisse de ${t2} % multiplie par 1 − ${t2} ÷ 100 = ${fr(q2)}`, err: [{ v: 1 + t2 / 100, m: 'Pour une baisse, on retranche : 1 − t ÷ 100.' }] },
+        { lab: 'Une suite est géométrique quand on passe d’un terme au suivant en…', qcm: ['ajoutant toujours le même nombre', 'multipliant toujours par le même nombre'], ok: 1, x: 'Dans une suite géométrique, vₙ₊₁ = vₙ × q : on multiplie toujours par la même raison q.' }],
+        ['Hausse de t % : q = 1 + t ÷ 100. Baisse de t % : q = 1 − t ÷ 100.', 'vₙ = v₀ × qⁿ : q est élevé à la puissance n.', 'Sur la calculatrice, utilise la touche puissance (^).'],
+        table(['Suite', 'Premier terme', 'Évolution'], [['(vₙ)', eur(v0), `+ ${t} % par an`]]));
+    };
+    TR.c5e6 = R => {
+      const ra = pick(R, [40, 50, 60]), t = pick(R, [3, 4, 5]), n = pick(R, [6, 8, 10, 15, 20]), A = 1000 + ra * n, B = 1000 * (1 + t / 100) ** n;
+      return Q('Choisir le bon modèle', `Deux placements partent de ${eur(1000)}. Placement A : on ajoute ${ra} € chaque année. Placement B : le capital augmente de ${t} % chaque année.`, [
+        { lab: 'Chaque année, on ajoute le même montant (A) : la suite est…', qcm: ['arithmétique', 'géométrique'], ok: 0, x: 'Ajouter toujours le même montant : suite arithmétique, de raison ' + ra + '.' },
+        { lab: 'Chaque année, on ajoute le même pourcentage (B) : la suite est…', qcm: ['arithmétique', 'géométrique'], ok: 1, x: `Augmenter toujours du même pourcentage : suite géométrique, de raison 1 + ${t} ÷ 100 = ${fr(1 + t / 100)}.` },
+        { lab: `Capital du placement A au bout de ${n} ans (1 000 + ${ra} × n), en €`, v: A, d: 2, w: 16, x: `1 000 + ${ra} × ${n} = ${fr(A)} €` },
+        { lab: `Capital du placement B au bout de ${n} ans (1 000 × ${fr(1 + t / 100)}^n), en €`, v: rnd(B, 2), d: 2, w: 16, x: `1 000 × ${fr(1 + t / 100)}^${n} ≈ ${fr(B)} €`, err: [{ v: rnd(1000 + 1000 * t / 100 * n, 2), m: 'Pour B, on multiplie n fois par ' + fr(1 + t / 100) + ' : on utilise la puissance, pas une multiplication par n.' }] },
+        { lab: `Au bout de ${n} ans, le placement le plus avantageux est…`, qcm: ['A', 'B'], ok: A >= B ? 0 : 1, x: `${fr(A)} € pour A contre ${fr(B)} € pour B : ${A >= B ? 'A' : 'B'} est plus avantageux.` }],
+        ['Même montant ajouté : suite arithmétique, uₙ = u₀ + r × n.', 'Même pourcentage : suite géométrique, vₙ = v₀ × qⁿ.', 'Calcule les deux capitaux avant de comparer.'],
+        table(['Placement', 'Capital de départ', 'Évolution'], [['A', eur(1000), `+ ${ra} € par an`], ['B', eur(1000), `+ ${t} % par an`]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

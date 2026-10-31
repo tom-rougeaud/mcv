@@ -93,5 +93,6 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer une probabilité.', ['e1', 'p1']], ['Je sais utiliser l’événement contraire.', ['p1']], ['Je sais compter les issues.', ['e2']], ['Je sais expliquer la fluctuation.', ['e3', 'c1', 'b1']]];
   c.words = old.words;
   c.plusloin = { meca: old.meca, probs: old.probs.filter(p => !['p1', 'c1', 'b1'].includes(p.id)) };
+  c.entraine.push({ id: 'e4', gen: 'c6e4', lc: 1 }); if (c.bilan[0]) c.bilan[0][1].push('e4');
   return c;
 };

@@ -61,4 +61,30 @@
       hints: ['qˣ = a donne x = log(a) ÷ log(q).', '10ˣ = b donne x = log(b) ; log(x) = c donne x = 10ᶜ.', 'Si 0 < q < 1, log(q) < 0 : en divisant, on change le sens de l’inégalité.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 3 (logarithme décimal) et 5 (équation log(x) = a et inéquations) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c4e4 = R => {
+      const n = pick(R, [2, 3, 4, 5, 6]), [a, b] = pick(R, [[2, 5], [4, 25], [20, 5], [50, 2], [8, 125], [25, 40]]), pw = Math.log10(a * b), [p, q] = pick(R, [[2000, 2], [5000, 5], [700, 7], [90, 9], [3000, 3], [600, 6]]), pq = Math.log10(p / q), k = pick(R, [2, 3, 4]), m = pick(R, [10, 100]);
+      return Q('Le logarithme décimal', 'log(b) = x signifie 10ˣ = b. Utilise les propriétés du tableau pour répondre, sans calculatrice.', [
+        { lab: `log(${fr(Math.pow(10, n), 0)})`, v: n, d: 0, w: 12, x: `${fr(Math.pow(10, n), 0)} = 10${'⁰¹²³⁴⁵⁶⁷⁸⁹'[n]} : log(10${'⁰¹²³⁴⁵⁶⁷⁸⁹'[n]}) = ${n}` },
+        { lab: `log(${a}) + log(${b})`, v: pw, d: 0, w: 12, x: `log(${a}) + log(${b}) = log(${a} × ${b}) = log(${fr(a * b, 0)}) = ${pw}`, err: [{ v: a + b, m: 'Utilise log(a) + log(b) = log(a × b), puis log(10ⁿ) = n.' }] },
+        { lab: `log(${fr(p, 0)}) − log(${q})`, v: pq, d: 0, w: 12, x: `log(${fr(p, 0)}) − log(${q}) = log(${fr(p, 0)} ÷ ${q}) = log(${fr(p / q, 0)}) = ${pq}` },
+        { lab: `log(${m}^${k}) = ${k} × log(${m})`, v: k * Math.log10(m), d: 0, w: 12, x: `log(${m}) = ${Math.log10(m)}, donc ${k} × ${Math.log10(m)} = ${k * Math.log10(m)}` },
+        { lab: 'Le nombre log(0) existe-t-il ?', qcm: ['oui', 'non'], ok: 1, x: 'Le logarithme décimal n’est défini que pour b > 0 : log(0) n’existe pas.' }],
+        ['log(10ⁿ) = n.', 'log(a) + log(b) = log(a × b) ; log(a) − log(b) = log(a ÷ b).', 'log(aⁿ) = n × log(a).'],
+        table(['Propriété', 'Formule'], [['log(10ⁿ)', 'n'], ['log(a × b)', 'log(a) + log(b)'], ['log(a ÷ b)', 'log(a) − log(b)'], ['log(aⁿ)', 'n × log(a)']]));
+    };
+    TR.c4e5 = R => {
+      const a1 = pick(R, [-2, -1, 1, 2, 3]), q1 = pick(R, [1.03, 1.05, 1.08, 1.1]), A1 = pick(R, [1.5, 2, 3]), x1 = Math.log10(A1) / Math.log10(q1), q2 = pick(R, [0.8, 0.85, 0.9, 0.95]), A2 = pick(R, [0.5, 0.25]), x2 = Math.log10(A2) / Math.log10(q2);
+      return Q('Équations log(x) = a et inéquations', 'On utilise log(x) = a ⟺ x = 10ᵃ et, pour résoudre qˣ ≥ A, la propriété log(qˣ) = x × log(q).', [
+        { lab: `Résous log(x) = ${fr(a1, 0)} : x =`, v: Math.pow(10, a1), d: 2, w: 14, x: `log(x) = ${fr(a1, 0)} ⟺ x = 10^(${fr(a1, 0)}) = ${fr(Math.pow(10, a1), 2)}`, err: [{ v: a1, m: 'log(x) = a donne x = 10ᵃ, pas x = a.' }] },
+        { lab: `Pour ${fr(q1)}ˣ ≥ ${fr(A1)} : x ≥ log(${fr(A1)}) ÷ log(${fr(q1)}) ≈ (au centième)`, v: rnd(x1, 2), d: 2, w: 16, x: `x ≥ log(${fr(A1)}) ÷ log(${fr(q1)}) ≈ ${fr(Math.log10(A1), 4)} ÷ ${fr(Math.log10(q1), 4)} ≈ ${fr(x1)}` },
+        { lab: `Le plus petit entier n tel que ${fr(q1)}ⁿ ≥ ${fr(A1)}`, v: Math.ceil(x1), d: 0, w: 12, x: `x ≥ ${fr(x1)} : le plus petit entier est ${Math.ceil(x1)}.`, err: [{ v: Math.floor(x1), m: 'Il faut un entier plus grand que ' + fr(x1) + '.' }] },
+        { lab: `Pour ${fr(q2)}ˣ ≤ ${fr(A2)} : x ≥ log(${fr(A2)}) ÷ log(${fr(q2)}) ≈ (au centième)`, v: rnd(x2, 2), d: 2, w: 16, x: `log(${fr(q2)}) est négatif : le sens de l’inégalité change. x ≥ ${fr(Math.log10(A2), 4)} ÷ (${fr(Math.log10(q2), 4)}) ≈ ${fr(x2)}` },
+        { lab: 'Quand on divise par log(q) avec 0 < q < 1, le sens de l’inégalité…', qcm: ['est conservé', 'change'], ok: 1, x: 'Pour 0 < q < 1, log(q) est négatif : diviser par un nombre négatif change le sens de l’inégalité.' }],
+        ['log(x) = a ⟺ x = 10ᵃ.', 'Pour qˣ ≥ A avec q > 1 : x ≥ log(A) ÷ log(q).', 'Si 0 < q < 1, log(q) est négatif : le sens de l’inégalité change.'],
+        table(['Méthode', 'Formule'], [['log(x) = a', 'x = 10ᵃ'], ['q > 1 : qˣ ≥ A', 'x ≥ log(A) ÷ log(q)'], ['0 < q < 1 : qˣ ≤ A', 'x ≥ log(A) ÷ log(q)']]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

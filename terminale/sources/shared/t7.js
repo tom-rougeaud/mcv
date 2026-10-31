@@ -53,4 +53,19 @@
       hints: ['eˣ = a ⟺ x = ln(a).', 'ln(x) = b ⟺ x = eᵇ.', 'e^(kt) = 2 ⟺ kt = ln(2).'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercice ajouté : notion 3 (le logarithme népérien) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c7e4 = R => {
+      const k = pick(R, [2, 3, 4, 5]), a = pick(R, [2, 3, 5, 7, 10, 20]), m = pick(R, [1, 2, 3]), A = pick(R, [3, 5, 7, 20, 50]), [a1, a2] = pick(R, [[2, 3], [2, 5], [3, 4], [5, 6], [2, 8], [4, 5]]);
+      return Q('Le logarithme népérien', 'ln(b) = x signifie eˣ = b. Utilise la touche ln de la calculatrice quand il le faut.', [
+        { lab: `ln(e${'⁰¹²³⁴⁵⁶⁷⁸⁹'[k]})`, v: k, d: 0, w: 12, x: `ln(eᵏ) = k, donc ln(e${'⁰¹²³⁴⁵⁶⁷⁸⁹'[k]}) = ${k}` },
+        { lab: `ln(${a}), au millième`, v: rnd(Math.log(a), 3), d: 3, w: 14, x: `Touche ln : ln(${a}) ≈ ${fr(Math.log(a), 4)} ≈ ${fr(rnd(Math.log(a), 3), 3)}` },
+        { lab: `x tel que ln(x) = ${m}, au centième`, v: rnd(Math.exp(m), 2), d: 2, w: 14, x: `ln(x) = ${m} ⟺ x = e^${m} ≈ ${fr(Math.exp(m), 3)} ≈ ${fr(rnd(Math.exp(m), 2))}`, err: [{ v: m, m: 'ln(x) = m donne x = e^m, pas x = m.' }] },
+        { lab: `x tel que eˣ = ${A}, au millième`, v: rnd(Math.log(A), 3), d: 3, w: 14, x: `eˣ = ${A} ⟺ x = ln(${A}) ≈ ${fr(Math.log(A), 4)} ≈ ${fr(rnd(Math.log(A), 3), 3)}` },
+        { lab: `ln(${a1}) + ln(${a2}) = ln(${a1} × ${a2}), au millième`, v: rnd(Math.log(a1 * a2), 3), d: 3, w: 14, x: `ln(${a1}) + ln(${a2}) = ln(${a1 * a2}) ≈ ${fr(Math.log(a1 * a2), 4)} ≈ ${fr(rnd(Math.log(a1 * a2), 3), 3)}`, err: [{ v: rnd(Math.log(a1 + a2), 3), m: 'La somme de deux ln est le ln du produit : ln(a) + ln(b) = ln(a × b).' }] }],
+        ['ln(b) = x ⟺ eˣ = b, pour b > 0.', 'ln(a × b) = ln(a) + ln(b) ; ln(aⁿ) = n × ln(a).', 'La touche ln donne les valeurs approchées.'],
+        table(['Propriété', 'Formule'], [['ln(e)', '1'], ['ln(a × b)', 'ln(a) + ln(b)'], ['ln(aⁿ)', 'n × ln(a)'], ['(ln x)′', '1 ÷ x']]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

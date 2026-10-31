@@ -62,4 +62,33 @@
       hints: ['f′(x) = 0 se résout comme une équation : 2a x + B = 0.', 'L’extremum est f(x) pour la valeur trouvée en a.', 'Si f monte puis descend, le sommet est un maximum.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 4 (dérivée et coût marginal) et 5 (la fonction inverse) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    const poly = (a, b, c) => `${a === 1 ? '' : fr(a)} q² + ${fr(b)} q + ${fr(c)}`.replace(/^ /, '');
+    TR.c4e4 = R => {
+      const al = pick(R, [0.5, 1, 2]), be = pick(R, [2, 5, 10]), ga = pick(R, [50, 100, 200]), q0 = pick(R, [10, 20, 30, 40]);
+      const dq = 2 * al === 1 ? 'q' : `${fr(2 * al)} q`, C = q => al * q * q + be * q + ga, d1 = 2 * al * q0 + be, cm = C(q0 + 1) - C(q0);
+      return Q('Dérivée et coût marginal', `Le coût de fabrication de q articles est C(q) = ${poly(al, be, ga)} (en €). On donne sa dérivée : C′(q) = ${dq} + ${fr(be, 0)}.`, [
+        { lab: `C(${q0}), en €`, v: C(q0), d: 2, w: 16, x: `${fr(al)} × ${q0}² + ${fr(be, 0)} × ${q0} + ${fr(ga, 0)} = ${fr(C(q0))}` },
+        { lab: `C(${q0 + 1}), en €`, v: C(q0 + 1), d: 2, w: 16, x: `${fr(al)} × ${q0 + 1}² + ${fr(be, 0)} × ${q0 + 1} + ${fr(ga, 0)} = ${fr(C(q0 + 1))}` },
+        { lab: `Coût marginal : C(${q0 + 1}) − C(${q0}), en €`, v: cm, d: 2, w: 16, x: `${fr(C(q0 + 1))} − ${fr(C(q0))} = ${fr(cm)}`, err: [{ v: C(q0 + 1), m: 'Le coût marginal est la différence C(q + 1) − C(q).' }] },
+        { lab: `C′(${q0}), en €`, v: d1, d: 2, w: 16, x: `${fr(2 * al)} × ${q0} + ${fr(be, 0)} = ${fr(d1)}`, err: [{ v: cm, m: 'Ici, remplace q par ' + q0 + ' dans C′(q).' }] },
+        { lab: `L’écart entre le coût marginal et C′(${q0}), en €`, v: rnd(cm - d1, 2), d: 2, w: 16, x: `${fr(cm)} − ${fr(d1)} = ${fr(cm - d1)} : petit devant ${fr(cm)}, donc C′(${q0}) approche bien le coût marginal.` }],
+        ['Coût marginal = C(q + 1) − C(q) : le coût de l’article en plus.', 'C′(q) est la dérivée : on remplace q par la valeur demandée.', 'Les deux valeurs sont proches : C′(q) donne une bonne approximation.'],
+        table(['Coût C(q)', 'Dérivée C′(q)', 'Production'], [[`${poly(al, be, ga)}`, `${dq} + ${fr(be, 0)}`, `q = ${q0}`]]));
+    };
+    TR.c4e5 = R => {
+      const x0 = pick(R, [2, 4, 5, 10]), [K, q0] = pick(R, [[200, 20], [200, 40], [400, 20], [400, 40], [400, 50], [600, 50], [600, 100], [800, 100], [400, 200], [600, 200]]);
+      return Q('La fonction inverse', 'On étudie f(x) = 1 ÷ x, de dérivée f′(x) = − 1 ÷ x², pour x > 0. Le coût moyen de fabrication de q articles est CM(q) = K ÷ q.', [
+        { lab: `f(${x0}) = 1 ÷ ${x0}`, v: 1 / x0, d: 4, w: 16, x: `1 ÷ ${x0} = ${fr(1 / x0, 4)}` },
+        { lab: `f′(${x0}) = − 1 ÷ ${x0}²`, v: -1 / (x0 * x0), d: 4, w: 16, x: `− 1 ÷ ${x0 * x0} = ${fr(-1 / (x0 * x0), 4)}`, err: [{ v: -1 / x0, m: 'Le dénominateur est x², c’est-à-dire ' + x0 + ' × ' + x0 + '.' }] },
+        { lab: 'Sur ]0 ; +∞[, f′(x) est négatif : f est…', qcm: ['croissante', 'décroissante'], ok: 1, x: 'f′(x) = − 1 ÷ x² est négatif pour tout x > 0 : la fonction f est décroissante sur ]0 ; +∞[.' },
+        { lab: `Pour K = ${K}, le coût moyen CM(${q0}), en €`, v: K / q0, d: 3, w: 16, x: `${fr(K, 0)} ÷ ${q0} = ${fr(K / q0, 3)} €` },
+        { lab: `CM′(${q0}) = − ${K} ÷ ${q0}², en €`, v: -K / (q0 * q0), d: 3, w: 16, x: `− ${fr(K, 0)} ÷ ${fr(q0 * q0, 0)} = ${fr(-K / (q0 * q0), 3)}` },
+        { lab: 'Quand la production augmente, le coût moyen…', qcm: ['diminue', 'augmente'], ok: 0, x: `CM′(${q0}) est négatif : le coût moyen diminue quand la production augmente.` }],
+        ['La dérivée de 1 ÷ x est − 1 ÷ x².', 'Une dérivée négative signifie que la fonction est décroissante.', 'CM(q) = K ÷ q se dérive comme K × (1 ÷ q) : CM′(q) = − K ÷ q².'],
+        table(['Fonction', 'Dérivée'], [['f(x) = 1 ÷ x', 'f′(x) = − 1 ÷ x²']]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

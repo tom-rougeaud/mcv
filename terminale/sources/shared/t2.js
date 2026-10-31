@@ -83,4 +83,31 @@
       hints: ['Intérêts de l’année = capital restant dû × taux.', 'Amortissement = annuité − intérêts.', 'Capital dû de l’année suivante = capital dû − amortissement.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 2 (durée d’un placement) et 5 (emprunt à annuités constantes) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, eur } = H;
+    TR.c2e4 = R => {
+      let C0, t, O, n;
+      do { C0 = pick(R, [2000, 2500, 3000, 4000]); t = pick(R, [3, 4, 5, 6]); O = Math.round(C0 * pick(R, [1.2, 1.3, 1.4, 1.5]) / 100) * 100; n = 1; while (C0 * Math.pow(1 + t / 100, n) < O) n++; } while (n > 12 || n < 4 || Math.abs(C0 * Math.pow(1 + t / 100, n) - O) < 1 || Math.abs(C0 * Math.pow(1 + t / 100, n - 1) - O) < 1);
+      const C = k => C0 * Math.pow(1 + t / 100, k);
+      return Q('La durée d’un placement', `Placement de ${eur(C0)} à ${t} % par an (intérêts composés), objectif ${eur(O)}. Cherche le plus petit entier n tel que C₀ × ${fr(1 + t / 100)}ⁿ ≥ ${fr(O, 0)}.`, [
+        { lab: `Capital au bout de ${n - 1} ans, en € (au centime)`, v: rnd(C(n - 1), 2), d: 2, w: 16, x: `${fr(C0, 0)} × ${fr(1 + t / 100)}^${n - 1} ≈ ${fr(C(n - 1))} €, ce qui est inférieur à ${fr(O, 0)} €`, err: [{ v: rnd(C(n), 2), m: 'Il s’agit du capital au bout de ' + (n - 1) + ' ans, donc exposant ' + (n - 1) + '.' }] },
+        { lab: `Capital au bout de ${n} ans, en € (au centime)`, v: rnd(C(n), 2), d: 2, w: 16, x: `${fr(C0, 0)} × ${fr(1 + t / 100)}^${n} ≈ ${fr(C(n))} €, ce qui est supérieur ou égal à ${fr(O, 0)} €` },
+        { lab: 'Durée minimale, en années', v: n, d: 0, w: 12, x: `Après ${n - 1} ans : ${fr(C(n - 1))} € < ${fr(O, 0)} € ; après ${n} ans : ${fr(C(n))} € ≥ ${fr(O, 0)} €. La durée minimale est ${n} ans.`, err: [{ v: n - 1, m: 'À ' + (n - 1) + ' ans, le capital est encore inférieur à l’objectif.' }] },
+        { lab: `L’objectif est-il atteint au bout de ${n - 1} ans ?`, qcm: ['oui', 'non'], ok: 1, x: `${fr(C(n - 1))} € est inférieur à ${fr(O, 0)} € : l’objectif n’est pas encore atteint.` }],
+        ['Calcule le capital pour des durées successives avec C₀ × q^n.', 'Cherche le premier entier n pour lequel le capital dépasse l’objectif.', 'Un tableau de valeurs (calculatrice, tableur) aide à trouver n.'],
+        table(['Capital de départ', 'Taux annuel', 'Objectif'], [[eur(C0), `${t} %`, eur(O)]]));
+    };
+    TR.c2e5 = R => {
+      const C = pick(R, [8000, 12000, 15000, 20000]), t = pick(R, [3, 4, 5, 6]), n = pick(R, [3, 4, 5]), i = t / 100, a = rnd(C * i / (1 - Math.pow(1 + i, -n)), 2), I1 = rnd(C * i, 2), A1 = rnd(a - I1, 2), R1 = rnd(C - A1, 2), cout = rnd(n * a - C, 2);
+      return Q('L’emprunt à annuités constantes', `On emprunte ${eur(C)} sur ${n} ans à ${t} % par an. Annuité constante : a = C × t ÷ (1 − (1 + t)^(−n)), arrondie au centime.`, [
+        { lab: 'L’annuité a, en €', v: a, d: 2, w: 16, x: `a = ${fr(C, 0)} × ${fr(i, 2)} ÷ (1 − ${fr(1 + i, 2)}^(−${n})) ≈ ${fr(a)} €` },
+        { lab: 'Intérêts de la 1re année (C × t), en €', v: I1, d: 2, w: 16, x: `${fr(C, 0)} × ${fr(i, 2)} = ${fr(I1)} €` },
+        { lab: 'Amortissement de la 1re année (a − intérêts), en €', v: A1, d: 2, w: 16, x: `${fr(a)} − ${fr(I1)} = ${fr(A1)} €`, err: [{ v: a, m: 'On retranche les intérêts à l’annuité.' }] },
+        { lab: 'Capital restant dû après la 1re annuité, en €', v: R1, d: 2, w: 16, x: `${fr(C, 0)} − ${fr(A1)} = ${fr(R1)} €`, err: [{ v: rnd(C - a, 2), m: 'On retranche seulement la partie amortie (pas les intérêts).' }] },
+        { lab: `Coût total du crédit (${n} × a − C), en €`, v: cout, d: 2, w: 16, x: `${n} × ${fr(a)} − ${fr(C, 0)} = ${fr(n * a)} − ${fr(C, 0)} = ${fr(cout)} €` }],
+        ['Intérêts de l’année = capital restant dû × taux.', 'Amortissement = annuité − intérêts de l’année.', 'Coût du crédit = n × annuité − somme empruntée.'],
+        table(['Capital emprunté', 'Taux annuel', 'Durée'], [[eur(C), `${t} %`, `${n} ans`]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

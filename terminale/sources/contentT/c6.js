@@ -126,5 +126,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais construire et lire un arbre pondéré.', ['e1', 'p1']], ['Je sais calculer la probabilité d’un chemin.', ['e1', 'p1']], ['Je sais calculer une probabilité conditionnelle.', ['e2', 'p2']], ['Je sais utiliser les probabilités totales.', ['e1', 'p2', 'p3']], ['Je sais reconnaître deux évènements indépendants.', ['e3', 'p3']]];
   c.words = require('./glT')('c6');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c6e4', lc: 1 });
+  c.bilan[0][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c6e5', lc: 4 });
+  c.bilan[3][1].push('e5');
   return c;
 };

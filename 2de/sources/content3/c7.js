@@ -97,5 +97,6 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer une aire et un périmètre.', ['e1']], ['Je sais calculer un volume en litres.', ['e2', 'b1']], ['Je sais utiliser le théorème de Pythagore.', ['e3', 'p1']], ['Je sais utiliser une échelle.', ['c1']]];
   c.words = old.words;
   c.plusloin = { meca: old.meca, probs: old.probs.filter(p => !['p1', 'c1', 'b1'].includes(p.id)) };
+  c.entraine.push({ id: 'e4', gen: 'c7e4', lc: 4 }); if (c.bilan[3]) c.bilan[3][1].push('e4');
   return c;
 };

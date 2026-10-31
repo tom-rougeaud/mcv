@@ -76,4 +76,28 @@
   };
   if (typeof module !== 'undefined') module.exports = { repere, parab, txtF, pas };
   else root.MCVT3 = { repere, parab, txtF, pas };
+  /* ===== exercices ajoutés : notions 2 (les racines) et 4 (le sommet et l’extremum) ===== */
+  {
+    const { Q, fr, pick, int, P } = H;
+    TR.c3e4 = R => {
+      const p = parab(R), g = repere(p.f, p.r1 - 1, p.r2 + 1, 'Une parabole'), sv = g.wrap(g.base + g.curve(p.f) + g.pts([[p.r1, 0], [p.r2, 0]], { r: 5.5, fill: P.RED }));
+      const non = pick(R, [p.r1 - 1, p.r2 + 1, p.xs]);
+      return Q('Les racines d’une parabole', 'Voici la courbe d’une fonction f du second degré. Les racines sont les nombres x pour lesquels f(x) = 0.', [
+        { lab: 'La plus petite racine de f', v: p.r1, d: 0, w: 12, x: `Les racines sont les abscisses des points où la courbe rencontre l’axe horizontal : la plus petite est ${fr(p.r1, 0)}.` },
+        { lab: 'La plus grande racine de f', v: p.r2, d: 0, w: 12, x: `La plus grande abscisse d’un point sur l’axe horizontal est ${fr(p.r2, 0)}.` },
+        { lab: 'Combien l’équation f(x) = 0 a-t-elle de solutions ?', qcm: ['une', 'deux', 'aucune'], ok: 1, x: 'La courbe coupe l’axe horizontal en deux points : l’équation f(x) = 0 a deux solutions.' },
+        { lab: `Le nombre ${fr(non, 0)} est-il une racine de f ?`, qcm: ['oui', 'non'], ok: 1, x: `La courbe ne coupe pas l’axe horizontal en ${fr(non, 0)} (f(${fr(non, 0)}) = ${fr(p.f(non), 0)}) : ce n’est pas une racine.` },
+        { lab: 'Distance entre les deux racines', v: p.r2 - p.r1, d: 0, w: 12, x: `${fr(p.r2, 0)} − ${fr(p.r1, 0)} = ${fr(p.r2 - p.r1, 0)}`, err: [{ v: p.r1 + p.r2, m: 'Une distance se calcule par une soustraction.' }] }],
+        ['Cherche les points où la courbe touche l’axe horizontal.', 'Une racine est une abscisse, lue sur l’axe horizontal.', 'f(x) = 0 se lit : la courbe est à la hauteur 0.'], sv);
+    };
+    TR.c3e5 = R => {
+      const p = parab(R), g = repere(p.f, p.r1 - 1, p.r2 + 1, 'Une parabole'), sv = g.wrap(g.base + g.curve(p.f)), up = p.a > 0, xs = p.xs, ys = p.ys, fa = (a, b, c) => txtF(a, b, c), A = p.a, B = -p.a * (p.r1 + p.r2), C = p.a * p.r1 * p.r2;
+      return Q('Le sommet d’une parabole', `Une fonction f est définie par f(x) = ${fa(A, B, C)}. Elle s’annule pour x = ${fr(p.r1, 0)} et pour x = ${fr(p.r2, 0)}.`, [
+        { lab: 'Abscisse du sommet : xS = (x₁ + x₂) ÷ 2', v: xs, d: 2, w: 14, x: `(${fr(p.r1, 0)} + ${fr(p.r2, 0)}) ÷ 2 = ${fr(xs)}`, err: [{ v: p.r1 + p.r2, m: 'Divise la somme des racines par 2 : le sommet est au milieu.' }] },
+        { lab: 'Ordonnée du sommet : yS = f(xS)', v: ys, d: 2, w: 14, x: `f(${fr(xs)}) = ${fr(A, 0)} × ${fr(xs)}² ${B < 0 ? '−' : '+'} ${fr(Math.abs(B), 0)} × ${fr(xs)} ${C < 0 ? '−' : '+'} ${fr(Math.abs(C), 0)} = ${fr(ys)}`, err: [{ v: xs, m: 'yS est l’image de xS par f : remplace x par xS dans f(x).' }] },
+        { lab: 'Le sommet est un…', qcm: ['maximum', 'minimum'], ok: up ? 1 : 0, x: up ? 'Le coefficient de x² est positif (a > 0) : la parabole est tournée vers le haut, le sommet est un minimum.' : 'Le coefficient de x² est négatif (a < 0) : la parabole est tournée vers le bas, le sommet est un maximum.' },
+        { lab: `Parmi f(${fr(xs - 1, 0)}), f(${fr(xs, 0)}) et f(${fr(xs + 1, 0)}), la valeur la plus ${up ? 'petite' : 'grande'} est…`, qcm: [`f(${fr(xs - 1, 0)})`, `f(${fr(xs, 0)})`, `f(${fr(xs + 1, 0)})`], ok: 1, x: `f(${fr(xs - 1, 0)}) = ${fr(p.f(xs - 1), 0)}, f(${fr(xs, 0)}) = ${fr(ys, 0)}, f(${fr(xs + 1, 0)}) = ${fr(p.f(xs + 1), 0)} : l’extremum est atteint au sommet.` }],
+        ['Le sommet est au milieu des deux racines.', 'yS = f(xS) : remplace x par xS.', 'a > 0 : minimum ; a < 0 : maximum.'], sv);
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

@@ -110,5 +110,8 @@ module.exports = function (chk) {
   c.bilan = [['Je sais lire une image et un antécédent sur un graphique.', ['e1', 'p1']], ['Je sais résoudre f(x) = g(x) avec deux courbes.', ['e2', 'p2']], ['Je sais comparer deux offres.', ['e2', 'p2']], ['Je sais trouver un seuil de rentabilité.', ['e3', 'p3']]];
   c.words = require('./gl1')('c2');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c2e4', lc: 3 });
+  c.bilan[2][1].push('e4');
   return c;
 };

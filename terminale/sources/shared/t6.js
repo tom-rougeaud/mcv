@@ -72,4 +72,42 @@
       hints: ['Calcule le produit P(A) × P(B).', 'Si ce produit est égal à P(A ∩ B), les évènements sont indépendants.', 'Sinon, savoir que A est réalisé change la probabilité de B.'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercices ajoutés : notions 1 (l’arbre pondéré) et 4 (probabilités totales) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, svg } = H;
+    const halo = 'paint-order:stroke;stroke:#fff;stroke-width:4px;stroke-linejoin:round';
+    const lab = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-size="${o.fs || 13}" font-weight="700" text-anchor="${o.a || 'middle'}" class="tx" style="${halo}">${s}</text>`;
+    const tree = (pD, pRD, pRM, hide) => {
+      const sh = (v, key) => hide && hide.includes(key) ? '?' : fr(v);
+      const nd = (x, y, s) => `<rect x="${x - 22}" y="${y - 15}" width="44" height="30" rx="8" fill="#EEF2FB" stroke="#1D2240" stroke-width="2"/>` + lab(x, y + 5, s, { fs: 14 });
+      const ln = (x1, y1, x2, y2) => `<line x1="${x1 + 22}" y1="${y1}" x2="${x2 - 22}" y2="${y2}" stroke="#1D2240" stroke-width="2"/>`;
+      let g = ln(46, 120, 230, 52) + ln(46, 120, 230, 188) + ln(230, 52, 440, 22) + ln(230, 52, 440, 82) + ln(230, 188, 440, 158) + ln(230, 188, 440, 218);
+      g += nd(46, 120, '') + nd(230, 52, 'D') + nd(230, 188, 'M') + nd(440, 22, 'R') + nd(440, 82, 'R̄') + nd(440, 158, 'R') + nd(440, 218, 'R̄');
+      g += lab(120, 74, sh(pD, 'pD')) + lab(120, 176, sh(1 - pD, 'pM')) + lab(340, 24, sh(pRD, 'pRD')) + lab(340, 80, sh(1 - pRD, 'pRDb')) + lab(340, 160, sh(pRM, 'pRM')) + lab(340, 216, sh(1 - pRM, 'pRMb'));
+      return svg(500, 240, g, 'Arbre pondéré à deux étapes');
+    };
+    const draw = R => ({ pD: pick(R, [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]), pRD: pick(R, [0.1, 0.15, 0.2, 0.25]), pRM: pick(R, [0.02, 0.05, 0.08, 0.1]) });
+    TR.c6e4 = R => {
+      const { pD, pRD, pRM } = draw(R), pM = 1 - pD;
+      return Q('L’arbre pondéré', 'D : « la pièce vient de la machine D », M : « de la machine M », R : « la pièce est défectueuse ». Complète l’arbre.', [
+        { lab: 'P(M)', v: pM, d: 2, w: 14, x: `P(M) = 1 − P(D) = 1 − ${fr(pD)} = ${fr(pM)} (la somme des branches d’un même nœud vaut 1)`, err: [{ v: pD, m: 'La somme des deux branches issues du même nœud vaut 1.' }] },
+        { lab: 'P_D(R̄) = 1 − P_D(R)', v: 1 - pRD, d: 2, w: 14, x: `1 − ${fr(pRD)} = ${fr(1 - pRD)}` },
+        { lab: 'P(D ∩ R) = P(D) × P_D(R)', v: pD * pRD, d: 3, w: 14, x: `${fr(pD)} × ${fr(pRD)} = ${fr(pD * pRD, 3)} (on multiplie le long du chemin)`, err: [{ v: pD + pRD, m: 'La probabilité d’un chemin est le produit des probabilités de ses branches.' }] },
+        { lab: 'P(M ∩ R) = P(M) × P_M(R)', v: pM * pRM, d: 3, w: 14, x: `${fr(pM)} × ${fr(pRM)} = ${fr(pM * pRM, 3)}` },
+        { lab: 'La somme des probabilités des branches issues d’un nœud vaut…', qcm: ['1', '0', 'P(R)'], ok: 0, x: 'Règle des nœuds : la somme des probabilités des branches issues d’un même nœud vaut 1.' }],
+        ['Sur chaque nœud, les branches ont une somme de 1.', 'Un chemin : on multiplie les probabilités de ses branches.', 'P_D(R) est la probabilité de R sachant D, sur la 2e étape.'],
+        tree(pD, pRD, pRM, ['pM', 'pRDb']));
+    };
+    TR.c6e5 = R => {
+      const { pD, pRD, pRM } = draw(R), pM = 1 - pD, a = pD * pRD, b = pM * pRM, pR = a + b;
+      return Q('Les probabilités totales', 'On reprend l’arbre : R peut arriver par deux chemins, en passant par D ou par M.', [
+        { lab: 'Le chemin D → R : P(D ∩ R)', v: a, d: 3, w: 14, x: `${fr(pD)} × ${fr(pRD)} = ${fr(a, 3)}` },
+        { lab: 'Le chemin M → R : P(M ∩ R)', v: b, d: 3, w: 14, x: `${fr(pM)} × ${fr(pRM)} = ${fr(b, 3)}` },
+        { lab: 'P(R) = P(D ∩ R) + P(M ∩ R)', v: pR, d: 3, w: 14, x: `P(R) = ${fr(a, 3)} + ${fr(b, 3)} = ${fr(pR, 3)}`, err: [{ v: rnd(a * b, 5), m: 'On additionne les chemins qui mènent à R.' }] },
+        { lab: 'P_R(D), probabilité que la pièce vienne de D sachant qu’elle est défectueuse (au millième)', v: rnd(a / pR, 3), d: 3, w: 14, x: `P_R(D) = P(D ∩ R) ÷ P(R) = ${fr(a, 3)} ÷ ${fr(pR, 3)} ≈ ${fr(a / pR, 4)} ≈ ${fr(rnd(a / pR, 3), 3)}`, err: [{ v: rnd(pRD, 3), m: 'P_D(R) et P_R(D) sont différentes : ici on se place parmi les pièces défectueuses.' }] },
+        { lab: 'Pour calculer P(R), on…', qcm: ['additionne les probabilités des chemins qui mènent à R', 'multiplie les probabilités des deux branches R', 'prend la plus grande des deux branches R'], ok: 0, x: 'Formule des probabilités totales : P(R) = P(D) × P_D(R) + P(M) × P_M(R), c’est la somme des chemins qui mènent à R.' }],
+        ['Un chemin : multiplication des branches.', 'Plusieurs chemins vers R : on additionne leurs probabilités.', 'P_R(D) = P(D ∩ R) ÷ P(R).'],
+        tree(pD, pRD, pRM, null));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

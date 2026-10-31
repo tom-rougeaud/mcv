@@ -118,5 +118,8 @@ module.exports = function (chk) {
   c.bilan = [['Je sais décrire la fonction cube.', ['p1']], ['Je sais dériver un polynôme de degré 3.', ['e1', 'p2']], ['Je sais dresser un tableau de variations et trouver un extremum local.', ['e2', 'p2', 'p3']], ['Je sais compter les solutions de f(x) = c et en donner une valeur approchée.', ['e3', 'p3']]];
   c.words = require('./glT')('c3');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c3e4', lc: 1 });
+  c.bilan[0][1].push('e4');
   return c;
 };

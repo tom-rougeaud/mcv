@@ -115,5 +115,8 @@ module.exports = function (chk) {
   c.words = require('./glT')('c7');
   c.plusloin = { meca: [], probs: [] };
   c.plusNote = 'programme complémentaire, poursuite d’études';
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c7e4', lc: 3 });
+  c.bilan[2][1].push('e4');
   return c;
 };

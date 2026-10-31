@@ -79,4 +79,31 @@
   };
   if (typeof module !== 'undefined') module.exports = { grille, venn };
   else root.MCVT7 = { grille, venn };
+  /* ===== exercices ajoutés : notions 1 (expérience aléatoire) et 5 (probabilité conditionnelle) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table } = H;
+    TR.c7e4 = R => {
+      const N = pick(R, [20, 25, 50]), g = int(R, 1, 3), p = int(R, 3, 8), perdu = N - g - p;
+      return Q('Expérience aléatoire et probabilité', `Une roue de loterie est partagée en ${N} secteurs identiques : on la fait tourner et on regarde le secteur indiqué.`, [
+        { lab: 'Nombre d’issues possibles (secteurs)', v: N, d: 0, w: 12, x: `Il y a ${N} secteurs : ${g} + ${p} + ${perdu} = ${N} issues possibles.` },
+        { lab: 'P(gros lot)', v: g / N, d: 3, w: 14, x: `${g} secteur${g > 1 ? 's' : ''} favorable${g > 1 ? 's' : ''} sur ${N} : ${g} ÷ ${N} = ${fr(g / N, 3)}` },
+        { lab: 'P(gagner un lot, gros ou petit)', v: (g + p) / N, d: 3, w: 14, x: `(${g} + ${p}) ÷ ${N} = ${g + p} ÷ ${N} = ${fr((g + p) / N, 3)}`, err: [{ v: p / N, m: 'Gagner un lot, c’est le gros lot OU le petit lot : ajoute les deux.' }] },
+        { lab: 'P(perdu)', v: perdu / N, d: 3, w: 14, x: `${perdu} ÷ ${N} = ${fr(perdu / N, 3)}. Contrôle : ${fr(g / N, 3)} + ${fr(p / N, 3)} + ${fr(perdu / N, 3)} = 1.` },
+        { lab: 'Une probabilité peut-elle valoir 1,2 ?', qcm: ['oui', 'non'], ok: 1, x: 'Une probabilité est toujours comprise entre 0 et 1 : 1,2 est impossible.' }],
+        ['Probabilité = issues favorables ÷ issues possibles.', 'La somme des probabilités de toutes les issues vaut 1.', 'Une probabilité est toujours entre 0 et 1.'],
+        table(['Issue', 'Gros lot', 'Petit lot', 'Perdu'], [['Nombre de secteurs', g, p, perdu]]));
+    };
+    TR.c7e5 = R => {
+      let ab, anb, nab, nanb; do { ab = int(R, 15, 40); anb = int(R, 20, 60); nab = int(R, 20, 50); nanb = int(R, 25, 70); } while (ab + anb === ab + nab);
+      const nA = ab + anb, nB = ab + nab, N = nA + nanb + nab, pAB = rnd(ab / nA, 2), pBA = rnd(ab / nB, 2);
+      return Q('La probabilité conditionnelle', `On interroge ${N} clients. A : « le client a la carte de fidélité ». B : « il achète en ligne ». On en choisit un au hasard.`, [
+        { lab: 'P(A), au centième', v: rnd(nA / N, 2), d: 2, w: 14, x: `${nA} ÷ ${N} ≈ ${fr(nA / N, 3)} ≈ ${fr(rnd(nA / N, 2))}` },
+        { lab: 'P(A ∩ B), au centième', v: rnd(ab / N, 2), d: 2, w: 14, x: `${ab} ÷ ${N} ≈ ${fr(ab / N, 3)} ≈ ${fr(rnd(ab / N, 2))}` },
+        { lab: 'P_A(B) : parmi les clients avec carte, la proportion qui achète en ligne (au centième)', v: pAB, d: 2, w: 14, x: `On se limite aux ${nA} clients de A : ${ab} ÷ ${nA} ≈ ${fr(ab / nA, 3)} ≈ ${fr(pAB)}`, err: [{ v: rnd(ab / N, 2), m: 'Pour P_A(B), on divise par n(A), pas par le total.' }, { v: pBA, m: 'P_A(B) : on se place parmi les clients de A.' }] },
+        { lab: 'P_B(A) : parmi les clients qui achètent en ligne, la proportion avec carte (au centième)', v: pBA, d: 2, w: 14, x: `On se limite aux ${nB} clients de B : ${ab} ÷ ${nB} ≈ ${fr(ab / nB, 3)} ≈ ${fr(pBA)}`, err: [{ v: pAB, m: 'P_B(A) : on se place parmi les clients de B.' }] },
+        { lab: `P_A(B) et P_B(A) sont-elles égales ici (${fr(pAB)} et ${fr(pBA)}) ?`, qcm: ['oui', 'non'], ok: pAB === pBA ? 0 : 1, x: `${fr(pAB)} ≠ ${fr(pBA)} : en général, P_A(B) et P_B(A) sont différentes.` }],
+        ['P_A(B) = n(A ∩ B) ÷ n(A) : on divise par le groupe de départ A.', 'P_B(A) = n(A ∩ B) ÷ n(B).', 'En général, P_A(B) n’est pas égale à P_B(A).'],
+        table(['', 'B : en ligne', 'non B', 'Total'], [['A : avec carte', ab, anb, nA], ['non A', nab, nanb, nab + nanb], ['Total', nB, anb + nanb, N]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

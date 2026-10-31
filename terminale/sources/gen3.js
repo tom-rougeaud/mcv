@@ -62,7 +62,7 @@ function chapter(c) {
     const a = AST[nt.astuce.k];
     fixed.push(`<div class="blk nt3 kwn c-${col}"><div class="nt3-k">Partie ${'ABCDE'[c.parties.findIndex(p => p.n.includes(i + 1))]} · ${c.parties.find(p => p.n.includes(i + 1)).t}${nt.hp ? ` <span class="hp3">➕ Pour aller plus loin · ${nt.hp}</span>` : ''}</div><div class="nt3-h"><span class="lc-n">${i + 1}</span>${nt.titre}</div><div class="nt3-g"><div class="nt3-d"><span class="t3">🔎 Je découvre</span><p>${nt.decouvre.txt}</p><div class="nt3-img">${nt.decouvre.img}</div></div><div class="nt3-c"><span class="t3">💬 Je comprends</span>${nt.comprends}</div></div></div>`);
     fixed.push(`<div class="blk nt3v c-${col}"><span class="t3">👀 Je vois</span>${nt.vois}<p class="nt3-leg">${nt.voisLeg}</p></div>`);
-    fixed.push(`<div class="blk nt3r c-${col}"><div class="nt3-rg"><div class="lc-r"><span class="lc-t">📌 Je retiens</span>${nt.retiens}</div><div class="lc-e"><span class="lc-t2">Exemple</span>${nt.exemple}</div></div>${nt.wide || ''}<div class="nt3-ag"><div class="att">⚠️ <b>Attention</b> · ${nt.attention}</div><div class="ast3 ast-${nt.astuce.k}">${a[0]} <b>${a[1]}</b> · ${nt.astuce.t}</div></div></div>`);
+    fixed.push(`<div class="blk nt3r c-${col}" data-lc="${i + 1}"><div class="nt3-rg"><div class="lc-r"><span class="lc-t">📌 Je retiens</span>${nt.retiens}</div><div class="lc-e"><span class="lc-t2">Exemple</span>${nt.exemple}</div></div>${nt.wide || ''}<div class="nt3-ag"><div class="att">⚠️ <b>Attention</b> · ${nt.attention}</div><div class="ast3 ast-${nt.astuce.k}">${a[0]} <b>${a[1]}</b> · ${nt.astuce.t}</div></div></div>`);
   });
   fixed.push(`<div class="blk mk3 c-${col}"><div class="lc-h"><span class="lc-n">🔤</span>Les mots à connaître</div><table class="tbl mkt3"><tr><th>Le mot</th><th>Ce qu’il veut dire</th><th>Au travail</th></tr>${c.mots.map(r => `<tr><td class="mk-w">${r[0]}</td><td>${r[1]}</td><td class="mk-x">« ${r[2]} »</td></tr>`).join('')}</table></div>`);
   /* 4. méthodes : un résolu complet, un résolu à compléter */
@@ -82,6 +82,48 @@ function chapter(c) {
     ex.push(`<div class="blk ex tr3 c-${col}" data-eid="${eid}" data-det="${eid}" data-stage="1"><div class="exh"><span class="num">·</span><span class="ext">${g.titre}</span><span class="cps"><span class="lcref">notion ${e.lc}</span></span></div><div class="exb"><p class="tr-c">${g.consigne}</p><div class="tr-s">${g.support}</div>${extra}</div></div>`);
     rep.push({ eid, titre: g.titre, txt: g.items.map(it => `${it.k}. ${it.a}`).join(' ; ') });
   });
+
+  /* réserve : d’autres tirages des exercices « Je m’entraîne ». La mise en page ne les pose que dans la place restée vide d’une page (jamais de page en plus). */
+  const evPool = [];
+  {
+    const base = c.entraine.filter(e => !e.niv), cnt = {}; base.forEach(e => { cnt[e.lc] = (cnt[e.lc] || 0) + 1; });
+    const sig = g => g.support + '|' + g.items.map(it => it.a).join(';');
+    base.slice().sort((a, b) => cnt[a.lc] - cnt[b.lc]).forEach(e => {
+      const seen = new Set([sig(MCVT.tr(e.gen, seedOf(c.id + '-' + e.id)))]);
+      ['r1', 'r2', 'r3', 'r4', 'r5', 'r6'].forEach(sfx => {
+        const rid = e.id + sfx, eid = c.id + '-' + rid, g = MCVT.tr(e.gen, seedOf(c.id + '-' + rid)), isEv = sfx === 'r4';
+        if (seen.has(sig(g))) return; seen.add(sig(g));
+        const outside = g.items.filter(it => !g.support.includes(`data-k="${it.k}"`) && !g.support.includes(`class="sbk">${it.k}<`));
+        const extra = outside.length ? `<div class="tr-q">${outside.map(it => `<div class="tr-qi"><span class="mg-l">${it.k}.</span>${it.qcm ? qcmOpts(it) : bl(30, it.a)}</div>`).join('')}</div>` : '';
+        detBlock(eid, `<b class="cn" data-numof="${eid}">·</b> ${g.titre}`, g.items.map(it => [`${it.k}.`, it.x || it.a]));
+        const html = `<div class="blk ex tr3 opt${isEv ? ' evb' : ''} c-${col}" data-eid="${eid}" data-det="${eid}" data-stage="1" data-src="${c.id}-${e.id}" data-lc="${e.lc}"><div class="exh"><span class="num">·</span><span class="ext">${g.titre}</span><span class="cps"><span class="optn optn-s">autres nombres · comme l’exercice <b data-numof="${c.id}-${e.id}">·</b></span><span class="optn optn-l">à toi, tout de suite</span><span class="optn optn-g">encore une fois · autres nombres</span><span class="optn optn-e">pour t’entraîner encore · hors barème</span><span class="lcref">notion ${e.lc}</span></span></div><div class="exb"><p class="tr-c">${g.consigne}</p><div class="tr-s">${g.support}</div>${extra}</div></div>`;
+        (isEv ? evPool : ex).push(html);
+        rep.push({ eid, titre: g.titre, txt: g.items.map(it => `${it.k}. ${it.a}`).join(' ; '), opt: 1 });
+      });
+    });
+  }
+  /* rappel : des exercices d’avant (autres nombres). Au « Point de départ » : ceux du chapitre précédent ; ailleurs, seulement si une page garde de la place vide (jamais de page en plus). */
+  {
+    const ci = DATA.indexOf(c), prev = ci > 0 ? DATA[ci - 1] : null; let nr = 0, ne = 0;
+    const addRap = (g, eid, srcId, titre, dep, free, isEv) => {
+      const outside = g.items.filter(it => !g.support.includes(`data-k="${it.k}"`) && !g.support.includes(`class="sbk">${it.k}<`));
+      const extra = outside.length ? `<div class="tr-q">${outside.map(it => `<div class="tr-qi"><span class="mg-l">${it.k}.</span>${it.qcm ? qcmOpts(it) : bl(30, it.a)}</div>`).join('')}</div>` : '';
+      detBlock(eid, `<b class="cn" data-numof="${eid}">·</b> ${g.titre}`, g.items.map(it => [`${it.k}.`, it.x || it.a]));
+      const html = `<div class="blk ex tr3 opt rap${isEv ? ' evb' : ''} c-${col}" data-eid="${eid}" data-det="${eid}" data-stage="1"${dep ? ' data-dep="1"' : ''} data-rap="1"${free ? ' data-free="1"' : ''} data-src="${srcId}"><div class="exh"><span class="num">·</span><span class="ext">${g.titre}</span><span class="cps"><span class="optn optn-r">je me rappelle · ${titre}</span></span></div><div class="exb"><p class="tr-c">${g.consigne}</p><div class="tr-s">${g.support}</div>${extra}</div></div>`;
+      (isEv ? evPool : ex).push(html);
+      rep.push({ eid, titre: g.titre, txt: g.items.map(it => `${it.k}. ${it.a}`).join(' ; '), opt: 1 });
+    };
+    const fromChap = (o, e, dep) => { const rid = 'rap' + (++nr), eid = c.id + '-' + rid; addRap(MCVT.tr(e.gen, seedOf(eid)), eid, o.id + '-' + e.id, o.titre, dep, false, false); };
+    const fromChapEv = (o, e) => { const rid = 'rae' + (++ne), eid = c.id + '-' + rid; addRap(MCVT.tr(e.gen, seedOf(eid)), eid, o.id + '-' + e.id, o.titre, false, false, true); };
+    if (prev) { const base = prev.entraine.filter(e => !e.niv), dp = [base[0], base[Math.floor(base.length / 2)], base[base.length - 1]].filter((e, i, a) => e && a.indexOf(e) === i); dp.forEach(e => fromChap(prev, e, true)); base.filter(e => !dp.includes(e)).forEach(e => fromChap(prev, e, false)); }
+    for (let k = 2; k <= Math.min(ci, 6); k++) { const o = DATA[ci - k], base = o.entraine.filter(e => !e.niv); for (let j = 0; j < Math.min(4, base.length); j++) fromChap(o, base[(ci + k + j) % base.length], false); }
+    /* évaluation : deux rappels « hors barème » du chapitre précédent et d’un chapitre plus ancien */
+    if (prev) { const base = prev.entraine.filter(e => !e.niv); if (base.length) fromChapEv(prev, base[(ci + 1) % base.length]); if (base.length > 1) fromChapEv(prev, base[(ci + 2) % base.length]); }
+    if (ci > 1) { const o = DATA[ci - 2], base = o.entraine.filter(e => !e.niv); if (base.length) fromChapEv(o, base[ci % base.length]); }
+    /* chapitre 1 : rappels de l’année précédente */
+    const CROSS = {c1: ['la classe de première', ['rt1', 'rt2', 'rt3']]}[c.id];
+    if (CROSS) CROSS[1].forEach((gid, i) => { const eid = c.id + '-rax' + (i + 1); addRap(MCVT.tr(gid, seedOf(eid)), eid, 'x-' + gid, CROSS[0], true, true, false); });
+  }
   /* 6. je résous : 3 problèmes (dont un défi et un sujet « vers le bac ») */
   ex.push(`<div class="blk ex palh palh3 kwn keep" data-stage="2"><span class="ph-i">🧩</span><b>Je résous</b><span>Des situations du métier. Je lis tout l’énoncé, je surligne les données, je dis ce que je cherche.</span></div>`);
   const ET = { 2: 'Petit problème', 3: 'Cas pratique', 4: 'Vers le bac' };
@@ -105,7 +147,7 @@ function chapter(c) {
   const evx = e.exos.map((x, i) => `<div class="blk evx kwn c-${col}" data-det="${c.id}-ev${i}"><div class="evx-h"><span class="evx-n">Exercice ${i + 1}</span><span class="evx-t">${x.t}</span><span class="evx-p">${ptsTxt(x.qs.reduce((a, b) => a + b.pts, 0))}</span></div>${x.intro || ''}</div>` + x.qs.map(q => { k++; return `<div class="blk evq c-${col}" data-det="${c.id}-ev${i}"><div class="evq-h"><span class="evq-n">${k}</span><span class="evq-t">${q.t}</span><span class="cp cp-${q.comp}">${CPS[q.comp]}</span><span class="evq-p">${ptsTxt(q.pts)}</span></div>${q.lines ? lines(q.lines, q.a) : `<p class="ans"><span>${q.lab || ''}</span>${bl(q.w || 40, q.a)}</p>`}${q.appel ? `<div class="appel3">📞 <b>Appel n° ${++ka}</b> · Appelle le professeur. ${q.appel}</div>` : ''}</div>`; }).join(''));
   let kq = 0;
   e.exos.forEach((x, i) => key.push({ k: 'ev', det: detBlock(`${c.id}-ev${i}`, `🎯 S’évaluer · exercice ${i + 1} · ${x.t}`, x.qs.map(q => [`${++kq}.`, q.x || q.a, `(${ptsTxt(q.pts)}${q.appel ? ' ; appel 📞 : ' + q.appel : ''})`])) }));
-  return { c, fixed, ex, ev: evh + evx.join(''), key, rep };
+  return { c, fixed, ex, ev: evh + evx.join('') + evPool.join(''), key, rep };
 }
 const CH = DATA.map(chapter);
 
@@ -186,7 +228,7 @@ const ccfCorr = `<div class="blk cc kwn c-brand"><h3>🎓 Sujets de CCF · corri
 
 /* ---------- réponses de « Je m’entraîne » (élève et professeur) ---------- */
 const repSec = `<section class="sec" data-key="rep" data-recto="1" data-run="Réponses de « Je m’entraîne »" data-col="brand"><div class="blk chead kwn c-brand"><div class="ch-txt"><div class="ch-k">Fin de manuel</div><h2>✔️ Réponses de « Je m’entraîne »</h2><p>Fais l’exercice d’abord, puis vérifie ici. Une réponse différente ? Relis la notion indiquée, ou refais l’exercice dans l’appli avec d’autres nombres.</p></div></div>`
-  + CH.map(({ c, rep }) => `<div class="blk rp3 c-${c.col}" data-sec="rep-${c.id}"><h3><span class="rp-n">${c.n}</span>${c.titre}</h3>${rep.map(r => `<p><b class="cn" data-numof="${r.eid}">·</b> <b>${r.titre}</b> — ${r.txt}.</p>`).join('')}</div>`).join('') + `</section>`;
+  + CH.map(({ c, rep }) => `<div class="blk rp3 c-${c.col}" data-sec="rep-${c.id}"><h3><span class="rp-n">${c.n}</span>${c.titre}</h3>${rep.map(r => `<p${r.opt ? ` data-optrep="${r.eid}"` : ''}><b class="cn" data-numof="${r.eid}">·</b> <b>${r.titre}</b> — ${r.txt}.</p>`).join('')}</div>`).join('') + `</section>`;
 
 /* ---------- glossaire visuel ---------- */
 const card = (w, m) => `<div class="blk gcard c-${m.col}" data-word="${esc(w.id)}"><div class="gc-ill">${w.pic}</div><div><div class="gc-h"><span class="gc-w">${w.mot}</span>${w.abr ? `<span class="sym">${w.abr}</span>` : ''}</div><p class="gc-def">${w.def}</p>${w.formule ? `<p class="gc-man">${w.formule}</p>` : ''}${w.sens ? `<p class="note">↔️ ${w.sens}</p>` : ''}<p class="gc-ph">« ${w.phrase} »</p></div></div>`;
@@ -213,6 +255,7 @@ const CSS = ['print.css', 'n3.css', 'mcv.css', 'v3.css'].map(f => fs.readFileSyn
   + `
 .page.cover2{padding:0}.cvfull,.cvfull svg{width:210mm;height:297mm;display:block}
 .cvsvg text{font-family:'Inter',${FALL}}
+.optn{font:800 8.4pt 'Inter',${FALL};color:var(--cc);background:var(--tt);border-radius:3mm;padding:.3mm 2.2mm;margin-right:2mm;white-space:nowrap}.opt .optn-e{display:none}.opt.evb .optn-s{display:none}.opt.evb .optn-e{display:inline}.opt .optn-r{display:none}.opt.rap .optn-s,.opt.rap .optn-e,.opt.rap .optn-l{display:none}.opt.rap .optn-r{display:inline}.opt .optn-l{display:none}.opt.inl .optn-l{display:inline}.opt.inl .optn-s{display:none}.opt .optn-g{display:none}.opt.inl.again .optn-l{display:none}.opt.inl.again .optn-g{display:inline}
 .owner{display:grid;grid-template-columns:auto 1fr auto 40mm;gap:3mm;align-items:end;font:800 11pt 'Inter',${FALL};color:#1D2240;margin-top:4mm}.owner i{border-bottom:2px dashed #9aa3c7;height:8mm}
 .ccfhow{display:grid;grid-template-columns:1fr 1fr;gap:3mm;margin:3mm 0}.ccfhow div{border:2px solid var(--cc);border-radius:4mm;padding:2.4mm 3.4mm;background:var(--tt)}.ccfhow b{display:block;font:800 12pt 'Inter',${FALL};color:#1D2240}.ccfhow span{font-size:10pt;line-height:1.3}.ccfadv{border-left:5px solid var(--cc);background:#FFFBEA;border-radius:3mm;padding:2mm 4mm;font-size:10.4pt}.ccfctx{font-size:10.6pt;margin:1mm 0 2mm}
 .evccf{font-size:9.6pt;margin:1.4mm 0 0;color:#545B7A}.appel3{margin:1.6mm 0 .4mm;border:2px dashed var(--cc);border-radius:3mm;padding:1.4mm 3mm;font-size:9.8pt;background:#fff}.appel3 b{color:var(--cc)}
@@ -229,6 +272,6 @@ const pBlank = `<div class="page blank" data-recto="0"></div>`;
 const front = pCover + pBlank + pGuide + pComp + pToc;
 fs.writeFileSync(path.join(B, 'eleve.html'), doc('Maths et MCV · Tle Bac Pro — manuel', front + pontSec + chapSecs + ccfSecs + repSec + glo, 'eleve'));
 fs.writeFileSync(path.join(B, 'prof.html'), doc('Maths et MCV · Tle Bac Pro — version professeur', front + pontSec + pontProf + chapSecs + ccfSecs + repSec + glo, 'prof'));
-const nEx = CH.reduce((a, x) => a + x.rep.length + x.c.probs.length, 0);
+const nEx = CH.reduce((a, x) => a + x.rep.filter(r => !r.opt).length + x.c.probs.length, 0);
 fs.writeFileSync(path.join(B, 'log.json'), JSON.stringify({ version: 3, chapitres: DATA.map(c => ({ id: c.id, n: c.n, titre: c.titre })), exercices: nEx, mots: DATA.reduce((a, c) => a + c.words.length, 0) }, null, 1));
 console.log(`chapitres : ${DATA.length} · exercices du manuel : ${nEx} · contrôles de calcul : OK`);

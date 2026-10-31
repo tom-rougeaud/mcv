@@ -110,5 +110,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais reconnaître une parabole et son sens.', ['e1', 'p1']], ['Je sais trouver les racines d’une fonction du second degré.', ['e1', 'e3']], ['Je sais étudier le signe avec la forme factorisée.', ['e3', 'p3']], ['Je sais trouver le sommet et l’extremum.', ['e3', 'p2']]];
   c.words = require('./gl1')('c3');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c3e4', lc: 2 });
+  c.bilan[1][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c3e5', lc: 4 });
+  c.bilan[3][1].push('e5');
   return c;
 };

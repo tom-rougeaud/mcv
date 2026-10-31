@@ -138,5 +138,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais choisir un modèle d’ajustement avec un outil numérique.', ['e1', 'p1']], ['Je sais comparer deux modèles avec R².', ['e1', 'p3']], ['Je sais faire un changement de variable.', ['e2', 'e3', 'p2']], ['Je sais interpoler et extrapoler avec prudence.', ['p1', 'p3']]];
   c.words = require('./glT')('c5');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c5e4', lc: 1 });
+  c.bilan[0][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c5e5', lc: 5 });
+  c.bilan[3][1].push('e5');
   return c;
 };

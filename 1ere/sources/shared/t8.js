@@ -94,4 +94,32 @@
   };
   const API = { cav, pave, cyl, cone, pyr, boule, ell, L, poly, SV, cote, SECTIONS };
   if (typeof module !== 'undefined') module.exports = API; else root.MCVT8 = API;
+  /* ===== exercices ajoutés : notions 3 (volume de la boule) et 5 (solides composés) ===== */
+  {
+    const { Q, fr, rnd, pick, int, table, svg, T } = H, PI = Math.PI;
+    TR.c8e4 = R => {
+      const r = pick(R, [3, 4, 5, 6, 9, 10]), D = pick(R, [8, 12, 14, 18, 20, 30]), r2 = D / 2, V = 4 / 3 * PI * r ** 3, V2 = 4 / 3 * PI * r2 ** 3;
+      const g = `<circle cx="150" cy="95" r="70" fill="#EEF2FB" stroke="#1D2240" stroke-width="2.4"/><ellipse cx="150" cy="95" rx="70" ry="18" fill="none" stroke="#1D2240" stroke-width="1.6" stroke-dasharray="5 4"/><line x1="150" y1="95" x2="220" y2="95" stroke="#B05200" stroke-width="2.6"/><circle cx="150" cy="95" r="3.5" fill="#1D2240"/>` + T(186, 86, `r = ${r} cm`, { fs: 13 });
+      return Q('Le volume de la boule', `Une boule pleine a un rayon de ${r} cm. Utilise la touche π de la calculatrice.`, [
+        { lab: `r³ = ${r} × ${r} × ${r}`, v: r ** 3, d: 0, w: 14, x: `${r} × ${r} × ${r} = ${fr(r ** 3, 0)}` },
+        { lab: 'Volume V = 4/3 × π × r³, en cm³ (au centième)', v: rnd(V, 2), d: 2, w: 18, x: `4/3 × π × ${fr(r ** 3, 0)} ≈ ${fr(V, 2)} cm³`, err: [{ v: rnd(PI * r ** 3, 2), m: 'N’oublie pas le facteur 4/3 dans la formule du volume.' }, { v: rnd(4 / 3 * PI * r * r, 2), m: 'Le rayon est élevé au cube (r × r × r).' }] },
+        { lab: 'Ce volume en litres (1 L = 1 000 cm³), au millième', v: rnd(V / 1000, 3), d: 3, w: 18, x: `${fr(V, 2)} ÷ 1 000 ≈ ${fr(V / 1000, 3)} L`, err: [{ v: rnd(V * 1000, 3), m: 'Pour passer des cm³ aux litres, on divise par 1 000.' }] },
+        { lab: `Une autre boule a un diamètre de ${D} cm : son rayon, en cm`, v: r2, d: 0, w: 14, x: `${D} ÷ 2 = ${r2}`, err: [{ v: D, m: 'Le rayon est la moitié du diamètre.' }] },
+        { lab: 'Son volume, en cm³ (au centième)', v: rnd(V2, 2), d: 2, w: 18, x: `4/3 × π × ${fr(r2 ** 3, 0)} ≈ ${fr(V2, 2)} cm³`, err: [{ v: rnd(4 / 3 * PI * D ** 3, 2), m: 'Utilise le rayon (la moitié du diamètre) dans la formule.' }] }],
+        ['V = 4/3 × π × r × r × r.', 'Le diamètre vaut 2 × r : le rayon est la moitié du diamètre.', '1 litre = 1 000 cm³.'], svg(300, 190, g, `Une boule de rayon ${r} cm`));
+    };
+    TR.c8e5 = R => {
+      const L = pick(R, [8, 10, 12]), l = pick(R, [5, 6, 8]), h = pick(R, [6, 8, 10]), r = pick(R, [1.5, 2, 2.5, 3].filter(x => 2 * x < Math.min(L, l))), hp = pick(R, [3, 4, 5]).valueOf(), V1 = L * l * h, V2 = PI * r * r * hp, V = V1 - V2;
+      const hh = Math.min(hp, h - 1);
+      const V2b = PI * r * r * hh, Vb = V1 - V2b;
+      return Q('Les solides composés', `Un bloc de bois est un pavé droit de ${L} cm × ${l} cm × ${h} cm, percé d’un trou cylindrique (rayon ${fr(r)} cm, profondeur ${hh} cm).`, [
+        { lab: 'Volume du pavé V₁ = L × l × h, en cm³', v: V1, d: 2, w: 16, x: `${L} × ${l} × ${h} = ${fr(V1, 0)} cm³` },
+        { lab: 'Volume du trou V₂ = π × r² × h, en cm³ (au centième)', v: rnd(V2b, 2), d: 2, w: 16, x: `π × ${fr(r)}² × ${hh} = π × ${fr(r * r)} × ${hh} ≈ ${fr(V2b)} cm³`, err: [{ v: rnd(PI * r * hh, 2), m: 'Le rayon est élevé au carré : r × r.' }] },
+        { lab: 'Volume du bloc percé, en cm³ (au centième)', v: rnd(Vb, 2), d: 2, w: 16, x: `V = V₁ − V₂ = ${fr(V1, 0)} − ${fr(V2b)} ≈ ${fr(Vb)} cm³`, err: [{ v: rnd(V1 + V2b, 2), m: 'On creuse un trou : on retire le volume du trou.' }] },
+        { lab: 'Pour un solide creusé, on utilise…', qcm: ['V = V₁ + V₂', 'V = V₁ − V₂'], ok: 1, x: 'Solide assemblé : on additionne les volumes. Solide creusé : on soustrait le volume enlevé.' },
+        { lab: 'Le trou enlève, en pourcentage du pavé (au dixième)', v: rnd(V2b / V1 * 100, 1), d: 1, w: 14, x: `${fr(V2b)} ÷ ${fr(V1, 0)} ≈ ${fr(V2b / V1, 3)} soit ${fr(rnd(V2b / V1 * 100, 1), 1)} %` }],
+        ['Nomme chaque solide : pavé droit, cylindre.', 'Cylindre : V = π × r² × h.', 'Solide creusé : V = V₁ − V₂.'],
+        table(['Solide', 'Dimensions'], [['Pavé droit', `${L} cm × ${l} cm × ${h} cm`], ['Trou cylindrique', `rayon ${fr(r)} cm · profondeur ${hh} cm`]]));
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

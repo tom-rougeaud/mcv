@@ -140,5 +140,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer un taux de variation et lire la pente d’une tangente.', ['e1', 'p1']], ['Je sais calculer un nombre dérivé et une fonction dérivée.', ['e2', 'p3']], ['Je sais étudier les variations avec le signe de la dérivée.', ['e3', 'p3']], ['Je sais interpréter une dérivée comme un coût marginal.', ['p1', 'p2']], ['Je sais étudier la fonction inverse et sa dérivée.', ['e2']]];
   c.words = require('./gl1')('c4');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c4e4', lc: 4 });
+  c.bilan[3][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c4e5', lc: 5 });
+  c.bilan[4][1].push('e5');
   return c;
 };

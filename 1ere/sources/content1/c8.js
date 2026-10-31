@@ -128,5 +128,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais lire et compléter un solide en perspective cavalière.', ['e1', 'p1']], ['Je sais calculer le volume d’un prisme, d’un cylindre, d’une pyramide et d’un cône.', ['e2', 'p2']], ['Je sais calculer le volume d’une boule.', ['p3']], ['Je sais reconnaître la section d’un solide par un plan.', ['e3']], ['Je sais calculer le volume d’un solide composé.', ['p3']]];
   c.words = require('./gl1')('c8');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c8e4', lc: 3 });
+  c.bilan[2][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c8e5', lc: 5 });
+  c.bilan[4][1].push('e5');
   return c;
 };

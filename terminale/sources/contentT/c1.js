@@ -141,5 +141,10 @@ module.exports = function (chk) {
   c.bilan = [['Je sais reconnaître une suite géométrique et donner sa raison.', ['e1', 'p1']], ['Je sais calculer le terme de rang n.', ['e2', 'p2']], ['Je sais justifier le sens de variation par la raison.', ['e1', 'p2']], ['Je sais additionner les premiers termes avec un outil numérique.', ['e3', 'p3']], ['Je sais relier une évolution à taux fixe et une fonction exponentielle.', ['p3']]];
   c.words = require('./glT')('c1');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c1e4', lc: 3 });
+  c.bilan[2][1].push('e4');
+  c.entraine.push({ id: 'e5', gen: 'c1e5', lc: 5 });
+  c.bilan[4][1].push('e5');
   return c;
 };

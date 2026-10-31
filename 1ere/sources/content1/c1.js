@@ -116,5 +116,8 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer un coût total, une recette et un résultat.', ['e1', 'p1']], ['Je sais calculer un coût moyen et un coût marginal.', ['e2', 'p3']], ['Je sais calculer des intérêts simples.', ['e3', 'p2']], ['Je sais passer d’un taux annuel à un taux mensuel, par quinzaine ou par jour.', ['e3']]];
   c.words = require('./gl1')('c1');
   c.plusloin = { meca: [], probs: [] };
+  /* ajout-e4 : un exercice d’entraînement pour chaque notion qui n’en avait pas */
+  c.entraine.push({ id: 'e4', gen: 'c1e4', lc: 4 });
+  c.bilan[3][1].push('e4');
   return c;
 };

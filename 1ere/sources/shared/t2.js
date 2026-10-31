@@ -58,4 +58,22 @@
       hints: ['Le seuil est le point où la recette rejoint le coût total.', 'À droite du seuil, la droite verte est au-dessus : le résultat est positif.', 'Résultat = recette − coût total = ' + p + 'q − (' + cf + ' + ' + cv + 'q).'] };
   };
   if (typeof module !== 'undefined') module.exports = {};
+  /* ===== exercice ajouté : notion 3 (comparer f(x) ≥ g(x)) ===== */
+  {
+    const { Q, fr, pick, int, P } = H;
+    TR.c2e4 = R => {
+      const a1 = pick(R, [10, 12, 15]), df = pick(R, [5, 8, 10]), a2 = a1 + df, js = pick(R, [4, 5, 6, 8]), b1 = js * df, xm = js + 4;
+      const A = j => b1 + a1 * j, B = j => a2 * j, ymax = Math.max(A(xm), B(xm)), st = [10, 20, 25, 50, 100].find(s => ymax / s <= 8), y1 = Math.ceil(ymax / st) * st;
+      const g = P.plot({ W: 600, H: 280, x: [0, xm, 1], y: [0, y1, st], ml: 50, mt: 26, mb: 36, fine: true, zeroAxes: true, cls: 'pic vis trs', lab: 'Prix des formules A et B selon le nombre de jours', xl: 'jours', yl: 'prix (€)' });
+      const sv = g.wrap(g.base + g.line(a1, b1, { stroke: P.BLUE, w: 3 }) + g.line(a2, 0, { stroke: P.RED, w: 3 }) + g.txt(xm - 0.1, A(xm) + y1 * 0.06, 'A', { fill: P.BLUE, fs: 15, a: 'end' }) + g.txt(xm - 0.1, B(xm) - y1 * 0.1, 'B', { fill: P.RED, fs: 15, a: 'end' }));
+      const j0 = int(R, 1, js - 1), jA = js + int(R, 1, 3), jB = int(R, 1, js - 1);
+      return Q('Comparer deux formules de location', `Une entreprise loue une machine. Formule A : ${fr(b1, 0)} € de forfait puis ${fr(a1, 0)} € par jour. Formule B : ${fr(a2, 0)} € par jour, sans forfait.`, [
+        { lab: `Prix de la formule A pour ${j0} jours, en €`, v: A(j0), d: 0, w: 14, x: `${fr(b1, 0)} + ${a1} × ${j0} = ${fr(A(j0), 0)} €` },
+        { lab: `Prix de la formule B pour ${j0} jours, en €`, v: B(j0), d: 0, w: 14, x: `${a2} × ${j0} = ${fr(B(j0), 0)} €` },
+        { lab: 'Nombre de jours pour lequel A et B coûtent le même prix (croisement des courbes)', v: js, d: 0, w: 12, x: `Les deux droites se croisent à j = ${js} : A(${js}) = ${fr(A(js), 0)} € = B(${js}).`, err: [{ v: A(js), m: 'Le nombre de jours se lit sur l’axe horizontal, pas le prix.' }] },
+        { lab: `Pour ${jA} jours, la formule la moins chère est…`, qcm: ['A', 'B'], ok: 0, x: `Pour j > ${js}, la courbe de A est sous celle de B : A(${jA}) = ${fr(A(jA), 0)} € contre B(${jA}) = ${fr(B(jA), 0)} €.` },
+        { lab: `Pour ${jB} jours, la formule la moins chère est…`, qcm: ['A', 'B'], ok: 1, x: `Pour j < ${js}, la courbe de B est sous celle de A : B(${jB}) = ${fr(B(jB), 0)} € contre A(${jB}) = ${fr(A(jB), 0)} €.` }],
+        ['Lis le prix en montant jusqu’à la droite, puis sur l’axe vertical.', 'Le point de croisement donne le nombre de jours où les prix sont égaux.', 'La moins chère est celle dont la courbe est en dessous.'], sv);
+    };
+  }
 })(typeof module !== 'undefined' ? module.exports : window);

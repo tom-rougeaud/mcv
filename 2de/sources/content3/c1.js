@@ -81,5 +81,6 @@ module.exports = function (chk) {
   c.bilan = [['Je sais calculer un pourcentage d’un prix.', ['e1']], ['Je sais appliquer une évolution avec un coefficient.', ['e2']], ['Je sais passer du HT au TTC, et l’inverse.', ['e3', 'p5']], ['Je sais calculer une marge et un taux de marque.', ['p5', 'b1']], ['Je sais vérifier une promotion.', ['c2']]];
   c.words = old.words;
   c.plusloin = { meca: old.meca, probs: old.probs.filter(p => !['p5', 'c2', 'b1'].includes(p.id)) };
+  c.entraine.push({ id: 'e4', gen: 'c1e4', lc: 4 }); if (c.bilan[3]) c.bilan[3][1].push('e4');
   return c;
 };

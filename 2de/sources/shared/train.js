@@ -416,6 +416,108 @@
     if (Math.abs(x - it.v) <= (it.tol == null ? 1e-6 : it.tol)) return { ok: true };
     const e = (it.err || []).find(e => Math.abs(x - e.v) <= Math.max(it.tol || 0, 1e-6)); return { ok: false, msg: e ? e.m : null };
   }
+  /* ===== entraînements ajoutés : chaque notion a maintenant au moins un exercice ===== */
+  const ln = (k, lab, a, w = 16) => `<p class="tr-l">${k}. ${lab} : ${tb(k, a, w)}</p>`;
+  const Q = (titre, consigne, rows, hints, pre = '') => {
+    const items = rows.map((r, i) => { const k = L[i], d = r.d == null ? 2 : r.d; const it = r.qcm ? qcm(k, r.qcm, r.ok, r.a) : num(k, r.v, d, r.a != null ? r.a : (Number.isInteger(rnd(r.v, d)) ? fr(r.v, 0) : d === 2 ? fr(r.v, 2) : fr(rnd(r.v, d))), r.err || []); if (r.x) it.x = r.x; return it; });
+    return { titre, consigne, support: pre + rows.map((r, i) => r.qcm ? `<p class="tr-l">${L[i]}. ${r.lab}</p>` : ln(L[i], r.lab, items[i].a, r.w || 16)).join(''), items, hints };
+  };
+  const int = (R, lo, hi) => lo + Math.floor(R() * (hi - lo + 1));
+  const p1 = v => fr(rnd(v, 1)) + NB + '%';
+  const quart = (a, k) => a.slice().sort((x, y) => x - y)[Math.ceil(k * a.length / 4) - 1];
+
+  /* 1.4 · marge, taux de marge, taux de marque */
+  TR.c1e4 = R => {
+    const cost = pick(R, [20, 25, 32, 40, 48, 60, 80]), tm0 = pick(R, [20, 25, 40, 50, 60, 100]), pv = rnd(cost * (1 + tm0 / 100), 2), m = rnd(pv - cost, 2), tm = rnd(m / cost * 100, 1), tq = rnd(m / pv * 100, 1);
+    const tq2 = pick(R, [20, 25, 40, 50]), c2 = pick(R, [24, 30, 36, 48, 60, 90]), pv2 = rnd(c2 / (1 - tq2 / 100), 2);
+    return Q('Marge, taux de marge, taux de marque', `Une boutique achète un article ${eur(cost)} HT et le revend ${eur(pv)} HT. Complète (pourcentages au dixième).`, [
+      { lab: 'Marge (en €)', v: m, a: eur(m), x: `${fr(pv, 2)} − ${fr(cost, 2)} = ${eur(m)}`, err: [{ v: rnd(pv + cost, 2), m: 'La marge est une différence : prix de vente HT − coût d’achat.' }] },
+      { lab: 'Taux de marge (en %)', v: tm, d: 1, a: fr(tm), x: `${fr(m, 2)} ÷ ${fr(cost, 2)} = ${fr(m / cost, 3)} soit ${p1(tm)} (on divise par le coût d’achat)`, err: [{ v: tq, m: 'Le taux de marge se calcule sur le coût d’achat, pas sur le prix de vente.' }] },
+      { lab: 'Taux de marque (en %)', v: tq, d: 1, a: fr(tq), x: `${fr(m, 2)} ÷ ${fr(pv, 2)} = ${fr(m / pv, 3)} soit ${p1(tq)} (on divise par le prix de vente HT)`, err: [{ v: tm, m: 'Le taux de marque se calcule sur le prix de vente HT, pas sur le coût d’achat.' }] },
+      { lab: 'Lequel de ces deux taux ne peut jamais dépasser 100 % ?', qcm: ['le taux de marge', 'le taux de marque'], ok: 1, x: 'La marge est toujours plus petite que le prix de vente : le taux de marque reste inférieur à 100 %.' },
+      { lab: `Un autre article est acheté ${eur(c2)} HT. On veut un taux de marque de ${tq2} %. Prix de vente HT (en €)`, v: pv2, a: eur(pv2), x: `Le coût d’achat vaut ${100 - tq2} % du prix de vente : ${fr(c2, 2)} ÷ ${fr(1 - tq2 / 100, 2)} = ${eur(pv2)}`, err: [{ v: rnd(c2 * (1 + tq2 / 100), 2), m: 'Un taux de marque se calcule sur le prix de vente : le coût d’achat vaut (100 − taux) % du prix de vente.' }] }],
+      ['Marge = prix de vente HT − coût d’achat.', 'Taux de marge : on divise par le coût d’achat. Taux de marque : par le prix de vente HT.', 'Pour la dernière question, le coût d’achat représente (100 − taux de marque) % du prix de vente.'], table(['Coût d’achat HT', 'Prix de vente HT'], [[eur(cost), eur(pv)]]));
+  };
+
+  /* 2.4 · dispersion : étendue, quartiles, écart interquartile */
+  TR.c2e4 = R => {
+    const n = pick(R, [9, 11]); let A, B, eA, eB;
+    for (;;) { A = Array.from({ length: n }, () => 8 + Math.floor(R() * 48)).sort((x, y) => x - y); B = Array.from({ length: n }, () => 8 + Math.floor(R() * 48)).sort((x, y) => x - y); eA = quart(A, 3) - quart(A, 1); eB = quart(B, 3) - quart(B, 1); if (eA !== eB && A[n - 1] - A[0] > 12 && B[n - 1] - B[0] > 12) break; }
+        return Q('Étendue et écart interquartile', `Voici le nombre de clients reçus pendant ${n} jours dans deux magasins, déjà rangés du plus petit au plus grand.`, [
+      { lab: 'Étendue du magasin A', d: 0, v: A[n - 1] - A[0], x: `${A[n - 1]} − ${A[0]} = ${A[n - 1] - A[0]}` },
+      { lab: 'Premier quartile Q₁ du magasin A', d: 0, v: quart(A, 1), x: `${n} ÷ 4 = ${fr(n / 4)} → rang ${Math.ceil(n / 4)} → ${quart(A, 1)}` },
+      { lab: 'Troisième quartile Q₃ du magasin A', d: 0, v: quart(A, 3), x: `3 × ${n} ÷ 4 = ${fr(3 * n / 4)} → rang ${Math.ceil(3 * n / 4)} → ${quart(A, 3)}` },
+      { lab: 'Écart interquartile du magasin A', d: 0, v: eA, x: `Q₃ − Q₁ = ${quart(A, 3)} − ${quart(A, 1)} = ${eA}` },
+      { lab: 'Écart interquartile du magasin B', d: 0, v: eB, x: `Q₁ = ${quart(B, 1)} et Q₃ = ${quart(B, 3)} : ${quart(B, 3)} − ${quart(B, 1)} = ${eB}` },
+      { lab: 'Quel magasin a la fréquentation la plus régulière (la moitié centrale la plus resserrée) ?', qcm: ['le magasin A', 'le magasin B'], ok: eA < eB ? 0 : 1, x: `Plus l’écart interquartile est petit, plus la série est régulière : ${Math.min(eA, eB)} < ${Math.max(eA, eB)}.` }],
+      ['Pour le rang de Q₁ : n ÷ 4 arrondi au-dessus. Pour Q₃ : 3n ÷ 4 arrondi au-dessus.', 'L’écart interquartile est Q₃ − Q₁.', 'Une petite dispersion centrale veut dire des jours qui se ressemblent.'], table(['', ...Array.from({ length: n }, (_, i) => 'J' + (i + 1))], [['Magasin A', ...A], ['Magasin B', ...B]]));
+  };
+
+  /* 3.4 · résoudre une inéquation */
+  TR.c3e4 = R => {
+    const F = pick(R, [30, 40, 50, 60]), p = pick(R, [10, 15, 20, 25]), nmax = int(R, 4, 9), e = int(R, 1, p - 1), B = F + p * nmax + e, th = (B - F) / p, k0 = int(R, 3, nmax - 1);
+    const c = pick(R, [2, 3, 4, 5]), r = c * int(R, 2, 6);
+    return Q('Un budget à ne pas dépasser', `On loue un stand : ${eur(F, 0)} de frais fixes, puis ${eur(p, 0)} par jour. Le budget est de ${eur(B, 0)}. Soit n le nombre de jours : le coût est ${F} + ${p}n.`, [
+      { lab: `Coût pour ${k0} jours (en €)`, v: F + p * k0, a: eur(F + p * k0), x: `${F} + ${p} × ${k0} = ${eur(F + p * k0)}` },
+      { lab: `Résous ${F} + ${p}n ≤ ${B}. Alors n ≤`, v: th, d: 2, a: fr(th, 2), x: `${p}n ≤ ${B} − ${F} = ${B - F} donc n ≤ ${B - F} ÷ ${p} = ${fr(th, 2)}`, err: [{ v: rnd((B + F) / p, 2), m: `Pour isoler ${p}n, on soustrait les frais fixes (${F}) des deux côtés.` }] },
+      { lab: 'Nombre maximal de jours entiers', d: 0, v: nmax, x: `n ≤ ${fr(th, 2)} et n est entier : on garde ${nmax}`, err: [{ v: nmax + 1, m: 'On arrondit toujours vers le bas : avec n = ' + (nmax + 1) + ' le budget serait dépassé.' }] },
+      { lab: `Le budget est-il respecté pour ${nmax + 1} jours ?`, qcm: ['oui', 'non'], ok: 1, x: `${F} + ${p} × ${nmax + 1} = ${F + p * (nmax + 1)} > ${B} : non` },
+      { lab: `Résous −${c}x ≤ ${r}. Le résultat s’écrit-il x ≥ … ou x ≤ … ?`, qcm: ['x ≥ …', 'x ≤ …'], ok: 0, x: 'On divise par un nombre négatif : le sens de l’inégalité change.' },
+      { lab: `Résous −${c}x ≤ ${r}. La valeur limite de x est`, d: 0, v: -r / c, x: `−${c}x ≤ ${r} ⟺ x ≥ ${r} ÷ (−${c}) = ${fr(-r / c)}`, err: [{ v: r / c, m: 'Attention au signe : on divise par −' + c + '.' }] }],
+      ['Isole le terme en n : soustrais d’abord les frais fixes.', 'Un nombre de jours est entier, et le budget ne doit pas être dépassé : arrondis vers le bas.', 'Diviser par un nombre négatif change le sens de l’inégalité.'], table(['Frais fixes', 'Prix par jour', 'Budget'], [[eur(F, 0), eur(p, 0), eur(B, 0)]]));
+  };
+
+  /* 5.4 · la fonction carré */
+  TR.c5e4 = R => {
+    const a = int(R, 4, 9), k = pick(R, [12, 15, 20, 25, 30]), s = pick(R, [1.5, 2, 2.5, 3, 4]);
+    return Q('La fonction carré', 'Soit f la fonction carré : f(x) = x². Un carrelage carré de côté x (en m) coûte k × x² euros.', [
+      { lab: `f(−${a})`, d: 0, v: a * a, x: `(−${a})² = (−${a}) × (−${a}) = ${a * a} : ${a}² et (−${a})² sont égaux`, err: [{ v: -a * a, m: 'Un carré n’est jamais négatif : (−a) × (−a) est positif.' }] },
+      { lab: `Prix d’un carrelage de ${fr(s)} m de côté, à ${k} €/m² (en €)`, v: k * s * s, a: eur(k * s * s), x: `${k} × ${fr(s)}² = ${k} × ${fr(s * s)} = ${eur(k * s * s)}` },
+      { lab: `Prix d’un carrelage de ${fr(2 * s)} m de côté, au même tarif (en €)`, v: k * 4 * s * s, a: eur(k * 4 * s * s), x: `${k} × ${fr(2 * s)}² = ${k} × ${fr(4 * s * s)} = ${eur(k * 4 * s * s)}` },
+      { lab: 'Quand on double le côté, le prix est multiplié par…', qcm: ['2', '4', '8'], ok: 1, x: '(2x)² = 4x² : le prix est multiplié par 4.' },
+      { lab: 'Sur [0 ; + ∞[, la fonction carré est…', qcm: ['croissante', 'décroissante'], ok: 0, x: 'Plus x grandit (x positif), plus x² grandit.' },
+      { lab: 'Sur ] − ∞ ; 0], la fonction carré est…', qcm: ['croissante', 'décroissante'], ok: 1, x: 'Quand x négatif se rapproche de 0, x² diminue.' }],
+      ['(−a)² = a² : le carré d’un nombre négatif est positif.', 'Côté × 2 : l’aire (donc le prix) est multipliée par 2² = 4.', 'Le tableau donne déjà quelques valeurs : utilise-le pour repérer le sens de variation.'], table(['x', '−3', '−2', '−1', '0', '1', '2', '3'], [['f(x) = x²', '9', '4', '1', '0', '1', '4', '9']]));
+  };
+
+  /* 6.1 · une probabilité */
+  TR.c6e4 = R => {
+    const N = pick(R, [20, 25, 50]), r = int(R, 3, Math.floor(N / 2) - 2), b = int(R, 3, Math.floor(N / 2) - 2), g = N - r - b, Pr = r / N, nt = 600;
+    return Q('Piocher un bonbon', `Un sachet contient ${N} bonbons : ${r} rouges, ${b} bleus et ${g} verts. On pioche un bonbon au hasard.`, [
+      { lab: 'P(rouge), au centième', v: Pr, a: fr(Pr, 2), x: `${r} bonbons rouges sur ${N} : ${r} ÷ ${N} = ${fr(Pr, 2)}`, err: [{ v: rnd(r / b, 2), m: 'On divise par le nombre total de bonbons, pas par un autre groupe.' }] },
+      { lab: 'P(non rouge), au centième', v: 1 - Pr, a: fr(1 - Pr, 2), x: `1 − ${fr(Pr, 2)} = ${fr(1 - Pr, 2)}`, err: [{ v: Pr, m: 'P(non rouge) = 1 − P(rouge).' }] },
+      { lab: 'P(bleu ou vert), au centième', v: (b + g) / N, a: fr((b + g) / N, 2), x: `(${b} + ${g}) ÷ ${N} = ${fr((b + g) / N, 2)} : c’est aussi 1 − P(rouge)` },
+      { lab: 'Laquelle de ces valeurs ne peut pas être une probabilité ?', qcm: ['0,35', '1,2', '0'], ok: 1, x: 'Une probabilité est toujours comprise entre 0 et 1 : 1,2 est impossible.' },
+      { lab: `Sur ${nt} piochages (en remettant le bonbon), nombre de rouges attendu environ`, d: 0, v: nt * Pr, x: `${nt} × ${fr(Pr, 2)} = ${nt * Pr} : c’est une estimation, pas un résultat exact` }],
+      ['P(A) = nombre de cas favorables ÷ nombre de cas possibles.', 'P(non A) = 1 − P(A).', 'Une probabilité reste entre 0 et 1.'], table(['Couleur', 'Rouge', 'Bleu', 'Vert', 'Total'], [['Nombre de bonbons', r, b, g, N]]));
+  };
+
+  /* 7.4 · agrandir et réduire */
+  TR.c7e4 = R => {
+    const s = pick(R, [20, 25, 50, 100]), Lg = pick(R, [4, 5, 6, 8, 10]), l = pick(R, [2, 3, 4, 5]), pl = Lg * 100 / s, pw = l * 100 / s;
+    return Q('Du plan au stand', `Un stand de ${Lg} m sur ${l} m est dessiné sur un plan à l’échelle 1/${s} (1 cm sur le plan représente ${fr(s / 100)} m dans la réalité).`, [
+      { lab: 'Longueur sur le plan (en cm)', v: pl, d: 0, x: `${Lg} m = ${Lg * 100} cm ; ${Lg * 100} ÷ ${s} = ${pl} cm` },
+      { lab: 'Largeur sur le plan (en cm)', v: pw, d: 0, x: `${l} m = ${l * 100} cm ; ${l * 100} ÷ ${s} = ${pw} cm` },
+      { lab: 'Aire du stand sur le plan (en cm²)', v: pl * pw, d: 0, x: `${pl} × ${pw} = ${pl * pw} cm²` },
+      { lab: 'Aire réelle du stand (en m²)', v: Lg * l, d: 0, x: `${Lg} × ${l} = ${Lg * l} m²`, err: [{ v: rnd(pl * pw * s / 10000, 2), m: 'Pour une aire, l’échelle s’applique deux fois : 1 cm² du plan représente ' + fr(s * s) + ' cm² dans la réalité.' }] },
+      { lab: `Par quel nombre l’aire est-elle multipliée du plan à la réalité ? (échelle 1/${s})`, v: s * s, d: 0, a: fr(s * s, 0), x: `Longueurs × ${s}, donc aires × ${s}² = ${fr(s * s, 0)}`, err: [{ v: s, m: 'Pour les aires, le coefficient est élevé au carré.' }] }],
+      ['Convertis d’abord les mètres en centimètres.', 'Longueurs × k, aires × k², volumes × k³.', 'Vérifie : aire du plan × k² doit donner l’aire réelle.'], table(['', 'Longueur', 'Largeur'], [['Réel', `${Lg} m`, `${l} m`], [`Plan (1/${s})`, '?', '?']]));
+  };
+
+  /* 8.4 · comparer deux groupes */
+  TR.c8e4 = R => {
+    const n1 = pick(R, [80, 120, 160, 200]), n2 = pick(R, [200, 240, 300, 400]); let q1, q2; do { q1 = pick(R, [30, 35, 40, 45, 50, 55, 60, 65, 70, 75]); q2 = pick(R, [30, 35, 40, 45, 50, 55, 60, 65, 70, 75]); } while (Math.abs(q1 - q2) < 5);
+    const k1 = n1 * q1 / 100, k2 = n2 * q2 / 100, ctx = pick(R, [['Clients en ligne', 'Clients en boutique', 'ont utilisé un bon de réduction'], ['Moins de 25 ans', '25 ans et plus', 'ont une carte de fidélité'], ['Abonnés au mois', 'Abonnés à l’année', 'ont pris l’option livraison']]);
+    return Q('Comparer deux groupes de tailles différentes', `On a interrogé deux groupes de clients : ${ctx[0].toLowerCase()} et ${ctx[1].toLowerCase()}.`, [
+      { lab: `Part du groupe « ${ctx[0].toLowerCase()} » qui ${ctx[2]} (en %)`, v: q1, d: 1, a: fr(q1), x: `${k1} ÷ ${n1} = ${fr(k1 / n1, 2)} soit ${p1(q1)}`, err: [{ v: rnd(k1 / (n1 + n2) * 100, 1), m: 'Pour un groupe, on divise par l’effectif de ce groupe, pas par le total.' }] },
+      { lab: `Part du groupe « ${ctx[1].toLowerCase()} » qui ${ctx[2]} (en %)`, v: q2, d: 1, a: fr(q2), x: `${k2} ÷ ${n2} = ${fr(k2 / n2, 2)} soit ${p1(q2)}` },
+      { lab: 'Dans quel groupe cette part est-elle la plus forte ?', qcm: [ctx[0].toLowerCase(), ctx[1].toLowerCase()], ok: q1 > q2 ? 0 : 1, x: `${p1(Math.max(q1, q2))} > ${p1(Math.min(q1, q2))}` },
+      { lab: 'Écart entre les deux parts (en points de pourcentage)', v: Math.abs(q1 - q2), d: 1, a: fr(Math.abs(q1 - q2)), x: `${fr(Math.max(q1, q2))} − ${fr(Math.min(q1, q2))} = ${fr(Math.abs(q1 - q2))}` },
+      { lab: 'Part sur l’ensemble des deux groupes (en %, au dixième)', v: (k1 + k2) / (n1 + n2) * 100, d: 1, a: fr(rnd((k1 + k2) / (n1 + n2) * 100, 1)), x: `(${k1} + ${k2}) ÷ (${n1} + ${n2}) = ${k1 + k2} ÷ ${n1 + n2} = ${fr((k1 + k2) / (n1 + n2), 3)} soit ${p1((k1 + k2) / (n1 + n2) * 100)}` }],
+      ['Pour comparer des groupes de tailles différentes, on compare des pourcentages, pas des effectifs.', 'La part d’un groupe : effectif concerné ÷ effectif du groupe.', 'Sur l’ensemble : additionne d’abord les deux groupes.'],
+      table(['', ctx[0], ctx[1], 'Ensemble'], [['Ceux qui ' + ctx[2], k1, k2, k1 + k2], ['Les autres', n1 - k1, n2 - k2, n1 + n2 - k1 - k2], ['Total', n1, n2, n1 + n2]]));
+  };
+
   const make = (tab, id, seed) => { const g = tab[id]; if (!g) throw new Error('générateur inconnu : ' + id); return g(rng(seed)); };
   root.MCVT = { DEP, TR, verdict, dep: (id, s) => make(DEP, id, s), tr: (id, s) => make(TR, id, s), L };
 })(typeof module !== 'undefined' ? module.exports : window);
