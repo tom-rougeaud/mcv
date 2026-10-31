@@ -16,7 +16,8 @@
   /* case à compléter dans un texte ou un tableau */
   const tb = (k, a, w = 16) => `<span class="tb" data-k="${k}" data-a="${esc(a)}" style="min-width:${w}mm"><i>${k}</i></span>`;
   /* case à compléter dans un dessin */
-  const sb = (x, y, w, k, a, h = 26) => `<g class="sb"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="5" class="sbr"/><text x="${x + 5}" y="${y + 11}" font-size="10" class="sbk">${k}</text><text x="${x + w / 2 + 4}" y="${y + h / 2 + 6}" font-size="15" text-anchor="middle" class="pa">${esc(a)}</text></g>`;
+  const sbw = (w, a) => Math.max(w, Math.ceil(String(a).length * 7.6) + 12);
+  const sb = (x, y, w, k, a, h = 26) => { const W2 = sbw(w, a), X0 = x - (W2 - w) / 2; return `<g class="sb"><rect x="${X0}" y="${y}" width="${W2}" height="${h}" rx="5" class="sbr"/><text x="${X0 + 3}" y="${y - 3}" font-size="10" class="sbk" style="paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round">${k}</text><text x="${X0 + W2 / 2}" y="${y + h / 2 + 6}" font-size="15" text-anchor="middle" class="pa">${esc(a)}</text></g>`; };
   const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" font-size="${o.fs || 14}" text-anchor="${o.a || 'middle'}" font-weight="${o.w || 700}" class="${o.c || 'tx'}"${o.r ? ` transform="rotate(${o.r} ${x} ${y})"` : ''}>${s}</text>`;
   const svg = (w, h, body, lab = '') => `<svg viewBox="0 0 ${w} ${h}" class="pic vis trs" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${esc(lab)}">${body}</svg>`;
   const table = (head, rows, cls = '') => `<table class="dt tcx dt-sm ${cls}"><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((c, j) => j === 0 ? `<th>${c}</th>` : `<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
@@ -56,7 +57,7 @@
   TR.c1e2 = R => {
     const rows = Array.from({ length: 3 }, (_, i) => { const p = pick(R, [20, 40, 50, 60, 80, 120, 150]), t = pick(R, i === 1 ? [10, 20, 30, 50] : [5, 10, 20, 25]) * (i === 1 ? -1 : 1) * (i === 2 ? -1 : 1); return { p, t, cm: rnd(1 + t / 100, 4), n: rnd(p * (1 + t / 100)) }; });
     let s = ''; const items = [];
-    rows.forEach((r, i) => { const y = 14 + i * 66;
+    rows.forEach((r, i) => { const y = 22 + i * 66;
       s += `<rect x="20" y="${y}" width="110" height="40" rx="8" class="k2 ks" stroke-width="2"/>` + T(75, y + 26, eur(r.p, 0), { fs: 16 });
       s += `<path d="M140 ${y + 20}H420" class="ks" stroke-width="3" fill="none"/><path d="M412 ${y + 12}L424 ${y + 20}L412 ${y + 28}Z" class="k"/>` + T(200, y + 12, (r.t > 0 ? '+ ' : '− ') + Math.abs(r.t) + ' %', { fs: 14, c: 'kt' });
       s += T(268, y + 12, '× CM =', { fs: 13 }) + sb(300, y - 6, 74, L[2 * i], fr(r.cm));
@@ -65,7 +66,7 @@
         num(L[2 * i + 1], r.n, 2, eur(r.n), [{ v: rnd(r.p * Math.abs(r.t) / 100), m: 'Tu as calculé seulement la variation. Multiplie le prix de départ par le coefficient.' }]));
     });
     rows.forEach((r, i) => XS(items, { [L[2 * i]]: `1 ${r.t > 0 ? '+' : '−'} ${Math.abs(r.t)} ÷ 100 = ${fr(r.cm)}`, [L[2 * i + 1]]: `${fr(r.p)} × ${fr(r.cm)} = ${eur(r.n)}` }));
-    return { titre: 'La flèche « × CM »', consigne: 'Pour chaque flèche, écris le coefficient multiplicateur, puis le prix d’arrivée.', support: svg(600, 210, s, 'Flèches du coefficient multiplicateur'), items,
+    return { titre: 'La flèche « × CM »', consigne: 'Pour chaque flèche, écris le coefficient multiplicateur, puis le prix d’arrivée.', support: svg(600, 218, s, 'Flèches du coefficient multiplicateur'), items,
       hints: ['Hausse de t % : coefficient 1 + t ÷ 100. Baisse : 1 − t ÷ 100.', '− 20 % : il reste 80 %, donc × 0,8.', 'Prix d’arrivée = prix de départ × coefficient.'] };
   };
   TR.c1e3 = R => {
@@ -211,7 +212,9 @@
     const I = m => rnd(C * t / 100 * m / 12);
     let s = `<line x1="40" x2="570" y1="70" y2="70" class="ks" stroke-width="3"/>`; const X = m => 50 + m / 24 * 500;
     [0, 3, 6, 12, 24].forEach(m => { s += `<line x1="${X(m)}" x2="${X(m)}" y1="62" y2="78" class="ks" stroke-width="2"/>` + T(X(m), 54, m ? (m < 12 ? m + ' mois' : m / 12 + ' an' + (m > 12 ? 's' : '')) : 'départ', { fs: 13 }); });
-    ds.forEach(([m], i) => { s += sb(X(m) - 44, 88, 88, L[i], eur(I(m))); });
+    const wd = ds.map(([m]) => sbw(88, eur(I(m)))), cx = ds.map(([m]) => X(m)), ord = ds.map((_, i) => i).sort((p, q) => cx[p] - cx[q]);
+    for (let k = 1; k < ord.length; k++) { const a = ord[k - 1], b = ord[k], ov = (wd[a] + wd[b]) / 2 + 8 - (cx[b] - cx[a]); if (ov > 0) { cx[a] -= ov / 2; cx[b] += ov / 2; } }
+    ds.forEach(([m], i) => { s += sb(cx[i] - wd[i] / 2, 88, wd[i], L[i], eur(I(m))); });
     return { titre: 'La frise des intérêts', consigne: `${eur(C, 0)} sont placés à ${fr(t)} % par an (intérêts simples). Calcule les intérêts à chaque date.`, support: svg(600, 128, s, 'Frise du temps'),
       items: ds.map(([m], i) => Object.assign(num(L[i], I(m), 2, eur(I(m)), m !== 12 ? [{ v: rnd(C * t / 100 * m), m: `La durée doit être en années : ${m} mois = ${fr(m / 12)} an.` }] : []), { x: `${fr(C)} × ${fr(t / 100)} × ${m} ÷ 12 = ${eur(I(m))}` })),
       hints: ['Commence par 1 an : capital × taux.', '6 mois, c’est la moitié d’un an ; 3 mois, le quart.', '2 ans : deux fois les intérêts d’un an.'] };

@@ -12,7 +12,7 @@
   /* tableau de variations dessiné : xs (textes ou cases), signes entre les xs, valeurs (avec leur niveau) */
   const cell = (c, x, y, w = 72) => typeof c === 'object' ? sb(x - w / 2, y - 19, w, c.k, c.a, 26) : T(x, y, c, { fs: 14 });
   H.tabvar = o => {
-    const W = o.W || 600, L = o.L || 150, n = o.xs.length, X = i => L + 46 + i * (W - L - 92) / (n - 1), y0 = 6, h1 = 34, h2 = 34, h3 = 92, f = o.f || 'f';
+    const W = o.W || 600, L = o.L || 150, n = o.xs.length, X = i => L + 46 + i * (W - L - 92) / (n - 1), y0 = 12, h1 = 34, h2 = 34, h3 = 92, f = o.f || 'f';
     let s = `<rect x="2" y="${y0}" width="${W - 4}" height="${h1 + h2 + h3}" rx="6" fill="#fff" stroke="#9aa3c7" stroke-width="1.4"/><line x1="2" y1="${y0 + h1}" x2="${W - 2}" y2="${y0 + h1}" stroke="#9aa3c7" stroke-width="1.4"/><line x1="2" y1="${y0 + h1 + h2}" x2="${W - 2}" y2="${y0 + h1 + h2}" stroke="#9aa3c7" stroke-width="1.4"/><line x1="${L}" y1="${y0}" x2="${L}" y2="${y0 + h1 + h2 + h3}" stroke="#9aa3c7" stroke-width="1.4"/>`;
     s += T(L / 2, y0 + 22, 'x', { fs: 15 }) + T(L / 2, y0 + h1 + 22, `signe de ${f}′(x)`, { fs: 13 }) + T(L / 2, y0 + h1 + h2 + 52, `variations de ${f}`, { fs: 13 });
     o.xs.forEach((c, i) => { s += cell(c, X(i), y0 + 23); });
