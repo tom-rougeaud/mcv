@@ -1329,10 +1329,14 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
     if (/^[-+]?\d*\.?\d+\/\d+$/.test(t)) { const [a, b] = t.split('/'); return +a / +b; }
     return t === '' ? NaN : Number(t);
   }
-  const check = (it, s) => { const x = parse(s); return Number.isFinite(x) && Math.abs(x - it.v) <= (it.tol == null ? 1e-6 : it.tol); };
+  /* forme de la réponse : si la tolérance est celle d’un arrondi (d décimales), la réponse saisie doit être arrondie à d décimales au plus ;
+     une fraction n’est acceptée que si elle est exactement égale à la valeur (3,14 n’est pas « 3,1 » ; 1/3 n’est pas « 0,33 »). */
+  const dmaxOf = tol => { if (tol == null) return null; const u = 2 * (tol - 1e-9); if (!(u > 0)) return null; const d = Math.round(-Math.log10(u)); return d >= 0 && d <= 8 && Math.abs(0.5 * Math.pow(10, -d) + 1e-9 - tol) < 1e-12 ? d : null; };
+  const formOK = (it, s) => { const d = dmaxOf(it.tol); if (d == null || typeof it.v !== 'number') return true; const t = String(s).replace(/(\d)[\s  ](?=\d{3}\b)/g, '$1').replace(/\s/g, '').replace('−', '-'); const m = /(\d+)(?:[.,](\d+))?(?:\/(\d+))?/.exec(t); if (!m) return true; if (m[3]) return Math.abs(parse(s) - it.v) <= 1e-9; return (m[2] ? m[2].length : 0) <= d; };
+  const check = (it, s) => { const x = parse(s); return Number.isFinite(x) && Math.abs(x - it.v) <= (it.tol == null ? 1e-6 : it.tol) && formOK(it, s); };
   const make = (id, seed) => { const g = G[id]; if (!g) throw new Error('générateur inconnu : ' + id); return g(rng(seed)); };
 
-  root.MCVG = { G, rng, make, check, parse, rnd, fr, eur, pct, sg, cm, frac };
+  root.MCVG = { G, rng, make, check, parse, formOK, dmaxOf, rnd, fr, eur, pct, sg, cm, frac };
 })(typeof module !== 'undefined' ? module.exports : window);
 </script>
 <script>/* Maths et MCV · 1re — repère, courbes, nuages : tracé exact (coordonnées calculées, jamais dessinées à la main).
@@ -1515,7 +1519,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
   function verdict(it, s) {
     if (it.qcm) return { ok: +s === it.qcm.ok };
     const x = MC.parse(s); if (!Number.isFinite(x)) return { ok: false, empty: String(s).trim() === '' };
-    if (Math.abs(x - it.v) <= (it.tol == null ? 1e-6 : it.tol)) return { ok: true };
+    if (Math.abs(x - it.v) <= (it.tol == null ? 1e-6 : it.tol)) return MC.formOK(it, s) ? { ok: true } : { ok: false, msg: 'Ta valeur est proche, mais elle n’est pas arrondie comme demandé : donne le résultat arrondi.' };
     const e = (it.err || []).find(e => Math.abs(x - e.v) <= Math.max(it.tol || 0, 1e-6)); return { ok: false, msg: e ? e.m : null };
   }
   const make = (tab, id, seed) => { const g = tab[id]; if (!g) throw new Error('générateur inconnu : ' + id); return g(rng(seed)); };
@@ -2135,7 +2139,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
     const a = pick(R, [1.5, 2, 2.5, 3]), b = pick(R, [8, 10, 12, 15]), pts = nuage(R, 6, a, b, 1.5), x1 = pick(R, [3.5, 4.5, 5.5]), x2 = pick(R, [9, 10]), yt = pick(R, [20, 24, 26]);
     const f = x => rnd(a * x + b, 2), xs = rnd((yt - b) / a, 2);
     const g = repN(pts, { xmax: 11, ex: [f(11)], lab: 'Nuage et droite d’ajustement', xl: 'x', yl: 'y' });
-    const items = [num('a', f(x1), 1, fr(f(x1))), num('b', f(x2), 1, fr(f(x2))), num('c', xs, 1, fr(xs), [{ v: f(yt), m: 'Ici on connaît y : résous a x + b = ' + yt + ' pour trouver x.' }]), qcm('d', ['une interpolation', 'une extrapolation'], 1, `une extrapolation : x = ${x2} est en dehors des données (de 1 à 6)`)];
+    const items = [num('a', f(x1), 2, fr(f(x1))), num('b', f(x2), 2, fr(f(x2))), num('c', xs, 2, fr(xs), [{ v: f(yt), m: 'Ici on connaît y : résous a x + b = ' + yt + ' pour trouver x.' }]), qcm('d', ['une interpolation', 'une extrapolation'], 1, `une extrapolation : x = ${x2} est en dehors des données (de 1 à 6)`)];
     XS(items, { a: `y = ${fr(a)} × ${fr(x1)} + ${b} = ${fr(f(x1))}`, b: `y = ${fr(a)} × ${x2} + ${b} = ${fr(f(x2))}`, c: `x = (${yt} − ${b}) ÷ ${fr(a)} = ${yt - b} ÷ ${fr(a)} ≈ ${fr(xs)}` });
     return { titre: 'Prévoir avec la droite', consigne: `La droite d’ajustement du nuage a pour équation y = ${fr(a)} x + ${b}. Utilise-la pour estimer.`, support: g.wrap(g.base + g.line(a, b, { stroke: RED, w: 2.6 }) + g.pts(pts, { r: 5.5 })) + `<p class="tr-l">a. Pour x = ${fr(x1)}, y ≈ ${tb('a', items[0].a, 14)} &nbsp; b. Pour x = ${x2}, y ≈ ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. Pour y = ${yt}, x ≈ ${tb('c', items[2].a, 14)} (au dixième)</p><p class="tr-l">d. L’estimation pour x = ${x2} est :</p>`, items,
       hints: ['Remplace x par la valeur donnée dans y = a x + b.', 'Pour trouver x, résous a x + b = y : x = (y − b) ÷ a.', 'Une extrapolation sort de la plage des données.'] };
@@ -2148,7 +2152,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
     const sheet = `<table class="dt tcx dt-sm"><tbody><tr><th>=PENTE(B2:B8;A2:A8)</th><td>${fr(rnd(F.a, 6))}</td></tr><tr><th>=ORDONNEE.ORIGINE(B2:B8;A2:A8)</th><td>${fr(rnd(F.b, 6))}</td></tr><tr><th>=COEFFICIENT.DETERMINATION(B2:B8;A2:A8)</th><td>${fr(r2)}</td></tr></tbody></table>`;
     const g = repN(pts, { lab: 'Nuage de sept points', xl: 'x', yl: 'y' });
     const pertinent = F.r2 >= .9;
-    const items = [num('a', ar, 2, fr(ar)), num('b', br, 2, fr(br)), qcm('c', ['oui', 'non'], pertinent ? 0 : 1, pertinent ? `oui : R² = ${fr(r2)} est proche de 1` : `non : R² = ${fr(r2)} est loin de 1`), num('d', rnd(ar * x0 + br, 2), 1, fr(rnd(ar * x0 + br, 2)))];
+    const items = [num('a', ar, 2, fr(ar)), num('b', br, 2, fr(br)), qcm('c', ['oui', 'non'], pertinent ? 0 : 1, pertinent ? `oui : R² = ${fr(r2)} est proche de 1` : `non : R² = ${fr(r2)} est loin de 1`), num('d', rnd(ar * x0 + br, 2), 2, fr(rnd(ar * x0 + br, 2)))];
     XS(items, { a: `${fr(rnd(F.a, 6))} arrondi au centième : ${fr(ar)}`, b: `${fr(rnd(F.b, 6))} arrondi au centième : ${fr(br)}`, d: `y = ${fr(ar)} × ${x0} + ${fr(br)} = ${fr(rnd(ar * x0, 2))} + ${fr(br)} = ${fr(rnd(ar * x0 + br, 2))}` });
     return { titre: 'Lire un tableur', consigne: 'Un tableur a calculé la droite d’ajustement (moindres carrés) et R². Arrondis a et b au centième, juge l’ajustement (ici, on le dit pertinent si R² ≥ 0,9), puis fais une estimation avec les valeurs arrondies.', support: g.wrap(g.base + g.pts(pts, { r: 5.5 })) + sheet + `<p class="tr-l">a. a ≈ ${tb('a', items[0].a, 14)} &nbsp; b. b ≈ ${tb('b', items[1].a, 14)}</p><p class="tr-l">c. Un ajustement affine est-il pertinent ?</p><p class="tr-l">d. Pour x = ${x0}, y ≈ ${tb('d', items[3].a, 14)} (avec a et b arrondis)</p>`, items,
       hints: ['La pente est a, l’ordonnée à l’origine est b : y = a x + b.', 'Plus R² est proche de 1, plus les points sont proches de la droite.', 'Remplace x par la valeur donnée dans y = a x + b.'] };
@@ -2355,7 +2359,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
     const r = pick(R, [2, 3, 4, 5]), h = pick(R, [6, 9, 12]), s = Math.min(13, 170 / h, 110 / (2 * r) * 1.6);
     const Ab = rnd(PI * r * r, 2), Vc = rnd(PI * r * r * h, 2), Vk = rnd(PI * r * r * h / 3, 2);
     const by = 240, body = cyl(150, by, s, r, h, { fill: '#E0EBFD' }) + cone(430, by, s, r, h, { fill: '#FDE3E0' }) + [150, 430].map(cx => L([cx, by], [cx + r * s, by], { stroke: SEC, w: 1.6 }) + T(cx + r * s / 2, by + .35 * r * s + 18, `r = ${r} cm`, { fs: 13, c: 'kt' }) + L([cx, by], [cx, by - h * s], { stroke: SEC, w: 1.4, dash: 1 }) + T(cx + r * s + 10, by - h * s / 2, `h = ${h} cm`, { fs: 13, a: 'start', c: 'kt' })).join('') + T(150, 24, 'cylindre', { fs: 14 }) + T(430, 24, 'cône', { fs: 14 });
-    const items = [num('a', Ab, 2, fr(Ab), [{ v: rnd(2 * PI * r, 2), m: 'C’est le périmètre du cercle. L’aire du disque est π × r².' }]), num('b', Vc, 1, fr(Vc)), num('c', Vk, 1, fr(Vk), [{ v: Vc, m: 'Pour un cône, on divise le volume du cylindre par 3.' }]), num('d', 3, 1, '3')];
+    const items = [num('a', Ab, 2, fr(Ab), [{ v: rnd(2 * PI * r, 2), m: 'C’est le périmètre du cercle. L’aire du disque est π × r².' }]), num('b', Vc, 2, fr(Vc)), num('c', Vk, 2, fr(Vk), [{ v: Vc, m: 'Pour un cône, on divise le volume du cylindre par 3.' }]), num('d', 3, 0, '3')];
     XS(items, { a: `π × ${r}² = ${r * r}π ≈ ${fr(Ab)} cm²`, b: `${r * r}π × ${h} = ${r * r * h}π ≈ ${fr(Vc)} cm³`, c: `${r * r * h}π ÷ 3 = ${fr(r * r * h / 3)}π ≈ ${fr(Vk)} cm³`, d: `${fr(Vc)} ÷ ${fr(Vk)} ≈ 3 : le cylindre contient 3 cônes` });
     return { titre: 'Cylindre et cône', consigne: 'Les deux solides ont la même base et la même hauteur. Calcule au centième, puis compare.', support: SV(600, 290, body, 'Un cylindre et un cône de même base et de même hauteur') + `<p class="tr-l">a. Aire de la base : π × ${r}² ≈ ${tb('a', items[0].a, 16)} cm²</p><p class="tr-l">b. Volume du cylindre ≈ ${tb('b', items[1].a, 16)} cm³ &nbsp; c. Volume du cône ≈ ${tb('c', items[2].a, 16)} cm³</p><p class="tr-l">d. Le volume du cylindre est ${tb('d', '3', 10)} fois celui du cône.</p>`, items,
       hints: ['Aire du disque : π × r × r.', 'Cylindre : aire de la base × hauteur.', 'Cône : aire de la base × hauteur ÷ 3.'] };
@@ -2672,7 +2676,7 @@ table.evg3{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px;backg
   document.addEventListener('click', e => { const t = e.target.closest('[data-auto-check],[data-auto-new]'); if (!t) return; const card = t.closest('.auto'), cid = card.dataset.c;
     if (t.hasAttribute('data-auto-new')) { AUTOS[cid] = rnd9(); const tmp = document.createElement('div'); tmp.innerHTML = autoApp(byId[cid]); card.replaceWith(tmp.firstElementChild); return; }
     const qs = window.MCVA.gen(cid, AUTOS[cid]); let ok = 0;
-    $$('.aq', card).forEach((li, j) => { const q = qs[j], v = M.parse(String($('.inp', li).value).replace(/\s*€/, '').replace(/\s/g, '')), good = Number.isFinite(v) && Math.abs(v - q.v) <= q.tol;
+    $$('.aq', card).forEach((li, j) => { const q = qs[j], v = M.parse(String($('.inp', li).value).replace(/\s*€/, '').replace(/\s/g, '')), good = Number.isFinite(v) && Math.abs(v - q.v) <= q.tol && M.formOK(q, $('.inp', li).value);
       li.classList.toggle('ok', good); li.classList.toggle('ko', !good); $('.afb', li).innerHTML = good ? '✅' : `❌ <span class="sol">${q.a}</span>`; if (good) ok++; });
     $('.score', card).textContent = `${ok} / ${qs.length}`; });
   window.MCVAUTO = cid => window.MCVA.gen(cid, AUTOS[cid]);
