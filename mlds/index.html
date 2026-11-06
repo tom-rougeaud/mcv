@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fractions et pourcentages</title><meta name="theme-color" content="#2F7F86"><link rel="manifest" href="manifest.json"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Pourcentages">
+<style>
+:root{--ink:#1D2240;--soft:#545B7A;--bg:#F6F8FC;--card:#fff;--line:#C9D3E8;--teal:#2F7F86;--ok:#1E7A46;--ko:#B3261E;--c1:#2F7F86;--c2:#2F5FA8;--c3:#6A3F9E}
+@media(prefers-color-scheme:dark){:root{--ink:#EEF1FA;--soft:#A9B1CF;--bg:#12162B;--card:#1B2040;--line:#39406B;--teal:#6CC3CA;--ok:#6FD39A;--ko:#FF8B83;--c1:#6CC3CA;--c2:#8FB4F2;--c3:#C3A2F0}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:.2em 0}h2{font-size:1.15rem;margin:.2em 0 .5em}
+header p{color:var(--soft);margin:.2em 0 .8em}
+nav[role=tablist]{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+nav button{flex:1 1 140px;min-height:48px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;font:inherit;font-weight:700;cursor:pointer}
+nav button[aria-selected=true]{border-color:var(--c);background:var(--c);color:#fff;--c:var(--teal)}
+nav button:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:14px;margin:12px 0}
+.q{border-top:1px solid var(--line);padding:12px 0}.q:first-of-type{border-top:0}
+.q label{display:block;font-weight:600;margin-bottom:6px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=text]{font:inherit;min-height:48px;width:11em;max-width:100%;border:2px solid var(--line);border-radius:12px;padding:6px 12px;background:var(--bg);color:var(--ink)}
+.u{color:var(--soft)}
+button.p{min-height:48px;padding:0 18px;border:0;border-radius:12px;background:var(--teal);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+html[data-d] button.p{color:#12162B}
+button.s{min-height:44px;padding:0 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.fb{margin-top:6px;font-weight:700}.fb.ok{color:var(--ok)}.fb.ko{color:var(--ko)}
+.bar{height:14px;border-radius:99px;background:var(--line);overflow:hidden}.bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .3s}
+.pill{display:inline-block;border-radius:99px;padding:2px 12px;font-weight:700;background:var(--line)}
+table{border-collapse:collapse;width:100%}td,th{border-bottom:1px solid var(--line);padding:6px;text-align:left}
+details{margin:8px 0}summary{cursor:pointer;font-weight:700;min-height:44px;display:flex;align-items:center}
+.sr{position:absolute;left:-9999px}
+footer{color:var(--soft);font-size:.85rem;margin:20px 0}
+.tip{border-left:5px solid var(--teal);padding:6px 12px;background:var(--card);border-radius:8px}
+</style></head><body><div class="w">
+<header><h1>Fractions et pourcentages</h1><p>Un calcul, une réponse, une correction. Les nombres changent à chaque série.</p></header>
+<nav role="tablist" aria-label="Choisir une activité" id="tabs"></nav>
+<main id="main" aria-live="polite"></main>
+<div class="card"><h2>Mes séries</h2><div id="stats"></div>
+<div class="row"><button class="s" id="exp">Exporter mes résultats</button><button class="s" id="imp">Importer</button><button class="s" id="clr">Tout effacer</button><input type="file" id="file" accept="application/json" class="sr" tabindex="-1" aria-label="Fichier à importer"></div><p id="msg" role="status" class="u"></p></div>
+<div class="card" id="inst" hidden><h2>Installer l’appli</h2><div id="instbody"></div></div>
+<details class="card"><summary>À propos</summary><p>Appli d’entraînement du pilote MLDS « Fractions et pourcentages » (séance d’1 h, de la fin de collège au niveau bac pro). Les questions sont tirées au hasard et chaque réponse attendue est calculée par programme. Auteur : T. Rougeaud · CC BY-NC 4.0.</p></details>
+<details class="card"><summary>Confidentialité</summary><p>Aucun compte, aucun serveur, aucun suivi. Tes résultats restent dans ce navigateur, sur cet appareil. Le bouton « Exporter » te donne un fichier que tu peux garder ou donner à ton professeur ; « Tout effacer » supprime tout.</p></details>
+<footer>MLDS · Fractions et pourcentages // T. Rougeaud · CC BY-NC 4.0</footer></div>
+<script>
+/* MLDS · Fractions et pourcentages : générateurs communs à la fiche (tirage fixe) et à l’appli (nouveau tirage).
+   Trois paliers : 1 « Je reprends » (fin de collège), 2 « Je consolide » (3e / 2de pro), 3 « Je vais plus loin » (niveau bac pro).
+   Toutes les réponses sont calculées, jamais écrites à la main. */
+(function (root) {
+  'use strict';
+  const rng = seed => { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+  const pick = (R, a) => a[Math.floor(R() * a.length)];
+  const rnd = (x, d) => Math.round((x + Number.EPSILON) * Math.pow(10, d)) / Math.pow(10, d);
+  const fr = (x, d) => { const s = (d == null ? String(rnd(x, 6)) : rnd(x, d).toFixed(d)); const [i, f] = s.replace('-', '').split('.'); const ii = i.replace(/\B(?=(\d{3})+(?!\d))/g, ' '); return (x < 0 ? '−' : '') + ii + (f ? ',' + f.replace(/0+$/, '') : '').replace(/,$/, ''); };
+  const num = (t, v, d, u) => ({ t, v: rnd(v, d), d, tol: 0.5 * Math.pow(10, -d) + 1e-9, a: fr(v, d) + (u ? ' ' + u : ''), u: u || '' });
+  const P = ' %', E = ' €';
+  const LV = {
+    1: { titre: 'Je reprends', sous: 'Les moitiés, les quarts, les dixièmes : on calcule de tête.',
+      mk: R => { const pv = pick(R, [40, 80, 120, 200, 240]), pot = pick(R, [60, 80, 120, 200]), g = pick(R, [[1, 2], [1, 4], [3, 4], [1, 10], [1, 5]]), mt = pick(R, [4, 8, 20]), p = pick(R, [10, 25, 50]), pvv = pick(R, [100, 200, 240, 360]), pr = pick(R, [40, 60, 90, 120]), tir = pick(R, [[2, 8], [5, 20], [10, 40], [3, 12]]), coup = pick(R, [20, 30, 40, 50]);
+        return [
+          num(`Dans un jeu, une potion rend la moitié de tes ${pot} points de vie (PV). Combien de PV rends-tu ?`, pot / 2, 0, 'PV'),
+          num(`Ton équipe a gagné ${g[0]} match${g[0] > 1 ? 's' : ''} sur ${g[1]}. Quel pourcentage de victoires est-ce ?`, g[0] / g[1] * 100, 0, '%'),
+          num(`Calcule ${p} % de ${fr(pvv)}.`, pvv * p / 100, 0),
+          num(`Ta barre de vie compte 100 PV. Un coup enlève ${coup} %. Combien de PV te reste-t-il ?`, 100 - coup, 0, 'PV'),
+          num(`Un joueur tente ${tir[1]} tirs et en cadre ${tir[0]}. Quel pourcentage de tirs cadrés ?`, tir[0] / tir[1] * 100, 0, '%'),
+          num(`Un jeu coûte ${pr} €. Il est à moitié prix. Quel est son prix soldé ?`, pr / 2, 0, '€')
+        ]; } },
+    2: { titre: 'Je consolide', sous: 'Un pourcentage d’un nombre, un prix soldé, un score en pourcentage.',
+      mk: R => { const p = pick(R, [15, 35, 60, 5, 30]), n = pick(R, [80, 120, 200, 360]), kt = pick(R, [[18, 24], [21, 28], [15, 20], [9, 12], [14, 40]]), pr = pick(R, [45, 60, 80, 120]), r = pick(R, [20, 30, 40, 15]), h = pick(R, [20, 15, 10, 30]), ab = pick(R, [8, 10, 12, 15]), ec = pick(R, [800, 1000, 1200, 2000]), gain = pick(R, [[10, 100], [20, 100], [25, 100], [15, 100]]);
+        return [
+          num(`Calcule ${p} % de ${fr(n)}.`, n * p / 100, 1),
+          num(`Tu réussis ${kt[0]} défis sur ${kt[1]}. Quel pourcentage de réussite ? (arrondi à l’unité)`, kt[0] / kt[1] * 100, 0, '%'),
+          num(`Un jeu à ${pr} € est soldé à − ${r} %. Quel est son prix soldé ?`, pr * (1 - r / 100), 2, '€'),
+          num(`Une chanson passe de ${fr(ec)} à ${fr(ec * (1 + h / 100))} écoutes. Quel est le pourcentage de hausse ?`, h, 0, '%'),
+          num(`Un abonnement à ${ab} € par mois augmente de ${h} %. Quel est le nouveau prix ?`, ab * (1 + h / 100), 2, '€'),
+          num(`Sur ${n} joueurs, ${p} % jouent en équipe. Combien de joueurs jouent en équipe ?`, n * p / 100, 0)
+        ]; } },
+    3: { titre: 'Je vais plus loin', sous: 'Évolutions successives, retour au prix de départ, pourcentage de pourcentage.',
+      mk: R => { const t1 = pick(R, [20, 10, 25, 30]), t2 = pick(R, [20, 10, 50]), pf = pick(R, [48, 60, 72, 90, 120]), tt = pick(R, [25, 20, 50, 10]), pa = pick(R, [8, 10, 20, 40]), dp = pick(R, [2, 4, 5]), a = pick(R, [40, 50, 60]), b = pick(R, [25, 50]), t3 = pick(R, [10, 20, 25]);
+        return [
+          num(`Un prix augmente de ${t1} % puis baisse de ${t2} %. Quel est le coefficient multiplicateur global ?`, (1 + t1 / 100) * (1 - t2 / 100), 3),
+          num(`Après une hausse de ${tt} %, un jeu coûte ${fr(pf * (1 + tt / 100), 2)} €. Quel était son prix avant la hausse ?`, pf, 2, '€'),
+          num(`Un forfait passe de ${pa} € à ${pa + dp} €. Quel est le pourcentage de hausse ? (arrondi à 0,1)`, dp / pa * 100, 1, '%'),
+          num(`${a} % des joueurs jouent en ligne, et ${b} % d’entre eux jouent en équipe. Quel pourcentage de tous les joueurs cela représente-t-il ?`, a * b / 100, 1, '%'),
+          num(`Un prix baisse de ${t3} % puis augmente de ${t3} %. Quel est le coefficient global ? (arrondi à 0,001)`, (1 - t3 / 100) * (1 + t3 / 100), 3),
+          num(`Une valeur est multipliée par ${fr((1 + t1 / 100) * (1 + t2 / 100), 3)}. Quel est le taux d’évolution global, en % ? (arrondi à 0,1)`, ((1 + t1 / 100) * (1 + t2 / 100) - 1) * 100, 1, '%')
+        ]; } }
+  };
+  const FLASH = R => { const a = pick(R, [60, 80, 120]), b = pick(R, [200, 350, 500]), c = pick(R, [18, 30, 44]), d = pick(R, [40, 80, 200]), e = pick(R, [90, 40, 120]), f = pick(R, [100, 400]);
+    return [num(`La moitié de ${a}`, a / 2, 0), num(`Le quart de ${d}`, d / 4, 0), num(`10 % de ${b}`, b / 10, 0), num(`50 % de ${c}`, c / 2, 0), num(`25 % de ${f}`, f / 4, 0), num(`Le dixième de ${e}`, e / 10, 0)]; };
+  const DEC = R => { const pr = pick(R, [40, 60, 80]), rr = [pick(R, [25]), pick(R, [50]), pick(R, [10])], nom = ['Jeu de course', 'Jeu d’aventure', 'Jeu de rythme'];
+    const jeux = [{ n: nom[0], p: pr, r: 25 }, { n: nom[1], p: pr + 20, r: 50 }, { n: nom[2], p: Math.round(pr / 2), r: 10 }];
+    return { jeux, qs: [
+      { t: 'Quel jeu a la plus forte réduction ?', a: jeux[1].n + ' (− 50 %)', text: true },
+      num(`Combien coûte le « ${jeux[1].n} » soldé ? (− 50 %, la moitié)`, jeux[1].p / 2, 0, '€'),
+      num(`Quelle est la réduction, en euros, sur le « ${jeux[0].n} » (− 25 %) ?`, jeux[0].p / 4, 2, '€'),
+      num('« Un quart de réduction » : quel pourcentage est-ce ?', 25, 0, '%')
+    ] }; };
+  const mk = (palier, seed) => LV[palier].mk(rng(seed));
+  const api = { rng, pick, fr, rnd, LV, mk, FLASH: s => FLASH(rng(s)), DEC: s => DEC(rng(s)) };
+  if (typeof module !== 'undefined') module.exports = api; else root.MLDS = api;
+})(typeof window !== 'undefined' ? window : this);
+
+(function(){'use strict';
+var PFX='mlds-pct:',TABS=[{id:'f',t:'⚡ Flash'},{id:'1',t:'Palier 1',c:'--c1'},{id:'2',t:'Palier 2',c:'--c2'},{id:'3',t:'Palier 3',c:'--c3'}];
+var mem={};function ld(k,d){try{var v=localStorage.getItem(PFX+k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}}
+function sv(k,v){mem[k]=v;try{localStorage.setItem(PFX+k,JSON.stringify(v))}catch(e){}}
+var st=ld('st',{runs:[]}),cur='f',items=[],done=[],seed=0;
+if(matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-d','');
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function parse(s){s=String(s).replace(/[\s  ]/g,'').replace(/[€%a-zA-Z]/g,'').replace(',','.').replace('−','-');if(!/^-?\d+(\.\d+)?$/.test(s))return NaN;return parseFloat(s)}
+function decs(s){var m=String(s).replace(',','.').match(/\.(\d+)/);return m?m[1].length:0}
+function newSet(){seed=(Math.random()*4294967295)>>>0;items=cur==='f'?MLDS.FLASH(seed):MLDS.mk(+cur,seed);done=items.map(function(){return null});}
+function tabs(){var n=$('tabs');n.innerHTML='';TABS.forEach(function(t){var b=document.createElement('button');b.setAttribute('role','tab');b.setAttribute('aria-selected',t.id===cur);b.textContent=t.t;b.onclick=function(){cur=t.id;newSet();tabs();draw()};n.appendChild(b)})}
+function score(){return done.filter(function(x){return x===true}).length}
+function draw(){var L='abcdef',T=cur==='f'?{titre:'Flash',sous:'6 calculs de tête, sans calculatrice. Ton score te donne ton palier de départ.'}:MLDS.LV[cur],h='<div class="card"><h2>'+esc(T.titre)+'</h2><p class="u">'+esc(T.sous)+'</p><div class="bar" aria-hidden="true"><i id="pb"></i></div><p><span class="pill" id="sc"></span></p>';
+items.forEach(function(it,k){h+='<div class="q"><label for="a'+k+'"><b>'+L[k]+'.</b> '+esc(it.t)+'</label><div class="row"><input type="text" id="a'+k+'" inputmode="decimal" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="f'+k+'">'+(it.u?'<span class="u">'+esc(it.u)+'</span>':'')+'<button class="p" data-k="'+k+'">Vérifier</button></div><div class="fb" id="f'+k+'" role="status"></div></div>'});
+h+='<div class="row"><button class="s" id="nw">Nouvelle série</button></div><div id="end"></div></div>';$('main').innerHTML=h;
+$('main').querySelectorAll('button.p').forEach(function(b){b.onclick=function(){chk(+b.dataset.k)}});
+items.forEach(function(_,k){$('a'+k).addEventListener('keydown',function(e){if(e.key==='Enter')chk(k)})});
+$('nw').onclick=function(){newSet();draw()};upd()}
+function chk(k){var it=items[k],i=$('a'+k),f=$('f'+k),raw=i.value;if(!raw.trim()){f.className='fb ko';f.textContent='Écris ta réponse d’abord.';return}
+var v=parse(raw);if(isNaN(v)){f.className='fb ko';f.textContent='Écris un nombre (par exemple 12,5).';return}
+var tol=it.tol,ok=Math.abs(v-it.v)<=tol,form=decs(raw)<=it.d+0;
+if(ok&&!form&&it.d<3&&decs(raw)>it.d){f.className='fb ko';f.textContent='Le résultat est bon, mais arrondis-le comme demandé ('+(it.d===0?'à l’unité':it.d+' décimale'+(it.d>1?'s':''))+').';return}
+if(done[k]===null)done[k]=ok;f.className='fb '+(ok?'ok':'ko');f.textContent=ok?'Juste.':'Pas tout à fait. Réponse attendue : '+it.a+'.';upd()}
+function upd(){var s=score(),n=items.length,d=done.filter(function(x){return x!==null}).length;$('sc').textContent='Score : '+s+' / '+n;$('pb').style.width=(d/n*100)+'%';
+if(d===n){var m=cur==='f'?(s<=2?'Commence au palier 1.':s<=4?'Commence au palier 2.':'Commence au palier 3.'):(s>=5?(cur==='3'?'Bravo : tu maîtrises le palier 3.':'5 sur 6 ou plus : tu peux passer au palier '+(+cur+1)+'.'):'Refais une série pour progresser.');
+$('end').innerHTML='<p class="tip"><b>Série terminée.</b> '+esc(m)+'</p>';if(!$('end').dataset.s||$('end').dataset.s!==String(seed)){$('end').dataset.s=String(seed);st.runs.push({d:new Date().toISOString().slice(0,10),p:cur,s:s,n:n});st.runs=st.runs.slice(-200);sv('st',st);stats()}}else $('end').innerHTML=''}
+function stats(){var r=st.runs,h='';if(!r.length){$('stats').innerHTML='<p class="u">Aucune série terminée pour l’instant.</p>';return}
+var by={};r.forEach(function(x){(by[x.p]=by[x.p]||[]).push(x)});h='<table><tr><th>Activité</th><th>Séries</th><th>Meilleur score</th></tr>';
+['f','1','2','3'].forEach(function(p){if(by[p])h+='<tr><td>'+(p==='f'?'Flash':'Palier '+p)+'</td><td>'+by[p].length+'</td><td>'+Math.max.apply(null,by[p].map(function(x){return x.s}))+' / 6</td></tr>'});$('stats').innerHTML=h+'</table>'}
+function msg(t){$('msg').textContent=t}
+$('exp').onclick=function(){var b=new Blob([JSON.stringify({app:'mlds-pourcentages',v:1,st:st},null,1)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='mes-resultats-pourcentages.json';document.body.appendChild(a);a.click();a.remove();msg('Fichier exporté.')};
+$('imp').onclick=function(){$('file').click()};
+$('file').onchange=function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var o=JSON.parse(r.result);if(!o||o.app!=='mlds-pourcentages'||!o.st||!Array.isArray(o.st.runs))throw 0;st={runs:o.st.runs.filter(function(x){return x&&typeof x.s==='number'&&typeof x.n==='number'&&/^[f123]$/.test(x.p)}).map(function(x){return{d:String(x.d).slice(0,10),p:x.p,s:x.s,n:x.n}}).slice(-200)};sv('st',st);stats();msg('Résultats importés.')}catch(_){msg('Ce fichier n’est pas valide.')}};r.readAsText(f)};
+$('clr').onclick=function(){if(!st.runs.length){msg('Rien à effacer.');return}if(confirm('Effacer tous tes résultats sur cet appareil ?')){st={runs:[]};sv('st',st);stats();msg('Résultats effacés.')}};
+/* installation */
+var dp=null,ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+function inst(){if(standalone)return;var b=$('instbody');$('inst').hidden=false;
+if(dp){b.innerHTML='<p>Ajoute l’appli à ton écran d’accueil pour la retrouver en un geste.</p><button class="p" id="ib">Installer</button>';$('ib').onclick=function(){dp.prompt();dp=null;$('inst').hidden=true}}
+else if(ios)b.innerHTML='<ol><li>Ouvre cette page dans <b>Safari</b>.</li><li>Touche le bouton <b>Partager</b> (le carré avec une flèche).</li><li>Choisis <b>Sur l’écran d’accueil</b>, puis <b>Ajouter</b>.</li></ol>';
+else b.innerHTML='<p>Dans le menu de ton navigateur (⋮ ou ⋯), choisis <b>Ajouter à l’écran d’accueil</b> ou <b>Installer l’application</b>. Si tu n’as pas ce choix, garde simplement la page dans tes favoris.</p>'}
+addEventListener('beforeinstallprompt',function(e){e.preventDefault();dp=e;inst()});
+try{if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}
+tabs();newSet();draw();stats();inst();
+window.__t={items:function(){return items},chk:chk,st:function(){return st}};
+})();
+</script></body></html>
