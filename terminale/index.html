@@ -1636,7 +1636,7 @@ body.profmode .profbox{display:block}
     R => { const a = pick(R, [500, 800, 1200]), n = pick(R, [4, 5]); return num(`Annuité constante de ${fr(a)} € pendant ${n} ans. Quelle somme totale est remboursée ?`, a * n, 0, '€'); },
     R => { const c = pick(R, [3000, 5000]), n = 4, a = c / n + pick(R, [100, 200]); return num(`Emprunt de ${fr(c)} € remboursé par ${n} annuités de ${fr(a)} €. Quel est le coût du crédit ?`, a * n - c, 0, '€'); },
     R => { const c = pick(R, [1000, 2000, 5000]), t = 0.1, a = c * t / (1 - pw(1 + t, -2)); return num(`Pour emprunter ${fr(c)} € à 10 % en 2 ans par annuités constantes, l’annuité vaut ${c} × 0,1 ÷ (1 − 1,1⁻²). Calcule-la, arrondie au centime.`, a, 2, '€'); },
-    R => { const a = pick(R, [1200, 1500]), n = 5, c = pick(R, [5400, 6500]); return num(`Annuités de ${fr(a)} € pendant ${n} ans pour un emprunt de ${fr(c)} €. Quel est le total des intérêts ?`, a * n - c, 0, '€'); }
+    R => { const [a, c] = pick(R, [[1200, 5400], [1200, 5500], [1500, 6500], [1500, 6800]]), n = 5; return num(`Annuités de ${fr(a)} € pendant ${n} ans pour un emprunt de ${fr(c)} €. Quel est le total des intérêts ?`, a * n - c, 0, '€'); }
   ]);
 
   /* ======================= chapitre 3 · fonctions polynômes de degré 3 ======================= */
